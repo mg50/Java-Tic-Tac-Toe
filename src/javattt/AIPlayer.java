@@ -21,21 +21,18 @@ public class AIPlayer extends Player {
     
     public int[] calculateMove(Board board) {
         
-        //System.out.println("\n\n\n");
         ArrayList<int[]> emptyCoords = board.emptyCoords();
         int size = emptyCoords.size();
         if(size == 0) return null;
         
         int[] champion = null;
-        float championValue = side == Board.X ? Infinity : NegInfinity;
+        float championValue = side == Board.X ? NegInfinity : Infinity;
 
         for(int i = 0; i < size; i++) {
             int[] emptyCoord = emptyCoords.get(i);
             Board child = board.duplicateBoard();
             child.setCell(emptyCoord[0], emptyCoord[1], side);
             float minimaxValue = scoreChild(child);
-
-            //System.out.println("Player " + side + " [" + emptyCoord[0] + ", " + emptyCoord[1] + "]: " + minimaxValue);
 
             if(side == Board.X && minimaxValue > championValue) {
                 championValue = minimaxValue;
