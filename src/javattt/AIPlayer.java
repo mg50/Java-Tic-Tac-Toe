@@ -20,6 +20,8 @@ public class AIPlayer extends Player {
     }
     
     public int[] calculateMove(Board board) {
+        
+        System.out.println("\n\n\n");
         ArrayList<int[]> emptyCoords = board.emptyCoords();
         int size = emptyCoords.size();
         if(size == 0) return null;
@@ -29,9 +31,11 @@ public class AIPlayer extends Player {
 
         for(int i = 0; i < size; i++) {
             int[] emptyCoord = emptyCoords.get(i);
-            Board child =  board.duplicateBoard();
+            Board child = board.duplicateBoard();
             child.setCell(emptyCoord[0], emptyCoord[1], side);
             int minimaxValue = scoreChild(child);
+
+            System.out.println("Player " + side + " [" + emptyCoord[0] + ", " + emptyCoord[1] + "]: " + minimaxValue);
 
             if(side == Board.X && minimaxValue > championValue) {
                 championValue = minimaxValue;

@@ -25,7 +25,6 @@ public class AIPlayerTest extends TestCase {
                                         {1, 1, 2},
                                         {0, 1, 2}};
 
-
     private static int[][] TestGrid5 = {{2, 2, 1},
                                         {1, 1, 2},
                                         {0, 1, 0}};
@@ -37,6 +36,11 @@ public class AIPlayerTest extends TestCase {
     private static int[][] TestGrid7 = {{1, 0, 2},
                                         {0, 2, 0},
                                         {0, 0, 1}};
+
+    private static int[][] TestGrid8 = {{1, 2, 1},
+                                        {0, 2, 0},
+                                        {1, 0, 0}};
+
 
     public void testLeafValueOne() {
         Board board = new Board(TestGrid1);
@@ -107,6 +111,14 @@ public class AIPlayerTest extends TestCase {
         assertEquals(o.scoreChild(board), 1);
     }
 
+    public void testScoreChildSeven() {
+        Board board = new Board(TestGrid8);
+        AIPlayer x = new AIPlayer(Board.X);
+        AIPlayer o = new AIPlayer(Board.O);
+
+        assertEquals(x.scoreChild(board), -1);
+    }
+
     public void testCalculateMoveOne() {
         Board board = new Board(TestGrid4);
         AIPlayer x = new AIPlayer(Board.X);
@@ -120,5 +132,12 @@ public class AIPlayerTest extends TestCase {
         AIPlayer x = new AIPlayer(Board.X);
         AIPlayer o = new AIPlayer(Board.O);
         assertArrayEquals(x.calculateMove(board), new int[]{0, 2});
+    }
+
+    public void testCalculateMoveThree() {
+        Board board = new Board(TestGrid8);
+        AIPlayer x = new AIPlayer(Board.X);
+        AIPlayer o = new AIPlayer(Board.O);
+        assertArrayEquals(o.calculateMove(board), new int[]{1, 2});
     }
 }
