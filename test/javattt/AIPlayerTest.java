@@ -140,4 +140,6 @@ public class AIPlayerTest extends TestCase {
         AIPlayer o = new AIPlayer(Board.O);
         assertArrayEquals(o.calculateMove(board), new int[]{1, 2});
     }
+
+
 }

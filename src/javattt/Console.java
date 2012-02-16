@@ -12,22 +12,23 @@ import java.io.*;
 public class Console implements UI {
 
     Game game;
-    InputStream inputStream;
-    OutputStream outputStream;
+    BufferedReader inputStream;
+    BufferedWriter outputStream;
 
-    public Console() {}
-
-    public Console(Game game) {
-        this.game = game;
-        this.inputStream = System.in;
-        this.outputStream = System.out;
+    public Console() {
+        this(null, System.in, System.out);
     }
 
     public Console(Game game, InputStream inputStream, OutputStream outputStream) {
         this.game = game;
-        this.inputStream = inputStream;
-        this.outputStream = outputStream;
+
+        InputStreamReader r = new InputStreamReader(inputStream);
+        this.inputStream = new BufferedReader(r);
+        
+        OutputStreamWriter w = new OutputStreamWriter(outputStream);
+        this.outputStream = new BufferedWriter(w);
     }
+
 
     public void update() {
         String display = "";
@@ -37,24 +38,26 @@ public class Console implements UI {
             if(y < 2) display += "-----\n";
         }
         
-        System.out.println(display + "\n\n");
+        try {            
+            outputStream.write(display + "\n\n");
+            outputStream.flush();
+        }
+        catch(Exception e) {
+            System.out.println("Error updating display!");
+        }
     }
     
     public int[] promptPlayer(Player player) {
         if(player.automated) return player.calculateMove(game.getBoard());
 
         int[] move = null;
-        InputStreamReader r = new InputStreamReader(inputStream);
-        BufferedReader in = new BufferedReader(r);
-
-        OutputStreamWriter w = new OutputStreamWriter(outputStream);
-        BufferedWriter out = new BufferedWriter(w);
 
         while(move == null || game.getBoard().getCell(move[0], move[1]) != Board.Empty) {
             try {
-                out.write("Please enter your next move: ");
-                out.flush();
-                move = parseMove(in.readLine());
+                outputStream.write("Please enter your next move: ");
+                outputStream.flush();
+                String moveString = inputStream.readLine();
+                move = parseMove(moveString);
             }
             catch (Exception e) {
                 System.out.println("Error reading move!");
@@ -63,11 +66,46 @@ public class Console implements UI {
         return move;
     }
     
+    public boolean prompt(String msg) {
+        String answer = null;
+
+        try {
+            while(answer == null || (!answer.equals("y") && !answer.equals("n"))) {
+                outputStream.write(msg + " y/n ");
+                outputStream.flush();
+                answer = inputStream.readLine();
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Error reading/writing prompt!");
+        }
+
+        return answer.equals("y");
+    }
+    
+    public void victoryMessage(int winner, int xWinsCount, int oWinsCount) {
+
+        try {
+            if(winner != 0) outputStream.write("Player " + getPlayerSymbol(winner) + " has won!\n");
+            else outputStream.write("The game has ended in a draw.\n");
+            outputStream.write("Player X has won " + xWinsCount + " games and player O has won " + oWinsCount + " games.\n");
+            outputStream.flush();
+            
+        }
+        catch (Exception e) {
+            System.out.println("Error writing victory message.");
+        }
+    }
+    
+    private String getPlayerSymbol(int side) {
+        if(side == Board.X) return "X";
+        else if(side == Board.O) return "O";
+        else return null;
+    }
     private String getCellSymbol(int x, int y) {
+        String symbol = getPlayerSymbol(game.getBoard().getCell(x, y));
         int val = game.getBoard().getCell(x, y);
-        if(val == Board.X) return "X";
-        else if(val == Board.O) return "O";
-        else return " ";
+        return symbol == null ? " " : symbol;
     }
     
     public int[] parseMove(String moveString) {

@@ -1,7 +1,9 @@
 package javattt;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 /**
@@ -16,16 +18,22 @@ public class Game {
     private Board board;
     private Player playerX;
     private Player playerO;
-    private UI ui;
+    public UI ui;
+    InputStream inputStream;
+    OutputStream outputStream;
     
     public Game() {
         board = new Board();
+        inputStream = System.in;
+        outputStream = System.out;
+        ui = new Console(this, inputStream, outputStream);
     }
     
     public Game(Board input_board) {
         board = input_board;
     }
-    
+
+
     public void setPlayerX(Player player) {
         playerX = player;
     }
@@ -68,47 +76,22 @@ public class Game {
 
     public int startOneGame() {
         board = new Board();
-        ui = new Console(this);
         playerX = null;
         playerO = null;
 
-        InputStreamReader r = new InputStreamReader(System.in);
-        BufferedReader in = new BufferedReader(r);
-        Boolean playVsAi = null;
-        while(playVsAi == null) {
-            System.out.print("Play vs. AI? y/n ");
-            try {
-                String answer = in.readLine();
-                if(answer.equals("y")) playVsAi = true;
-                else if(answer.equals("n")) playVsAi = false;
+        if(ui.prompt("Play vs. AI?")) {
+            if(ui.prompt("Play as X?")) {
+                playerX = new HumanPlayer(Board.X);
+                playerO = new AIPlayer(Board.O);
             }
-            catch (Exception e) {
-                System.out.println("Error reading answer!");
+            else {
+                playerX = new AIPlayer(Board.X);
+                playerO = new HumanPlayer(Board.O);
             }
-        }
-
-        if(!playVsAi) {
-            playerX = new HumanPlayer(Board.X);
-            playerO = new HumanPlayer(Board.O);
         }
         else {
-            while(playerX == null) {
-                System.out.print("Play as X? y/n ");
-                try {
-                    String answer = in.readLine();
-                    if(answer.equals("y")) {
-                        playerX = new HumanPlayer(Board.X);
-                        playerO = new AIPlayer(Board.O);
-                    }
-                    else if(answer.equals("n")) {
-                        playerX = new AIPlayer(Board.X);
-                        playerO = new HumanPlayer(Board.O);
-                    }
-                }
-                catch (Exception e) {
-                    System.out.println("Error reading answer!");
-                }
-            }
+            playerX = new HumanPlayer(Board.X);
+            playerO = new HumanPlayer(Board.O);
         }
 
         Player currentPlayer = playerX;
@@ -123,40 +106,28 @@ public class Game {
         } while(winner == 0 && !isDraw());
 
         ui.update();
-        if(winner == Board.X) System.out.println("Player X has won!");
-        else if(winner == Board.O) System.out.println("Player O has won!");
-        else System.out.println("The game ended in a draw.");
-        
+
         return winner;
     }
 
-    public void start() {
+    public int[] start() {
+
         int xScore = 0;
         int oScore = 0;
+        int draws = 0;
         boolean gamePlaying = true;
 
         do {
+            board = new Board();
             int victor = startOneGame();
             if(victor == Board.X) xScore++;
             else if(victor == Board.O) oScore++;
-            
-            System.out.println("Player X has won " + xScore + " games and player O has won " + oScore + " games.");
-            
-            String answer = null;
-            while(answer == null || (!answer.equals("y") && !answer.equals("n"))) {
-                System.out.print("Play again? y/n ");
-
-                InputStreamReader r = new InputStreamReader(System.in);
-                BufferedReader in = new BufferedReader(r);
-                try {
-                    answer = in.readLine();
-                    if(answer.equals("n")) gamePlaying = false;
-                }
-                catch (Exception e) {
-                    System.out.println("Error reading answer!");
-                }
-            }
+            else draws++;
+            ui.victoryMessage(victor, xScore, oScore);
+            if(!ui.prompt("Play again?")) gamePlaying = false;
         } while(gamePlaying);
+        
+        return new int[] {xScore, oScore, draws};
     }
     
     public Player otherPlayer(Player player) {
