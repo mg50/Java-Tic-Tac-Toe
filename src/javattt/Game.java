@@ -66,7 +66,8 @@ public class Game {
         board.setCell(x, y, player.side);
     }
 
-    public void start() {
+    public int startOneGame() {
+        board = new Board();
         ui = new Console(this);
         playerX = null;
         playerO = null;
@@ -125,6 +126,37 @@ public class Game {
         if(winner == Board.X) System.out.println("Player X has won!");
         else if(winner == Board.O) System.out.println("Player O has won!");
         else System.out.println("The game ended in a draw.");
+        
+        return winner;
+    }
+
+    public void start() {
+        int xScore = 0;
+        int oScore = 0;
+        boolean gamePlaying = true;
+
+        do {
+            int victor = startOneGame();
+            if(victor == Board.X) xScore++;
+            else if(victor == Board.O) oScore++;
+            
+            System.out.println("Player X has won " + xScore + " games and player O has won " + oScore + " games.");
+            
+            String answer = null;
+            while(answer == null || (!answer.equals("y") && !answer.equals("n"))) {
+                System.out.print("Play again? y/n ");
+
+                InputStreamReader r = new InputStreamReader(System.in);
+                BufferedReader in = new BufferedReader(r);
+                try {
+                    answer = in.readLine();
+                    if(answer.equals("n")) gamePlaying = false;
+                }
+                catch (Exception e) {
+                    System.out.println("Error reading answer!");
+                }
+            }
+        } while(gamePlaying);
     }
     
     public Player otherPlayer(Player player) {
