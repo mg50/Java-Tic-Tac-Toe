@@ -27,7 +27,7 @@ public class AIPlayer extends Player {
         if(size == 0) return null;
         
         int[] champion = null;
-        float championValue = side == Board.X ? -1 : 1;
+        float championValue = side == Board.X ? Infinity : NegInfinity;
 
         for(int i = 0; i < size; i++) {
             int[] emptyCoord = emptyCoords.get(i);
