@@ -21,21 +21,21 @@ public class AIPlayer extends Player {
     
     public int[] calculateMove(Board board) {
         
-        System.out.println("\n\n\n");
+        //System.out.println("\n\n\n");
         ArrayList<int[]> emptyCoords = board.emptyCoords();
         int size = emptyCoords.size();
         if(size == 0) return null;
         
         int[] champion = null;
-        int championValue = side == Board.X ? -1 : 1;
+        float championValue = side == Board.X ? -1 : 1;
 
         for(int i = 0; i < size; i++) {
             int[] emptyCoord = emptyCoords.get(i);
             Board child = board.duplicateBoard();
             child.setCell(emptyCoord[0], emptyCoord[1], side);
-            int minimaxValue = scoreChild(child);
+            float minimaxValue = scoreChild(child);
 
-            System.out.println("Player " + side + " [" + emptyCoord[0] + ", " + emptyCoord[1] + "]: " + minimaxValue);
+            //System.out.println("Player " + side + " [" + emptyCoord[0] + ", " + emptyCoord[1] + "]: " + minimaxValue);
 
             if(side == Board.X && minimaxValue > championValue) {
                 championValue = minimaxValue;
@@ -58,11 +58,11 @@ public class AIPlayer extends Player {
         else return 0;
     }
 
-    public int scoreChild(Board board) {
+    public float scoreChild(Board board) {
         return minimax(board, board.emptyCoords().size(), AIPlayer.NegInfinity, AIPlayer.Infinity, otherSide());
     }
     
-    public int minimax(Board board, int depth, int alpha, int beta, int side) {
+    public float minimax(Board board, int depth, float alpha, float beta, int side) {
         int score = absoluteLeafScore(board);
         if(depth == 0 || score != 0) return score;
         int otherSide = otherSide(side);
@@ -71,17 +71,18 @@ public class AIPlayer extends Player {
 
 
         for(Board child : children) {
-            int childValue = minimax(child, depth - 1, alpha, beta, otherSide);
+            float childValue = minimax(child, depth - 1, alpha, beta, otherSide);
             if(side == Board.X && childValue > alpha) {
                 alpha = childValue;
                 if(beta <= alpha) break;
             }
             if(side == Board.O && childValue < beta){
+                if(childValue == -2) childValue = -1;
                 beta = childValue;
                 if(beta <= alpha) break;
             }
         }
 
-        return side == Board.X ? alpha : beta ;
+        return side == Board.X ? alpha/(float) depth : beta/(float) depth ;
     }
 }
