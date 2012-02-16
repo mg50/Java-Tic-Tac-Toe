@@ -18,6 +18,10 @@ public class Console implements UI {
     public Console() {
         this(null, System.in, System.out);
     }
+    
+    public Console(Game game) {
+        this(game, System.in, System.out);
+    }
 
     public Console(Game game, InputStream inputStream, OutputStream outputStream) {
         this.game = game;

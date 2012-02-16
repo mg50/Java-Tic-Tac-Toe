@@ -19,14 +19,10 @@ public class Game {
     private Player playerX;
     private Player playerO;
     public UI ui;
-    InputStream inputStream;
-    OutputStream outputStream;
-    
+
     public Game() {
         board = new Board();
-        inputStream = System.in;
-        outputStream = System.out;
-        ui = new Console(this, inputStream, outputStream);
+        ui = new Console(this);
     }
     
     public Game(Board input_board) {
