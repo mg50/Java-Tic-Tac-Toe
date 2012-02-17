@@ -29,33 +29,19 @@ public class Game {
         board = input_board;
     }
 
+
+    public void setPlayerX(Player player) {
+        playerX = player;
+    }
+
+    public void setPlayerO(Player player) {
+        playerO = player;
+    }
+
     public Board getBoard() {
         return board;
     }
 
-    public int winner() {
-        Boolean hasEmptyCell = false;
-        int[][] lines = board.lines();
-
-        for(int[] line : lines) {
-            if(winnerX(line)) return Board.X;
-            else if(winnerO(line)) return Board.O;
-        }
-
-        return 0;
-    }
-    
-    public static Boolean winnerX(int[] line) {
-        return Arrays.equals(line, new int[] {Board.X, Board.X, Board.X});
-    }
-
-    public static Boolean winnerO(int[] line) {
-        return Arrays.equals(line, new int[] {Board.O, Board.O, Board.O});
-    }
-    
-    public Boolean isDraw() {
-        return (winner() == 0 && !board.hasEmptyCell());
-    }
 
     public void move(int x, int y, Player player) {
         board.setCell(x, y, player.side);
@@ -66,8 +52,8 @@ public class Game {
         playerX = null;
         playerO = null;
 
-        if(ui.prompt("Play vs. AI?")) {
-            if(ui.prompt("Play as X?")) {
+        if(ui.promptPlayVsAi()) {
+            if(ui.promptPlayAsX()) {
                 playerX = new HumanPlayer(Board.X);
                 playerO = new AIPlayer(Board.O);
             }
@@ -88,9 +74,9 @@ public class Game {
             ui.update();
             moveCoords = ui.promptPlayer(currentPlayer);
             move(moveCoords[0], moveCoords[1], currentPlayer);
-            winner = winner();
+            winner = board.winner();
             currentPlayer = otherPlayer(currentPlayer);
-        } while(winner == 0 && !isDraw());
+        } while(winner == 0 && !board.isDraw());
 
         ui.update();
 
@@ -111,7 +97,7 @@ public class Game {
             else if(victor == Board.O) oScore++;
             else draws++;
             ui.victoryMessage(victor, xScore, oScore);
-            if(!ui.prompt("Play again?")) gamePlaying = false;
+            if(!ui.promptStartNewGame()) gamePlaying = false;
         } while(gamePlaying);
         
         return new int[] {xScore, oScore, draws};

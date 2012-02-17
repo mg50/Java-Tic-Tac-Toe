@@ -46,10 +46,10 @@ public class AIPlayerTest extends TestCase {
         Board board = new Board(TestGrid1);
 
         AIPlayer x = new AIPlayer(Board.X);
-        assertEquals(x.absoluteLeafScore(board), 1);
+        assertEquals(x.absoluteLeafScore(board), 512);
                 
         AIPlayer o = new AIPlayer(Board.O);
-        assertEquals(o.absoluteLeafScore(board), 1);
+        assertEquals(o.absoluteLeafScore(board), 512);
     }
 
     public void testLeafValueTwo() {
@@ -67,32 +67,32 @@ public class AIPlayerTest extends TestCase {
         Board board = new Board(TestGrid2);
         AIPlayer x = new AIPlayer(Board.X);
         AIPlayer o = new AIPlayer(Board.O);
-        assertEquals(x.scoreChild(board), (float) 0);
-        assertEquals(o.scoreChild(board), (float) 0);
+        assertEquals(x.scoreChild(board), 0);
+        assertEquals(o.scoreChild(board), 0);
     }
 
     public void testScoreChildTwo() {
         Board board = new Board(TestGrid3);
         AIPlayer x = new AIPlayer(Board.X);
         AIPlayer o = new AIPlayer(Board.O);
-        assertEquals(x.scoreChild(board), (float) 0);
-        assertEquals(o.scoreChild(board), (float) 0);
+        assertEquals(x.scoreChild(board), 0);
+        assertEquals(o.scoreChild(board), 0);
     }
 
     public void testScoreChildThree() {
         Board board = new Board(TestGrid4);
         AIPlayer x = new AIPlayer(Board.X);
         AIPlayer o = new AIPlayer(Board.O);
-        assertEquals(x.scoreChild(board), (float) 0);
-        assertEquals(o.scoreChild(board), (float) 1);
+        assertEquals(x.scoreChild(board), 0);
+        assertEquals(o.scoreChild(board), 256);
     }
 
     public void testScoreChildFour() {
         Board board = new Board(TestGrid5);
         AIPlayer x = new AIPlayer(Board.X);
         AIPlayer o = new AIPlayer(Board.O);
-        assertEquals(x.scoreChild(board), (float) 0);
-        assertEquals(o.scoreChild(board), (float) 0.5);
+        assertEquals(x.scoreChild(board), 0);
+        assertEquals(o.scoreChild(board), 256);
     }
 
     public void testScoreChildFive() {
@@ -100,7 +100,8 @@ public class AIPlayerTest extends TestCase {
         AIPlayer x = new AIPlayer(Board.X);
         AIPlayer o = new AIPlayer(Board.O);
 
-        assertTrue(o.scoreChild(board) > (float) 0);
+        assertEquals(x.scoreChild(board), 0);
+        assertEquals(o.scoreChild(board), 16);
     }
 
     public void testScoreChildSix() {
@@ -108,7 +109,7 @@ public class AIPlayerTest extends TestCase {
         AIPlayer x = new AIPlayer(Board.X);
         AIPlayer o = new AIPlayer(Board.O);
 
-        assertTrue(o.scoreChild(board) > (float) 0);
+        assertEquals(o.scoreChild(board), 64);
     }
 
     public void testScoreChildSeven() {
@@ -116,7 +117,8 @@ public class AIPlayerTest extends TestCase {
         AIPlayer x = new AIPlayer(Board.X);
         AIPlayer o = new AIPlayer(Board.O);
 
-        assertTrue(x.scoreChild(board) < (float) 0);
+        assertEquals(x.scoreChild(board), -256);
+        assertEquals(o.scoreChild(board), 256);
     }
 
     public void testCalculateMoveOne() {
