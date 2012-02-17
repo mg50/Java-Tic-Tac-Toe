@@ -12,5 +12,8 @@ public interface UI {
     void update();
     int[] promptPlayer(Player player);
     boolean prompt(String msg);
+    boolean promptPlayAsX();
+    boolean promptPlayVsAi();
+    boolean promptStartNewGame();
     void victoryMessage(int winner, int xWinCount, int oWinCount);
 }

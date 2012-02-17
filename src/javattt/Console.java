@@ -87,6 +87,18 @@ public class Console implements UI {
         return answer.equals("y");
     }
     
+    public boolean promptPlayAsX() {
+        return prompt("Play as X?");
+    }
+    
+    public boolean promptPlayVsAi() {
+        return prompt("Play vs. AI?");
+    }
+    
+    public boolean promptStartNewGame() {
+        return prompt("Start another game?");
+    }
+    
     public void victoryMessage(int winner, int xWinsCount, int oWinsCount) {
 
         try {
