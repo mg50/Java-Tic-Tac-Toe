@@ -16,10 +16,14 @@ public class Board {
                                         new int[] {0, 0, 0},
                                         new int[] {0, 0, 0}};
     
-    public static int Empty = 0;
-    public static int X = 1;
-    public static int O = 2;
+    public static final int Empty = 0;
+    public static final int X = 1;
+    public static final int O = 2;
     
+    public static int otherSide(int side) {
+        if(side == X) return O;
+        else return X;
+    }
 
     private int[][] grid;
     
@@ -110,7 +114,29 @@ public class Board {
 
         return list;
     }
-    
+
+
+    public int winner() {
+        Boolean hasEmptyCell = false;
+        int[][] lines = lines();
+
+        int[] winningXLine = {Board.X, Board.X, Board.X};
+        int[] winningOLine = {Board.O, Board.O, Board.O};
+        
+        for(int[] line : lines) {
+            if(Arrays.equals(line, winningXLine)) return Board.X;
+            else if(Arrays.equals(line, winningOLine)) return Board.O;
+        }
+
+        return 0;
+    }
+
+
+    public Boolean isDraw() {
+        return (winner() == 0 && !hasEmptyCell());
+    }
+
+
     public int hashCode() {
         int hash = 0;
         for(int i = 0; i < 3; i++) {

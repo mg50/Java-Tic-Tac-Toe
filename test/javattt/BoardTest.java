@@ -9,9 +9,21 @@ import static org.junit.Assert.*;
 
 public class BoardTest extends TestCase {
 
-    private static int[][] TestGrid1 = {{2, 0, 2}, {1, 1, 2}, {1, 0, 2}};
-    private static int[][] TestGrid2 = {{2, 1, 2}, {1, 1, 2}, {1, 2, 2}};
+    private static int[][] TestGrid1 = {{2, 0, 2},
+                                        {1, 1, 2},
+                                        {1, 0, 2}};
 
+    private static int[][] TestGrid2 = {{2, 1, 2},
+                                        {1, 1, 2},
+                                        {1, 2, 2}};
+
+    private static int[][] TestGrid3 = {{1, 2, 1},
+                                        {2, 1, 2},
+                                        {2, 1, 2}};
+
+    private static int[][] TestGrid4 = {{1, 1, 1},
+                                        {2, 2, 0},
+                                        {0, 0, 0}};
 
     @Test
     public void testGetCell() throws Exception {
@@ -97,6 +109,25 @@ public class BoardTest extends TestCase {
         assertFalse(board.equals(board2));
     }
 
+    public void testIsDraw() throws Exception {
+        Board board1 = new Board(TestGrid3);
+        assertTrue(board1.isDraw());
+
+        Board board2 = new Board(TestGrid2);
+        assertFalse(board2.isDraw());
+    }
+
+    public void testWinner() throws Exception {
+        Board board1 = new Board(TestGrid1);
+        assertEquals(board1.winner(), Board.O);
+
+        Board board2 = new Board(TestGrid4);
+        assertEquals(board2.winner(), Board.X);
+
+        Board board3 = new Board(TestGrid3);
+        assertEquals(board3.winner(), 0);
+    }
+
     public void testChildNodesOne() {
         Board board = new Board(TestGrid1);
         int[][] c1 = {{2, 1, 2}, {1, 1, 2}, {1, 0, 2}};
@@ -107,6 +138,8 @@ public class BoardTest extends TestCase {
 
         assertArrayEquals(board.childNodes(Board.X), children);
     }
+
+
 
     public void testChildNodesTwo() {
         Board board = new Board(TestGrid2);
