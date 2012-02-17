@@ -11,7 +11,6 @@ public interface UI {
 
     void update(Board board);
     int[] promptPlayer(Board board);
-    boolean prompt(String msg);
     boolean promptPlayAsX();
     boolean promptPlayVsAi();
     boolean promptStartNewGame();
