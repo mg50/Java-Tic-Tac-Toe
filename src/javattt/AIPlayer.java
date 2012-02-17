@@ -55,13 +55,13 @@ public class AIPlayer extends Player {
     }
 
     public int scoreChild(Board board) {
-        return minimax(board, board.emptyCoords().size(), AIPlayer.NegInfinity, AIPlayer.Infinity, Player.otherSide(side));
+        return minimax(board, board.emptyCoords().size(), AIPlayer.NegInfinity, AIPlayer.Infinity, Board.otherSide(side));
     }
     
     public int minimax(Board board, int depth, int alpha, int beta, int side) {
         int score = absoluteLeafScore(board);
         if(depth == 0 || score != 0) return score;
-        int otherSide = Player.otherSide(side);
+        int otherSide = Board.otherSide(side);
 
         Board[] children = board.childNodes(side);
 

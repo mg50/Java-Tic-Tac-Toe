@@ -15,13 +15,8 @@ public class Player {
     public Player(int side) {
         this.side = side;
     }
-    
+
     public int[] calculateMove(Board board) { // No-op
         return null;
-    }
-
-    public static int otherSide(int side) {
-        if(side == Board.X) return Board.O;
-        else return Board.X;
     }
 }
