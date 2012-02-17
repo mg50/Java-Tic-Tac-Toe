@@ -25,18 +25,6 @@ public class GameTest extends TestCase {
         assertArrayEquals(board.getGrid(), result);
     }
 
-    public void testOtherPlayer() throws Exception {
-        Game game = new Game();
-        Player px = new HumanPlayer(Board.X);
-        Player po = new HumanPlayer(Board.O);
-        
-        game.setPlayerX(px);
-        game.setPlayerO(po);
-        
-        assertEquals(game.otherPlayer(px), po);
-        assertEquals(game.otherPlayer(po), px);
-    }
-    
     public void testStartOneGameOne() throws Exception {
         String gameString = "n\ntop left\ntop right\nmiddle left\nmiddle right\nbottom left\n";
         Game game = new Game();

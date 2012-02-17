@@ -71,14 +71,17 @@ public class Game {
         int[] moveCoords;
         int winner;
         do {
-            ui.update();
-            moveCoords = ui.promptPlayer(currentPlayer);
+            ui.update(board);
+            if(currentPlayer.automated) moveCoords = currentPlayer.calculateMove(board);
+            else moveCoords = ui.promptPlayer(board);
+
             move(moveCoords[0], moveCoords[1], currentPlayer);
             winner = board.winner();
-            currentPlayer = otherPlayer(currentPlayer);
+            if(currentPlayer == playerX) currentPlayer = playerO;
+            else currentPlayer = playerX;
         } while(winner == 0 && !board.isDraw());
 
-        ui.update();
+        ui.update(board);
 
         return winner;
     }
@@ -102,12 +105,7 @@ public class Game {
         
         return new int[] {xScore, oScore, draws};
     }
-    
-    public Player otherPlayer(Player player) {
-        if(player == playerX) return playerO;
-        else return playerX;
-    }
-    
+
     public static void main(String[] args) {
         new Game().start();
     }

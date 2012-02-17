@@ -19,12 +19,8 @@ public class Player {
     public int[] calculateMove(Board board) { // No-op
         return null;
     }
-    
-    public int otherSide() {
-        return otherSide(side);
-    }
-    
-    public int otherSide(int side) {
+
+    public static int otherSide(int side) {
         if(side == Board.X) return Board.O;
         else return Board.X;
     }

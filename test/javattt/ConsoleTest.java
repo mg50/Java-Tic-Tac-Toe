@@ -29,7 +29,7 @@ public class ConsoleTest extends TestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("center".getBytes());
         HumanPlayer player = new HumanPlayer(Board.X);
         Console console = new Console(game, inputStream, new ByteArrayOutputStream());
-        assertArrayEquals(console.promptPlayer(player), new int[] {1, 1});
+        assertArrayEquals(console.promptPlayer(game.getBoard()), new int[] {1, 1});
     }
 
     public void testPromptMoveTwo() {
@@ -37,7 +37,7 @@ public class ConsoleTest extends TestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("top right".getBytes());
         HumanPlayer player = new HumanPlayer(Board.X);
         Console console = new Console(game, inputStream, new ByteArrayOutputStream());
-        assertArrayEquals(console.promptPlayer(player), new int[] {2, 0});
+        assertArrayEquals(console.promptPlayer(game.getBoard()), new int[] {2, 0});
     }
 
     public void testPromptMoveThree() {
@@ -45,7 +45,7 @@ public class ConsoleTest extends TestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("invalid\ntop right".getBytes());
         HumanPlayer player = new HumanPlayer(Board.X);
         Console console = new Console(game, inputStream, new ByteArrayOutputStream());
-        assertArrayEquals(console.promptPlayer(player), new int[] {2, 0});
+        assertArrayEquals(console.promptPlayer(game.getBoard()), new int[] {2, 0});
     }
 
     public void testPromptMoveFour() {
@@ -55,6 +55,6 @@ public class ConsoleTest extends TestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("top left\ncenter".getBytes());
         HumanPlayer player = new HumanPlayer(Board.X);
         Console console = new Console(game, inputStream, new ByteArrayOutputStream());
-        assertArrayEquals(console.promptPlayer(player), new int[] {1, 1});
+        assertArrayEquals(console.promptPlayer(game.getBoard()), new int[] {1, 1});
     }
 }

@@ -9,8 +9,8 @@ package javattt;
  */
 public interface UI {
 
-    void update();
-    int[] promptPlayer(Player player);
+    void update(Board board);
+    int[] promptPlayer(Board board);
     boolean prompt(String msg);
     boolean promptPlayAsX();
     boolean promptPlayVsAi();

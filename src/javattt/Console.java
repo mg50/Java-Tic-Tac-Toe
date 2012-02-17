@@ -34,11 +34,11 @@ public class Console implements UI {
     }
 
 
-    public void update() {
+    public void update(Board board) {
         String display = "";
         for(int y = 0; y < 3; y++) {
-            display += getCellSymbol(0, y) + "|" + getCellSymbol(1, y) + "|" +
-                       getCellSymbol(2, y) + "\n";
+            display += getCellSymbol(board, 0, y) + "|" + getCellSymbol(board, 1, y) + "|" +
+                       getCellSymbol(board, 2, y) + "\n";
             if(y < 2) display += "-----\n";
         }
         
@@ -51,12 +51,10 @@ public class Console implements UI {
         }
     }
     
-    public int[] promptPlayer(Player player) {
-        if(player.automated) return player.calculateMove(game.getBoard());
-
+    public int[] promptPlayer(Board board) {
         int[] move = null;
 
-        while(move == null || game.getBoard().getCell(move[0], move[1]) != Board.Empty) {
+        while(move == null || board.getCell(move[0], move[1]) != Board.Empty) {
             try {
                 outputStream.write("Please enter your next move: ");
                 outputStream.flush();
@@ -118,9 +116,8 @@ public class Console implements UI {
         else if(side == Board.O) return "O";
         else return null;
     }
-    private String getCellSymbol(int x, int y) {
-        String symbol = getPlayerSymbol(game.getBoard().getCell(x, y));
-        int val = game.getBoard().getCell(x, y);
+    private String getCellSymbol(Board board, int x, int y) {
+        String symbol = getPlayerSymbol(board.getCell(x, y));
         return symbol == null ? " " : symbol;
     }
     
