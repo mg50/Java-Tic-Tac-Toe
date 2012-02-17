@@ -29,15 +29,6 @@ public class Game {
         board = input_board;
     }
 
-
-    public void setPlayerX(Player player) {
-        playerX = player;
-    }
-    
-    public void setPlayerO(Player player) {
-        playerO = player;
-    }
-    
     public Board getBoard() {
         return board;
     }
