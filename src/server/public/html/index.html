@@ -1,0 +1,82 @@
+
+<html>
+	<head>
+		<title>Tic-Tac-Toe</title>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+		<script type="text/javascript" src="/js/json.js"></script>
+		<script type="text/javascript" src="/js/ttt.js"></script>
+		<style type="text/css">
+			html, body {
+				background-color: black;
+				padding: 0;
+				margin: 0;
+				color: white;
+			}
+
+			#board_wrapper {
+				height: 100%;
+				width: 100%;
+				position: relative;
+			}
+
+			#board {
+				height: 600px;
+				width: 600px;
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				margin: auto;
+				border-collapse: collapse;
+			}
+
+			td {
+				border: 1px solid white;
+				width: 33%;
+				height: 33%;
+				vertical-align: middle;
+				text-align: center;
+				font-size: 100px;				
+			}
+		</style>
+	</head>	
+	<body>
+		<div id="wrapper">
+			<div id="board_wrapper">
+				<table id="board">
+					<tr>
+						<td>
+						</td>
+						<td>
+						</td>
+						<td>
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+						</td>
+						<td>
+						</td>
+						<td>
+						</td>
+					</tr>
+
+					<tr>
+						<td>
+						</td>
+						<td>
+						</td>
+						<td>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="bottom">
+			
+			</div>
+		</div>
+	</body>
+</html>
