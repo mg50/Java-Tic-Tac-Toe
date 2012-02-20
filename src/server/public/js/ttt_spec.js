@@ -1,11 +1,9 @@
-var Board;
-
 (function() {
 	var X = "X";
 	var O = "O";
 	var EMPTY = "";
 
-	Board = function(stage) {
+	function Board(stage) {
 		this.dom = Board.buildDom();
 		$(stage).append(this.dom);
 
@@ -118,4 +116,10 @@ var Board;
 			}
 		});
 	}
+
+	$(document).ready(function() {
+		var board = new Board('#board_wrapper');
+
+		board.begin();
+	})
 })();
