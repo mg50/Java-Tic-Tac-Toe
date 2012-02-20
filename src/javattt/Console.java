@@ -56,7 +56,7 @@ public class Console implements UI {
 
         while(move == null || board.getCell(move[0], move[1]) != Board.Empty) {
             try {
-                outputStream.write("Please enter your next move: ");
+                outputStream.write("Please enter your next move (or \"help\"): ");
                 outputStream.flush();
                 String moveString = inputStream.readLine();
                 move = parseMove(moveString);
@@ -123,6 +123,19 @@ public class Console implements UI {
     
     public int[] parseMove(String moveString) {
         int[] move;
+        
+        if(moveString.equals("help")) {
+            try {
+                String helpString = "Type one of the following to make a move: top left, top middle, top right, " +
+                                    "middle left, center, middle right, bottom left, bottom middle, bottom right.\n";
+                outputStream.write(helpString);
+                outputStream.flush();
+            }
+            catch (Exception e) {
+                System.out.println("Error printing help message!");
+            }
+        }
+        
         if(moveString.equals("top left")) move = new int[] {0, 0};
         else if(moveString.equals("top middle")) move = new int[] {1, 0};
         else if(moveString.equals("top right")) move = new int[] {2, 0};

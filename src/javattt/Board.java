@@ -19,7 +19,7 @@ public class Board {
     public static final int Empty = 0;
     public static final int X = 1;
     public static final int O = 2;
-    
+
     public static int otherSide(int side) {
         if(side == X) return O;
         else return X;

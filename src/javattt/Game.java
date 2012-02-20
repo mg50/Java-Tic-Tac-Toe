@@ -14,7 +14,7 @@ import java.util.Arrays;
  * To change this template use File | Settings | File Templates.
  */
 public class Game {
-    
+
     private Board board;
     private Player playerX;
     private Player playerO;
@@ -24,18 +24,9 @@ public class Game {
         board = new Board();
         ui = new Console(this);
     }
-    
+
     public Game(Board input_board) {
         board = input_board;
-    }
-
-
-    public void setPlayerX(Player player) {
-        playerX = player;
-    }
-
-    public void setPlayerO(Player player) {
-        playerO = player;
     }
 
     public Board getBoard() {
