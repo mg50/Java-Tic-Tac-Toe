@@ -3,13 +3,35 @@
 	var O = "O";
 	var EMPTY = "";
 
-	function Board(selector) {
-		this.dom = $(selector).get(0);
+	function Board(stage) {
+		this.dom = Board.buildDom();
+		$(stage).append(this.dom);
+
 		this.currentPlayer = X;
 		this.readyForMove = true;
 		this.playVsAi = false;
 
 		this.createListeners();
+	}
+
+	Board.buildDom = function(gameState) {
+		var dom = $('<table id="board"></table>')
+		for(var i = 0; i < 3; i++) {
+			var tr = $('<tr />')
+			for(var j = 0; j < 3; j++) {
+				var td = $('<td />');
+				if(gameState) td.html(gameState[j][i]);
+				tr.append(td)
+			}
+			dom.append(tr);
+		}
+
+		return dom.get(0);
+	}
+
+	Board.prototype.remove = function() {
+		$(this.dom).find('td').unbind();
+		$(this.dom).remove();
 	}
 
 	Board.prototype.createListeners = function() {
@@ -96,7 +118,7 @@
 	}
 
 	$(document).ready(function() {
-		var board = new Board('#board');
+		var board = new Board('#board_wrapper');
 
 		board.begin();
 	})
