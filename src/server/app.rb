@@ -12,7 +12,7 @@ class App < Sinatra::Base
 	end
 
 	post '/' do
-		respond_to_ttt_request(params[:gameState], params[:numPlayers])
+		App.respond_to_ttt_request(params[:gameState], params[:numPlayers])
 	end
 
 	def self.respond_to_ttt_request(game_string, num_players)
