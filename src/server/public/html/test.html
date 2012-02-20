@@ -2,45 +2,24 @@
 <html>
 	<head>
 		<title>Tic-Tac-Toe</title>
+		<link rel="stylesheet" href="css/jasmine.css" type="text/css" />		
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-		<script type="text/javascript" src="/js/json.js"></script>
-		<script type="text/javascript" src="/js/ttt.js"></script>
-		<script type="text/javascript" scr="/js/jasmine.js"></script>
-		<script type="text/javascript" src="js/ttt_spec.js"></script>
+		<script type="text/javascript" src="/js/lib/json.js"></script>
+		<script type="text/javascript" src="/js/lib/jasmine.js"></script>
+		<script type="text/javascript" src="/js/lib/jasmine-html.js"></script>
+		<script type="text/javascript" src="/js/src/ttt.js"></script>		
+		<script type="text/javascript" src="/js/spec/ttt_spec.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+				jasmine.getEnv().execute();				
+			})
+		</script>
 		<style type="text/css">
-			html, body {
-				background-color: black;
-				padding: 0;
-				margin: 0;
-				color: white;
-			}
-
 			#board_wrapper {
-				height: 100%;
-				width: 100%;
-				position: relative;
+				display:none;
 			}
 
-			#board {
-				height: 600px;
-				width: 600px;
-				position: absolute;
-				left: 0;
-				right: 0;
-				top: 0;
-				bottom: 0;
-				margin: auto;
-				border-collapse: collapse;
-			}
-
-			td {
-				border: 1px solid white;
-				width: 33%;
-				height: 33%;
-				vertical-align: middle;
-				text-align: center;
-				font-size: 100px;				
-			}
 		</style>
 	</head>	
 	<body>

@@ -11,6 +11,11 @@ class App < Sinatra::Base
 		File.read(File.join('public/html', 'index.html'))
 	end
 
+	get '/test' do
+		File.read(File.join('public/html', 'test.html'))
+	end
+
+
 	post '/' do
 		App.respond_to_ttt_request(params[:gameState], params[:numPlayers])
 	end
