@@ -8,7 +8,7 @@ describe App, "#respond_to_ttt_request"  do
 		num_players = "1"
 		json = '{"success":true,"move":[0,0],"outcome":null}'
 
-		App.respond_to_ttt_request(game_string, num_players).should eq(json)
+		App.respond_to_ttt_request(game_string, num_players).should == json
 	end
 
 	it "recommends a move" do
@@ -16,7 +16,7 @@ describe App, "#respond_to_ttt_request"  do
 		num_players = "1"
 		json = '{"success":true,"move":[0,1],"outcome":null}'
 
-		App.respond_to_ttt_request(game_string, num_players).should eq(json)
+		App.respond_to_ttt_request(game_string, num_players).should == json
 	end
 
 	it "recognizes a victory" do
@@ -24,7 +24,7 @@ describe App, "#respond_to_ttt_request"  do
 		num_players = "2"
 		json = '{"success":true,"move":null,"outcome":"' + Solver::OWinsMessage + '"}'
 
-		App.respond_to_ttt_request(game_string, num_players).should eq(json)
+		App.respond_to_ttt_request(game_string, num_players).should == json
 	end
 
 	it "recognizes a draw" do
@@ -32,7 +32,7 @@ describe App, "#respond_to_ttt_request"  do
 		num_players = "1"
 		json = '{"success":true,"move":[1,2],"outcome":"' + Solver::DrawMessage + '"}'
 
-		App.respond_to_ttt_request(game_string, num_players).should eq(json)
+		App.respond_to_ttt_request(game_string, num_players).should == json
 	end
 
 	it "handles bad JSON gracefully" do
@@ -40,6 +40,6 @@ describe App, "#respond_to_ttt_request"  do
 		num_players = "2"
 		json = '{"success":false}'
 
-		App.respond_to_ttt_request(game_string, num_players).should eq(json)
+		App.respond_to_ttt_request(game_string, num_players).should == json
 	end
 end
