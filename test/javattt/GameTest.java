@@ -30,29 +30,33 @@ public class GameTest extends TestCase {
 
     public void testStartOneGameOne() throws Exception {
         String gameString = "n\ntop left\ntop right\nmiddle left\nmiddle right\nbottom left\n";
-        Game game = new Game();
-        game.ui = new Console(game, new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Console console = new Console(new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Game game = new Game(console);
+        
         assertEquals(game.startOneGame(), X);
     }
 
     public void testStartOneGameTwo() throws Exception {
         String gameString = "n\ncenter\ntop right\nmiddle left\nmiddle right\nbottom left\n\nbottom right";
-        Game game = new Game();
-        game.ui = new Console(game, new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Console console = new Console(new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Game game = new Game(console);
+        
         assertEquals(game.startOneGame(), O);
     }
 
     public void testStartOneGameThree() throws Exception {
         String gameString = "n\ncenter\ncenter\ncenter\ntop right\nmiddle left\nmiddle right\nbottom left\n\nbottom right";
-        Game game = new Game();
-        game.ui = new Console(game, new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Console console = new Console(new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Game game = new Game(console);
+
         assertEquals(game.startOneGame(), O);
     }
     
     public void testStartOne() throws Exception {
         String gameString = "n\ntop left\ntop right\nmiddle left\nmiddle right\nbottom left\nn\n";
-        Game game = new Game();
-        game.ui = new Console(game, new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Console console = new Console(new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Game game = new Game(console);
+
         assertArrayEquals(game.start(), new int[] {1, 0, 0});
     }
 
@@ -61,8 +65,8 @@ public class GameTest extends TestCase {
         String gameString2 = "n\ncenter\ncenter\ncenter\ntop right\nmiddle left\nmiddle right\nbottom left\n\nbottom right\n";
 
         String gameString = gameString1 + "y\n" + gameString2 + "n\n";
-        Game game = new Game();
-        game.ui = new Console(game, new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Console console = new Console(new ByteArrayInputStream(gameString.getBytes()), new ByteArrayOutputStream());
+        Game game = new Game(console);
         assertArrayEquals(game.start(), new int[] {1, 1, 0});
     }
 }

@@ -20,13 +20,17 @@ public class Game {
     private Player playerO;
     public UI ui;
 
-    public Game() {
+    public Game(UI ui) {
         board = new Board();
-        ui = new Console(this);
+        this.ui = ui;
     }
-
     public Game(Board input_board) {
         board = input_board;
+    }
+
+    public Game(Board input_board, UI ui) {
+        board = input_board;
+        this.ui = ui;
     }
 
     public Board getBoard() {
@@ -79,6 +83,7 @@ public class Game {
 
     public int[] start() {
 
+        this.ui = ui;
         int xScore = 0;
         int oScore = 0;
         int draws = 0;
@@ -98,6 +103,5 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        new Game().start();
     }
 }
