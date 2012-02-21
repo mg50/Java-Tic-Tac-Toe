@@ -7,7 +7,7 @@ package javattt;
  * Time: 2:11 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Player {
+public abstract class Player {
 
     public int side;
     public Boolean automated;

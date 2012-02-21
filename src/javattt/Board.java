@@ -92,7 +92,6 @@ public class Board {
     }
 
     public Boolean hasEmptyCell() {
-        Boolean hasEmptyCell = false;
         int[][] lines = lines();
         for(int[] line : lines) {
             if(line[0] == Board.Empty || line[1] == Board.Empty || line[2] == Board.Empty)
@@ -117,7 +116,6 @@ public class Board {
 
 
     public int winner() {
-        Boolean hasEmptyCell = false;
         int[][] lines = lines();
 
         int[] winningXLine = {Board.X, Board.X, Board.X};
@@ -130,7 +128,6 @@ public class Board {
 
         return 0;
     }
-
 
     public Boolean isDraw() {
         return (winner() == 0 && !hasEmptyCell());
