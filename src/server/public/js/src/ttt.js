@@ -43,10 +43,6 @@ var Board,
 		return $(this.dom).find(ROW_SELECTOR).eq(y).find(CELL_SELECTOR).eq(x).html();
 	}
 
-	Board.prototype.getCellValue = function(x, y) {
-		return this.getCell.html();
-	}
-
 	Board.prototype.remove = function() {
 		$(this.dom).find('*').unbind();
 		$(this.dom).remove();
