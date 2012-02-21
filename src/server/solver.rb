@@ -4,16 +4,17 @@ require 'java'
 require File.expand_path('../../javattt/ttt.jar', __FILE__)
 include_class Java::Javattt.AIPlayer
 include_class Java::Javattt.Board
+include_class Java::Javattt.Side
 
 
-Java::Javattt.Board.class_eval do
-	field_reader :X, :O, :Empty
+Java::Javattt.Side.class_eval do
+	field_reader :X, :O, :_
 end
 
 class Solver
-	X = Java::Javattt.Board.X
-	O = Java::Javattt.Board.O
-	Empty = Java::Javattt.Board.Empty
+	X = Java::Javattt.Side.X
+	O = Java::Javattt.Side.O
+	Empty = Java::Javattt.Side._
 
 	X_WINS = "Player X has won!"
 	O_WINS = "Player O has won!"
@@ -64,7 +65,7 @@ class Solver
 	def make_board(rows)
 		java_rows = rows.map do |row|
 			java_row = row.map {|side| java_side side}
-		end.to_java(Java::int[])
+		end.to_java(Java::Javattt.Side[])
 
 		Board.new java_rows
 	end
