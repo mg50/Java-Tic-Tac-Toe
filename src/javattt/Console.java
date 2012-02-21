@@ -54,7 +54,7 @@ public class Console implements UI {
     public int[] promptPlayer(Board board) {
         int[] move = null;
 
-        while(move == null || board.getCell(move[0], move[1]) != Board.Empty) {
+        while(move == null || board.getCell(move[0], move[1]) != Board._) {
             try {
                 outputStream.write("Please enter your next move (or \"help\"): ");
                 outputStream.flush();
@@ -102,13 +102,19 @@ public class Console implements UI {
         try {
             if(winner != 0) outputStream.write("Player " + getPlayerSymbol(winner) + " has won!\n");
             else outputStream.write("The game has ended in a draw.\n");
-            outputStream.write("Player X has won " + xWinsCount + " games and player O has won " + oWinsCount + " games.\n");
+            outputStream.write("Player X has won " + InflectWinCount(xWinsCount) + " and player O has won " +
+                               InflectWinCount(oWinsCount) + ".\n");
             outputStream.flush();
             
         }
         catch (Exception e) {
             System.out.println("Error writing victory message.");
         }
+    }
+    
+    public static String InflectWinCount(int count) {
+        if(count == 1) return count + " game";
+        else return count + " games";
     }
     
     private String getPlayerSymbol(int side) {
