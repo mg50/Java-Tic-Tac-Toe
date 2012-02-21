@@ -2,9 +2,9 @@ var Board,
 	SIDES = {X: "X", O: "O", EMPTY: ""};
 
 (function() {
-	X = SIDES.X;
-	O = SIDES.O;
-	EMPTY = SIDES.EMPTY;
+	var X = SIDES.X,
+		O = SIDES.O,
+		EMPTY = SIDES.EMPTY;
 
 	Board = function(stage, gameState) {
 		this.dom = Board.buildDom(gameState);
