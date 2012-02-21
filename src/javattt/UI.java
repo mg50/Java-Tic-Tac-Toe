@@ -14,5 +14,5 @@ public interface UI {
     boolean promptPlayAsX();
     boolean promptPlayVsAi();
     boolean promptStartNewGame();
-    void victoryMessage(int winner, int xWinCount, int oWinCount);
+    void victoryMessage(Side winner, int xWinCount, int oWinCount);
 }

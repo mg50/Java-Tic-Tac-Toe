@@ -3,6 +3,7 @@ package javattt;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
 /**
  * Created by IntelliJ IDEA.
  * User: MGT
@@ -12,23 +13,21 @@ import java.util.Arrays;
  */
 public class Board {
 
-    private final static int[][] BlankGrid = {new int[] {0, 0, 0},
-                                        new int[] {0, 0, 0},
-                                        new int[] {0, 0, 0}};
-    
-    public static final int Empty = 0;
-    public static final int X = 1;
-    public static final int O = 2;
 
-    public static int otherSide(int side) {
-        if(side == X) return O;
-        else return X;
+    private final static Side[][] BlankGrid = {{Side._, Side._, Side._},
+                                               {Side._, Side._, Side._},
+                                               {Side._, Side._, Side._}};
+
+
+    public static Side otherSide(Side side) {
+        if(side == Side.X) return Side.O;
+        else return Side.X;
     }
 
-    private int[][] grid;
+    private Side[][] grid;
     
-    private int[][] copyGrid(int[][] input_grid) {
-        int[][] out = new int[3][3];
+    private Side[][] copyGrid(Side[][] input_grid) {
+        Side[][] out = new Side[3][3];
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
                 out[i][j] = input_grid[i][j];
@@ -46,28 +45,28 @@ public class Board {
         return new Board(grid);
     }
 
-    public int[][] getGrid() {
+    public Side[][] getGrid() {
         return grid;
     }
 
-    public Board(int[][] input_grid) {
+    public Board(Side[][] input_grid) {
         grid = copyGrid(input_grid);
     }
 
-    public int getCell(int x, int y) {
+    public Side getCell(int x, int y) {
         return grid[y][x];
     }
     
-    public void setCell(int x, int y, int val) {
+    public void setCell(int x, int y, Side val) {
         grid[y][x] = val;
     }
     
-    public int[][] rows() {
+    public Side[][] rows() {
         return grid;
     }
     
-    public int[][] columns() {
-        int[][] cols = new int[3][3];
+    public Side[][] columns() {
+        Side[][] cols = new Side[3][3];
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
                 cols[i][j] = grid[j][i];
@@ -77,24 +76,24 @@ public class Board {
         return cols;
     }
     
-    public int[][] diagonals() {
-        int[] left_diag = {getCell(0, 0), getCell(1, 1), getCell(2, 2)};
-        int[] right_diag = {getCell(0, 2), getCell(1, 1), getCell(2, 0)};
-        return new int[][] {left_diag, right_diag};
+    public Side[][] diagonals() {
+        Side[] left_diag = {getCell(0, 0), getCell(1, 1), getCell(2, 2)};
+        Side[] right_diag = {getCell(0, 2), getCell(1, 1), getCell(2, 0)};
+        return new Side[][] {left_diag, right_diag};
     }
     
-    public int[][] lines() {
-        int[][] rows = rows();
-        int[][] columns = columns();
-        int[][] diagonals = diagonals();
+    public Side[][] lines() {
+        Side[][] rows = rows();
+        Side[][] columns = columns();
+        Side[][] diagonals = diagonals();
     
-        return new int[][] {rows[0], rows[1], rows[2], columns[0], columns[1], columns[2], diagonals[0], diagonals[1]};
+        return new Side[][] {rows[0], rows[1], rows[2], columns[0], columns[1], columns[2], diagonals[0], diagonals[1]};
     }
 
     public Boolean hasEmptyCell() {
-        int[][] lines = lines();
-        for(int[] line : lines) {
-            if(line[0] == Board.Empty || line[1] == Board.Empty || line[2] == Board.Empty)
+        Side[][] lines = lines();
+        for(Side[] line : lines) {
+            if(line[0] == Side._ || line[1] == Side._ || line[2] == Side._)
                 return true;
         }
 
@@ -105,7 +104,7 @@ public class Board {
         ArrayList<int[]> list = new ArrayList<int[]>();
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
-                if(getCell(i, j) == Board.Empty) {
+                if(getCell(i, j) == Side._) {
                     list.add(new int[] {i, j});
                 }
             }
@@ -115,30 +114,36 @@ public class Board {
     }
 
 
-    public int winner() {
-        int[][] lines = lines();
+    public Side winner() {
+        Side[][] lines = lines();
 
-        int[] winningXLine = {Board.X, Board.X, Board.X};
-        int[] winningOLine = {Board.O, Board.O, Board.O};
+        Side[] winningXLine = {Side.X, Side.X, Side.X};
+        Side[] winningOLine = {Side.O, Side.O, Side.O};
         
-        for(int[] line : lines) {
-            if(Arrays.equals(line, winningXLine)) return Board.X;
-            else if(Arrays.equals(line, winningOLine)) return Board.O;
+        for(Side[] line : lines) {
+            if(Arrays.equals(line, winningXLine)) return Side.X;
+            else if(Arrays.equals(line, winningOLine)) return Side.O;
         }
 
-        return 0;
+        return null;
     }
 
     public Boolean isDraw() {
-        return (winner() == 0 && !hasEmptyCell());
+        return (winner() == null && !hasEmptyCell());
     }
 
 
+    public int sideValue(Side s) {
+        if(s == Side.X) return 1;
+        else if(s == Side.O) return 2;
+        else return 0;
+    }
+    
     public int hashCode() {
         int hash = 0;
         for(int i = 0; i < 3; i++) {
             for(int j = 0; j < 3; j++) {
-                hash = 10*hash + getCell(j, i);
+                hash = 10*hash + sideValue(getCell(j, i));
             }
         }
 
@@ -151,7 +156,7 @@ public class Board {
         else return Arrays.deepEquals(grid, ((Board) board).getGrid());
     }
     
-    public Board[] childNodes(int side) {
+    public Board[] childNodes(Side side) {
         ArrayList<int[]> emptyCoords = emptyCoords();
         int size = emptyCoords.size();
         Board[] children = new Board[size];

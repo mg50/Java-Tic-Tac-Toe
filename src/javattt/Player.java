@@ -9,10 +9,10 @@ package javattt;
  */
 public abstract class Player {
 
-    public int side;
+    public final Side side;
     public Boolean automated;
 
-    public Player(int side) {
+    public Player(Side side) {
         this.side = side;
     }
 

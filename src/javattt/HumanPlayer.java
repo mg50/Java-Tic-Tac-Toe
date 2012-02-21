@@ -8,7 +8,7 @@ package javattt;
  * To change this template use File | Settings | File Templates.
  */
 public class HumanPlayer extends Player {
-    public HumanPlayer(int side) {
+    public HumanPlayer(Side side) {
         super(side);
         automated = false;
     }

@@ -38,29 +38,29 @@ public class Game {
         board.setCell(x, y, player.side);
     }
 
-    public int startOneGame() {
+    public Side startOneGame() {
         board = new Board();
         playerX = null;
         playerO = null;
 
         if(ui.promptPlayVsAi()) {
             if(ui.promptPlayAsX()) {
-                playerX = new HumanPlayer(Board.X);
-                playerO = new AIPlayer(Board.O);
+                playerX = new HumanPlayer(Side.X);
+                playerO = new AIPlayer(Side.O);
             }
             else {
-                playerX = new AIPlayer(Board.X);
-                playerO = new HumanPlayer(Board.O);
+                playerX = new AIPlayer(Side.X);
+                playerO = new HumanPlayer(Side.O);
             }
         }
         else {
-            playerX = new HumanPlayer(Board.X);
-            playerO = new HumanPlayer(Board.O);
+            playerX = new HumanPlayer(Side.X);
+            playerO = new HumanPlayer(Side.O);
         }
 
         Player currentPlayer = playerX;
         int[] moveCoords;
-        int winner;
+        Side winner = null;
         do {
             ui.update(board);
             if(currentPlayer.automated) moveCoords = currentPlayer.calculateMove(board);
@@ -70,7 +70,7 @@ public class Game {
             winner = board.winner();
             if(currentPlayer == playerX) currentPlayer = playerO;
             else currentPlayer = playerX;
-        } while(winner == 0 && !board.isDraw());
+        } while(winner == null && !board.isDraw());
 
         ui.update(board);
 
@@ -86,9 +86,9 @@ public class Game {
 
         do {
             board = new Board();
-            int victor = startOneGame();
-            if(victor == Board.X) xScore++;
-            else if(victor == Board.O) oScore++;
+            Side victor = startOneGame();
+            if(victor == Side.X) xScore++;
+            else if(victor == Side.O) oScore++;
             else draws++;
             ui.victoryMessage(victor, xScore, oScore);
             if(!ui.promptStartNewGame()) gamePlaying = false;

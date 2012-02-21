@@ -54,7 +54,7 @@ public class Console implements UI {
     public int[] promptPlayer(Board board) {
         int[] move = null;
 
-        while(move == null || board.getCell(move[0], move[1]) != Board._) {
+        while(move == null || board.getCell(move[0], move[1]) != Side._) {
             try {
                 outputStream.write("Please enter your next move (or \"help\"): ");
                 outputStream.flush();
@@ -97,10 +97,10 @@ public class Console implements UI {
         return prompt("Start another game?");
     }
     
-    public void victoryMessage(int winner, int xWinsCount, int oWinsCount) {
+    public void victoryMessage(Side winner, int xWinsCount, int oWinsCount) {
 
         try {
-            if(winner != 0) outputStream.write("Player " + getPlayerSymbol(winner) + " has won!\n");
+            if(winner != null) outputStream.write("Player " + getSideSymbol(winner) + " has won!\n");
             else outputStream.write("The game has ended in a draw.\n");
             outputStream.write("Player X has won " + InflectWinCount(xWinsCount) + " and player O has won " +
                                InflectWinCount(oWinsCount) + ".\n");
@@ -117,14 +117,13 @@ public class Console implements UI {
         else return count + " games";
     }
     
-    private String getPlayerSymbol(int side) {
-        if(side == Board.X) return "X";
-        else if(side == Board.O) return "O";
-        else return null;
+    private String getSideSymbol(Side side) {
+        if(side == Side.X) return "X";
+        else if(side == Side.O) return "O";
+        else return " ";
     }
     private String getCellSymbol(Board board, int x, int y) {
-        String symbol = getPlayerSymbol(board.getCell(x, y));
-        return symbol == null ? " " : symbol;
+        return getSideSymbol(board.getCell(x, y));
     }
     
     public int[] parseMove(String moveString) {
