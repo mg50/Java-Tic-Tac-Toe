@@ -22,7 +22,7 @@ describe App, "#respond_to_ttt_request"  do
 	it "recognizes a victory" do
 		game_string ='[["O","O","O"],["X","X",""],["X","",""]]'
 		num_players = "2"
-		json = '{"success":true,"move":null,"outcome":"' + Solver::OWinsMessage + '"}'
+		json = '{"success":true,"move":null,"outcome":"' + Solver::O_WINS + '"}'
 
 		App.respond_to_ttt_request(game_string, num_players).should == json
 	end
@@ -30,7 +30,7 @@ describe App, "#respond_to_ttt_request"  do
 	it "recognizes a draw" do
 		game_string = '[["X","O","X"],["X","O","O"],["O","","X"]]'
 		num_players = "1"
-		json = '{"success":true,"move":[1,2],"outcome":"' + Solver::DrawMessage + '"}'
+		json = '{"success":true,"move":[1,2],"outcome":"' + Solver::DRAW + '"}'
 
 		App.respond_to_ttt_request(game_string, num_players).should == json
 	end

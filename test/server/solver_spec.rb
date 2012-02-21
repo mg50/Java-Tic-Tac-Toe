@@ -30,17 +30,17 @@ describe Solver, "#solve" do
 		game = [["O", "O", ""], ["X", "X", ""], ["", "", ""]]
 		response1 = Solver.new(1).solve(game, "X")
 		response1['move'].should == [2, 1]
-		response1['outcome'].should eq(Solver::XWinsMessage)
+		response1['outcome'].should == Solver::X_WINS
 
 
 		response2 = Solver.new(1).solve(game, "O")
 		response2['move'].should == [2, 0]
-		response2['outcome'].should == Solver::OWinsMessage
+		response2['outcome'].should == Solver::O_WINS
 	end
 
 	it "forks when it can" do
 		game = [["O", "", "X"], ["", "O", ""], ["X", "", ""]]
-		Solver.new(1).solve(game, "X")['move'].should eq([2, 2])
+		Solver.new(1).solve(game, "X")['move'].should == [2, 2]
 	end
 
 	it "recognizes a 1-player draw" do
@@ -48,14 +48,14 @@ describe Solver, "#solve" do
 		response = Solver.new(1).solve(game, "X")
 
 		response['move'].should == [1,2]
-		response['outcome'].should eq(Solver::DrawMessage)
+		response['outcome'].should eq(Solver::DRAW)
 	end
 
 	it "recognizes a 2-player draw" do
 		game = [["X", "O", "O"], ["O", "O", "X"], ["X", "X", "O"]]		
 		response = Solver.new(2).solve(game, "O")
 		response['move'].should be_nil
-		response['outcome'].should == Solver::DrawMessage
+		response['outcome'].should == Solver::DRAW
 	end
 
 end

@@ -15,9 +15,9 @@ class Solver
 	O = Java::Javattt.Board.O
 	Empty = Java::Javattt.Board.Empty
 
-	XWinsMessage = "Player X has won!"
-	OWinsMessage = "Player O has won!"
-	DrawMessage = "The game ended in a draw."
+	X_WINS = "Player X has won!"
+	O_WINS = "Player O has won!"
+	DRAW = "The game ended in a draw."
 
 	def initialize(num_players)
 		@num_players = num_players
@@ -39,11 +39,11 @@ class Solver
 
 		winner = board.winner 
 		if winner == X
-			out["outcome"] = XWinsMessage
+			out["outcome"] = X_WINS
 		elsif winner == O
-			out["outcome"] = OWinsMessage
+			out["outcome"] = O_WINS
 		elsif board.isDraw
-			out["outcome"] = DrawMessage
+			out["outcome"] = DRAW
 		else 
 			out["outcome"] = nil
 		end
