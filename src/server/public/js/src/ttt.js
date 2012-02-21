@@ -55,9 +55,9 @@ var Board,
 	Board.prototype.createListeners = function() {
 		var self = this;
 		$(this.dom).find(CELL_SELECTOR).click(function() {
-			var tr = $(this).closest(ROW_SELECTOR).get(0);
-			var x = $(tr).find(CELL_SELECTOR).index(this);
-			var y = $(self.dom).find(ROW_SELECTOR).index(tr);
+			var row = $(this).closest(ROW_SELECTOR).get(0);
+			var x = $(row).find(CELL_SELECTOR).index(this);
+			var y = $(self.dom).find(ROW_SELECTOR).index(row);
 			self.move(x, y, function() {
 				self.sendBoardState();
 			});
