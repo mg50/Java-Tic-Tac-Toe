@@ -26,6 +26,18 @@ $(document).ready(function() {
 			}
 		});
 
+		it("it gets the value of a cell", function() {
+			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
+
+			board = new Board(stage, game);
+			for(var i = 0; i < 3; i++) {
+				for(var j = 0; j < 3; j++) {
+					var side = board.getCell(j, i);
+					expect(side).toEqual(game[i][j])
+				}
+			}
+		});		
+
 		it("encodes itself as JSON correctly", function() {
 			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
 			var board = new Board(stage, game);
@@ -42,7 +54,7 @@ $(document).ready(function() {
 			board.currentPlayer = X;
 						
 			board.move(2, 1);
-			var side = $(board.dom).find('tr').eq(1).find('td').eq(2).html();
+			var side = board.getCell(2, 1);
 			expect(side).toEqual(X);
 		})
 
@@ -52,7 +64,7 @@ $(document).ready(function() {
 			board.currentPlayer = O;
 						
 			board.move(0, 2);
-			var side = $(board.dom).find('tr').eq(2).find('td').eq(0).html();
+			var side = board.getCell(0, 2);
 			expect(side).toEqual(O);
 		})
 
@@ -62,7 +74,7 @@ $(document).ready(function() {
 			board.currentPlayer = X;
 						
 			board.move(2, 0);
-			var side = $(board.dom).find('tr').eq(0).find('td').eq(2).html();
+			var side = board.getCell(2, 0);
 			expect(side).toEqual(O);
 		})
 	})

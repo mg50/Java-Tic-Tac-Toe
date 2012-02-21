@@ -6,6 +6,13 @@ var Board,
 		O = SIDES.O,
 		EMPTY = SIDES.EMPTY;
 
+	var ROW_CLASS = 'row',
+		CELL_CLASS = 'cell',
+		ROW_SELECTOR = '.' + ROW_CLASS,
+		CELL_SELECTOR = '.' + CELL_CLASS;
+
+
+
 	Board = function(stage, gameState) {
 		this.dom = Board.buildDom(gameState);
 		$(stage).append(this.dom);
@@ -20,9 +27,9 @@ var Board,
 	Board.buildDom = function(gameState) {
 		var dom = $('<table id="board"></table>')
 		for(var i = 0; i < 3; i++) {
-			var tr = $('<tr />')
+			var tr = $('<tr class="' + ROW_CLASS + '"/>')
 			for(var j = 0; j < 3; j++) {
-				var td = $('<td />');
+				var td = $('<td class="' + CELL_CLASS + '" />');
 				if(gameState) td.html(gameState[i][j]);
 				tr.append(td)
 			}
@@ -32,17 +39,25 @@ var Board,
 		return dom.get(0);
 	}
 
+	Board.prototype.getCell = function(x, y) {
+		return $(this.dom).find(ROW_SELECTOR).eq(y).find(CELL_SELECTOR).eq(x).html();
+	}
+
+	Board.prototype.getCellValue = function(x, y) {
+		return this.getCell.html();
+	}
+
 	Board.prototype.remove = function() {
-		$(this.dom).find('td').unbind();
+		$(this.dom).find('*').unbind();
 		$(this.dom).remove();
 	}
 
 	Board.prototype.createListeners = function() {
 		var self = this;
-		$(this.dom).find('td').click(function() {
-			var tr = $(this).parent().get(0);
-			var x = $(tr).find('td').index(this);
-			var y = $(self.dom).find('tr').index(tr);
+		$(this.dom).find(CELL_SELECTOR).click(function() {
+			var tr = $(this).closest(ROW_SELECTOR).get(0);
+			var x = $(tr).find(CELL_SELECTOR).index(this);
+			var y = $(self.dom).find(ROW_SELECTOR).index(tr);
 			self.move(x, y, function() {
 				self.sendBoardState();
 			});
@@ -51,9 +66,9 @@ var Board,
 
 	Board.prototype.jsonify = function() {
 		var gameState = [];
-		$(this.dom).find('tr').each(function() {
+		$(this.dom).find(ROW_SELECTOR).each(function() {
 			var row = [];
-			$(this).find('td').each(function() {
+			$(this).find(CELL_SELECTOR).each(function() {
 				row.push($(this).html());
 			})
 			gameState.push(row);
@@ -64,7 +79,7 @@ var Board,
 
 	Board.prototype.begin = function() {
 		//Clear board		
-		$(this.dom).find('td').each(function() {
+		$(this.dom).find(CELL_SELECTOR).each(function() {
 			$(this).html(EMPTY);
 		});
 
@@ -82,10 +97,10 @@ var Board,
 	}
 
 	Board.prototype.move = function(x, y, callback) {
-		var td = $(this.dom).find('tr').eq(y).find('td').eq(x)
-		if(!this.readyForMove || td.html() !== EMPTY) return;
+		var cell = $(this.dom).find(ROW_SELECTOR).eq(y).find(CELL_SELECTOR).eq(x)
+		if(!this.readyForMove || cell.html() !== EMPTY) return;
 
-		td.html(this.currentPlayer);
+		cell.html(this.currentPlayer);
 		this.currentPlayer = this.currentPlayer === X ? O : X;
 
 		if(typeof callback === "function") callback();
