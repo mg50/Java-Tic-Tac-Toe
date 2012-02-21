@@ -7,67 +7,71 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
+import static javattt.Side.X;
+import static javattt.Side.O;
+import static javattt.Side._;
+
 public class BoardTest extends TestCase {
 
-    private static int[][] TestGrid1 = {{2, 0, 2},
-                                        {1, 1, 2},
-                                        {1, 0, 2}};
+    private static Side[][] TestGrid1 = {{O, _, O},
+                                         {X, X, O},
+                                         {X, _, O}};
 
-    private static int[][] TestGrid2 = {{2, 1, 2},
-                                        {1, 1, 2},
-                                        {1, 2, 2}};
+    private static Side[][] TestGrid2 = {{O, X, O},
+                                         {X, X, O},
+                                         {X, O, O}};
 
-    private static int[][] TestGrid3 = {{1, 2, 1},
-                                        {2, 1, 2},
-                                        {2, 1, 2}};
+    private static Side[][] TestGrid3 = {{X, O, X},
+                                         {O, X, O},
+                                         {O, X, O}};
 
-    private static int[][] TestGrid4 = {{1, 1, 1},
-                                        {2, 2, 0},
-                                        {0, 0, 0}};
+    private static Side[][] TestGrid4 = {{X, X, X},
+                                         {O, O, _},
+                                         {_, _, _}};
 
     @Test
     public void testGetCell() throws Exception {
         Board board1 = new Board();
-        assertEquals(board1.getCell(0, 0), Board.Empty);
+        assertEquals(board1.getCell(0, 0), _);
         
         Board board2 = new Board(TestGrid1);
-        assertEquals(board2.getCell(0, 0), Board.O);
+        assertEquals(board2.getCell(0, 0), O);
     }
     
     @Test
     public void testSetCell() throws Exception {
         Board board1 = new Board();
-        board1.setCell(0, 0, Board.O);
-        assertEquals(board1.getCell(0, 0), Board.O);
+        board1.setCell(0, 0, O);
+        assertEquals(board1.getCell(0, 0), O);
 
         Board board2 = new Board(TestGrid1);
-        board2.setCell(1, 1, Board.Empty);
-        assertEquals(board2.getCell(1, 1), Board.Empty);
+        board2.setCell(1, 1, _);
+        assertEquals(board2.getCell(1, 1), _);
     }
 
     @Test
     public void testRows() throws Exception {
         Board board1 = new Board();
-        assertArrayEquals(board1.rows()[1], new int[] {0, 0, 0});
+        assertArrayEquals(board1.rows()[1], new Side[] {_, _, _});
         
         Board board2 = new Board(TestGrid1);
-        assertArrayEquals(board2.rows()[2], new int[]{1, 0, 2});
+        assertArrayEquals(board2.rows()[2], new Side[]{X, _, O});
     }
 
     public void testColumns() throws Exception {
         Board board1 = new Board();
-        assertArrayEquals(board1.columns()[2], new int[] {0, 0, 0});
+        assertArrayEquals(board1.columns()[2], new Side[] {_, _, _});
         
         Board board2 = new Board(TestGrid1);
-        assertArrayEquals(board2.columns()[2], new int[] {2, 2, 2});
+        assertArrayEquals(board2.columns()[2], new Side[] {O, O, O});
     }
     
     public void testDiagonals() throws Exception {
         Board board1 = new Board();
-        assertArrayEquals(board1.diagonals()[0], new int[] {0, 0, 0});
+        assertArrayEquals(board1.diagonals()[0], new Side[] {_, _, _});
 
         Board board2 = new Board(TestGrid1);
-        assertArrayEquals(board2.diagonals()[0], new int[] {2, 1, 2});
+        assertArrayEquals(board2.diagonals()[0], new Side[] {O, X, O});
     }
     
     public void testHasEmptyCell() throws Exception {
@@ -105,12 +109,13 @@ public class BoardTest extends TestCase {
     public void testEqualsTwo() throws Exception {
         Board board = new Board();
         Board board2 = board.duplicateBoard();
-        board2.setCell(0, 0, Board.X);
+        board2.setCell(0, 0, X);
         assertFalse(board.equals(board2));
     }
 
     public void testIsDraw() throws Exception {
         Board board1 = new Board(TestGrid3);
+        System.out.println(board1.isDraw());
         assertTrue(board1.isDraw());
 
         Board board2 = new Board(TestGrid2);
@@ -119,30 +124,30 @@ public class BoardTest extends TestCase {
 
     public void testWinner() throws Exception {
         Board board1 = new Board(TestGrid1);
-        assertEquals(board1.winner(), Board.O);
+        assertEquals(board1.winner(), O);
 
         Board board2 = new Board(TestGrid4);
-        assertEquals(board2.winner(), Board.X);
+        assertEquals(board2.winner(), X);
 
         Board board3 = new Board(TestGrid3);
-        assertEquals(board3.winner(), 0);
+        assertEquals(board3.winner(), null);
     }
 
     public void testChildNodesOne() {
         Board board = new Board(TestGrid1);
-        int[][] c1 = {{2, 1, 2}, {1, 1, 2}, {1, 0, 2}};
-        int[][] c2 = {{2, 0, 2}, {1, 1, 2}, {1, 1, 2}};
+        Side[][] c1 = {{O, X, O}, {X, X, O}, {X, _, O}};
+        Side[][] c2 = {{O, _, O}, {X, X, O}, {X, X, O}};
         Board b1 = new Board(c1);
         Board b2 = new Board(c2);
         Board[] children = {b1, b2};
 
-        assertArrayEquals(board.childNodes(Board.X), children);
+        assertArrayEquals(board.childNodes(X), children);
     }
 
 
 
     public void testChildNodesTwo() {
         Board board = new Board(TestGrid2);
-        assertArrayEquals(board.childNodes(Board.O), new Board[] {});
+        assertArrayEquals(board.childNodes(O), new Board[] {});
     }
 }
