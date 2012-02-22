@@ -99,7 +99,4 @@ public class Game {
         
         return new int[] {xScore, oScore, draws};
     }
-
-    public static void main(String[] args) {
-    }
 }
