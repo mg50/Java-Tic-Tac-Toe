@@ -10,13 +10,12 @@ package javattt;
 public abstract class Player {
 
     public final Side side;
-    public Boolean automated;
 
     public Player(Side side) {
         this.side = side;
     }
 
-    public int[] calculateMove(Board board) { // No-op
+    public int[] determineNextMove(Board board, UI ui) { // No-op
         return null;
     }
 }

@@ -67,8 +67,7 @@ public class Game {
         Side winner = null;
         do {
             ui.update(board);
-            if(currentPlayer.automated) moveCoords = currentPlayer.calculateMove(board);
-            else moveCoords = ui.promptPlayer(board);
+            moveCoords = currentPlayer.determineNextMove(board, ui);
 
             move(moveCoords[0], moveCoords[1], currentPlayer);
             winner = board.winner();
@@ -83,7 +82,6 @@ public class Game {
 
     public int[] start() {
 
-        this.ui = ui;
         int xScore = 0;
         int oScore = 0;
         int draws = 0;

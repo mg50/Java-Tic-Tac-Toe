@@ -16,10 +16,9 @@ public class AIPlayer extends Player {
     
     public AIPlayer(Side side) {
         super(side);
-        automated = true;
     }
     
-    public int[] calculateMove(Board board) {
+    public int[] determineNextMove(Board board, UI ui) {
         
         ArrayList<int[]> emptyCoords = board.emptyCoords();
         int size = emptyCoords.size();

@@ -10,7 +10,7 @@ package javattt;
 public interface UI {
 
     void update(Board board);
-    int[] promptPlayer(Board board);
+    int[] promptMove(Board board);
     boolean promptPlayAsX();
     boolean promptPlayVsAi();
     boolean promptStartNewGame();

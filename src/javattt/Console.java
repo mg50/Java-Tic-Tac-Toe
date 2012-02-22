@@ -44,7 +44,7 @@ public class Console implements UI {
         }
     }
     
-    public int[] promptPlayer(Board board) {
+    public int[] promptMove(Board board) {
         int[] move = null;
 
         while(move == null || board.getCell(move[0], move[1]) != Side._) {

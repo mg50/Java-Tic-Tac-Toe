@@ -126,23 +126,21 @@ public class AIPlayerTest extends TestCase {
         Board board = new Board(TestGrid4);
         AIPlayer x = new AIPlayer(Side.X);
         AIPlayer o = new AIPlayer(Side.O);
-        assertArrayEquals(x.calculateMove(board), new int[]{0, 2});
-        assertArrayEquals(o.calculateMove(board), new int[]{0, 2});
+        assertArrayEquals(x.determineNextMove(board, new Console()), new int[]{0, 2});
+        assertArrayEquals(o.determineNextMove(board, new Console()), new int[]{0, 2});
     }
 
     public void testCalculateMoveTwo() {
         Board board = new Board(TestGrid7);
         AIPlayer x = new AIPlayer(Side.X);
         AIPlayer o = new AIPlayer(Side.O);
-        assertArrayEquals(x.calculateMove(board), new int[]{0, 2});
+        assertArrayEquals(x.determineNextMove(board, new Console()), new int[]{0, 2});
     }
 
     public void testCalculateMoveThree() {
         Board board = new Board(TestGrid8);
         AIPlayer x = new AIPlayer(Side.X);
         AIPlayer o = new AIPlayer(Side.O);
-        assertArrayEquals(o.calculateMove(board), new int[]{1, 2});
+        assertArrayEquals(o.determineNextMove(board, new Console()), new int[]{1, 2});
     }
-
-
 }

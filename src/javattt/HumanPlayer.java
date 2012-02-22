@@ -10,6 +10,9 @@ package javattt;
 public class HumanPlayer extends Player {
     public HumanPlayer(Side side) {
         super(side);
-        automated = false;
+    }
+    
+    public int[] determineNextMove(Board board, UI ui) {
+        return ui.promptMove(board);
     }
 }
