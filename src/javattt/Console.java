@@ -95,8 +95,8 @@ public class Console implements UI {
         try {
             if(winner != null) outputStream.write("Player " + getSideSymbol(winner) + " has won!\n");
             else outputStream.write("The game has ended in a draw.\n");
-            outputStream.write("Player X has won " + InflectWinCount(xWinsCount) + " and player O has won " +
-                               InflectWinCount(oWinsCount) + ".\n");
+            outputStream.write("Player X has won " + inflectWinCount(xWinsCount) + " and player O has won " +
+                               inflectWinCount(oWinsCount) + ".\n");
             outputStream.flush();
             
         }
@@ -105,7 +105,7 @@ public class Console implements UI {
         }
     }
     
-    public static String InflectWinCount(int count) {
+    public static String inflectWinCount(int count) {
         if(count == 1) return count + " game";
         else return count + " games";
     }
