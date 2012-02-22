@@ -24,12 +24,12 @@ public class Game {
         board = new Board();
         this.ui = ui;
     }
-    public Game(Board input_board) {
-        board = input_board;
+    public Game(Board inputBoard) {
+        board = inputBoard;
     }
 
-    public Game(Board input_board, UI ui) {
-        board = input_board;
+    public Game(Board inputBoard, UI ui) {
+        board = inputBoard;
         this.ui = ui;
     }
 
@@ -88,7 +88,6 @@ public class Game {
         boolean gamePlaying = true;
 
         do {
-            board = new Board();
             Side victor = startOneGame();
             if(victor == Side.X) xScore++;
             else if(victor == Side.O) oScore++;
