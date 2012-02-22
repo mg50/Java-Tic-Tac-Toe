@@ -2,7 +2,6 @@ package javattt;
 
 
 import junit.framework.TestCase;
-import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import static org.junit.Assert.*;
 
 import static javattt.Side.X;
-import static javattt.Side.O;
 import static javattt.Side._;
 
 /**
@@ -32,7 +30,7 @@ public class ConsoleTest extends TestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("center".getBytes());
         HumanPlayer player = new HumanPlayer(Side.X);
         Console console = new Console(inputStream, new ByteArrayOutputStream());
-        Game game = new Game(console);
+        LocalGame game = new LocalGame(console);
         assertArrayEquals(console.promptMove(game.getBoard()), new int[] {1, 1});
     }
 
@@ -40,7 +38,7 @@ public class ConsoleTest extends TestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("top right".getBytes());
         HumanPlayer player = new HumanPlayer(Side.X);
         Console console = new Console(inputStream, new ByteArrayOutputStream());
-        Game game = new Game(console);
+        LocalGame game = new LocalGame(console);
         assertArrayEquals(console.promptMove(game.getBoard()), new int[] {2, 0});
     }
 
@@ -48,7 +46,7 @@ public class ConsoleTest extends TestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("invalid\ntop right".getBytes());
         HumanPlayer player = new HumanPlayer(Side.X);
         Console console = new Console(inputStream, new ByteArrayOutputStream());
-        Game game = new Game(console);
+        LocalGame game = new LocalGame(console);
 
         assertArrayEquals(console.promptMove(game.getBoard()), new int[] {2, 0});
     }
@@ -59,7 +57,7 @@ public class ConsoleTest extends TestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream("top left\ncenter".getBytes());
         HumanPlayer player = new HumanPlayer(Side.X);
         Console console = new Console(inputStream, new ByteArrayOutputStream());
-        Game game = new Game(board, console);
+        LocalGame game = new LocalGame(board, console);
 
         assertArrayEquals(console.promptMove(game.getBoard()), new int[] {1, 1});
     }
