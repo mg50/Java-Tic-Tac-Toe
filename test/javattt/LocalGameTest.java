@@ -181,5 +181,5 @@ public class LocalGameTest extends TestCase {
         assertEquals(game.stage, Stage.newGame);
         assertEquals(game.xWinsCount, 1);
         assertEquals(game.oWinsCount, 0);
-    }                                          */
+    }
 }
