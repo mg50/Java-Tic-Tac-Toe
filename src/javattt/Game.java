@@ -42,6 +42,7 @@ public class Game {
                     playerX = currentPlayer = new HumanPlayer(Side.X);
                     playerO = new HumanPlayer(Side.O);
                     stage = Stage.queryingMove;
+                    ui.update(board);
                 }
                 break;
 
@@ -77,10 +78,12 @@ public class Game {
                 int y = data.move[1];
                 if(board.getCell(x, y) == Side._) {
                     move(x, y, currentPlayer);
+                    ui.update(board);
                     Side victor = board.winner();
                     if(victor != null || board.isDraw()) {
                         stage = Stage.gameOver;
-                        return new TransitionData(victor);
+                        if(victor != null) return new TransitionData(victor);
+                        else return null;
                     }
                     else {
                         stage = Stage.queryingMove;
@@ -94,14 +97,18 @@ public class Game {
                 break;
 
             case gameOver:
-                Side victor = data.side;
+                Side victor;
+                if(data != null) victor = data.side;
+                else victor = null;
                 if(victor == Side.X) xWinsCount++;
                 else if(victor == Side.O) oWinsCount++;
                 ui.victoryMessage(victor, xWinsCount, oWinsCount);
                 
+                stage = Stage.promptingStarNewGame;
                 break;
 
             case promptingStarNewGame:
+                stage = Stage.receivingStartNewGame;
                 return new TransitionData(ui.promptStartNewGame());
 
             case receivingStartNewGame:
@@ -124,7 +131,7 @@ public class Game {
     public void start() {
         TransitionData result = null;
         while(stage != Stage.halt) {
-            transition(result);
+            result = transition(result);
         }
     }
 }
