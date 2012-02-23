@@ -31,7 +31,7 @@ public class ConsoleTest extends TestCase {
         HumanPlayer player = new HumanPlayer(Side.X);
         Console console = new Console(inputStream, new ByteArrayOutputStream());
         LocalGame game = new LocalGame(console);
-        assertArrayEquals(console.promptMove(game.getBoard()), new int[] {1, 1});
+        assertArrayEquals(console.promptMove(game.getBoard()).coords, new int[] {1, 1});
     }
 
     public void testPromptMoveTwo() {
@@ -39,26 +39,6 @@ public class ConsoleTest extends TestCase {
         HumanPlayer player = new HumanPlayer(Side.X);
         Console console = new Console(inputStream, new ByteArrayOutputStream());
         LocalGame game = new LocalGame(console);
-        assertArrayEquals(console.promptMove(game.getBoard()), new int[] {2, 0});
-    }
-
-    public void testPromptMoveThree() {
-        ByteArrayInputStream inputStream = new ByteArrayInputStream("invalid\ntop right".getBytes());
-        HumanPlayer player = new HumanPlayer(Side.X);
-        Console console = new Console(inputStream, new ByteArrayOutputStream());
-        LocalGame game = new LocalGame(console);
-
-        assertArrayEquals(console.promptMove(game.getBoard()), new int[] {2, 0});
-    }
-
-    public void testPromptMoveFour() {
-        Side[][] grid = {{X, _, _}, {_, _, _}, {_, _, _}};
-        Board board = new Board(grid);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream("top left\ncenter".getBytes());
-        HumanPlayer player = new HumanPlayer(Side.X);
-        Console console = new Console(inputStream, new ByteArrayOutputStream());
-        LocalGame game = new LocalGame(board, console);
-
-        assertArrayEquals(console.promptMove(game.getBoard()), new int[] {1, 1});
+        assertArrayEquals(console.promptMove(game.getBoard()).coords, new int[] {2, 0});
     }
 }

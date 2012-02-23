@@ -6,9 +6,21 @@ require File.join(File.dirname(__FILE__), 'solver')
 TEST = false unless defined? TEST
 
 class App < Sinatra::Base
+	@@SEARCHING_FOR_GAME = []
 
 	get '/' do
-		File.read(File.join('public/html', 'index.html'))
+		conn = Connection.new
+		@@waiting << game
+
+		File.read(File.join('public/html', 'index.html'))		
+	end
+
+	post '/query' do
+		conn = Connection.new
+		signal = HTTPGame.interpret params
+		raise unless signal
+
+		Game[conn].start signal		
 	end
 
 	get '/test' do
@@ -16,7 +28,14 @@ class App < Sinatra::Base
 	end
 
 
+	post '/status' do
+		conn = Connection.new
+		Game[conn].ui.status
+	end
+
 	post '/' do
+
+		game = Coordinator.game_of id
 		App.respond_to_ttt_request(params[:gameState], params[:numPlayers])
 	end
 

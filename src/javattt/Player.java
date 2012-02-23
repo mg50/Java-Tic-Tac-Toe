@@ -15,7 +15,7 @@ public abstract class Player {
         this.side = side;
     }
 
-    public int[] determineNextMove(Board board, UI ui) { // No-op
+    public TransitionData determineNextMove(Board board, UI ui) { // No-op
         return null;
     }
 }

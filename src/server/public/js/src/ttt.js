@@ -110,27 +110,24 @@ var Board,
 			type: 'post',
 			dataType: 'json',
 			data: 'gameState=' + self.jsonify() + '&numPlayers=' + (self.playVsAi ? 1 : 2),
-			success: receiveResponse,
+			success: function(response) {
+				self.readyForMove = true;
+
+				if(response.move && self.playVsAi) {
+					self.move(response.move[0], response.move[1]);
+				}
+				if(response.outcome) {
+					alert(response.outcome);
+					if(confirm('Play again?')) {
+						self.begin();
+					}
+					else self.readyForMove = false;
+				}
+			},
 			error: function(e) {
 				console.log(e);
 				alert("Error!");
 			}
 		});
 	}
-
-	Board.prototype.receiveResponse = function(response) {
-		self.readyForMove = true;
-
-		if(response.move && self.playVsAi) {
-			self.move(response.move[0], response.move[1]);
-		}
-		if(response.outcome) {
-			alert(response.outcome);
-			if(confirm('Play again?')) {
-				self.begin();
-			}
-			else self.readyForMove = false;
-		}		
-	}
-
 })();

@@ -18,7 +18,7 @@ public class AIPlayer extends Player {
         super(side);
     }
     
-    public int[] determineNextMove(Board board, UI ui) {
+    public TransitionData determineNextMove(Board board, UI ui) {
         
         ArrayList<int[]> emptyCoords = board.emptyCoords();
         int size = emptyCoords.size();
@@ -43,7 +43,7 @@ public class AIPlayer extends Player {
             }
         }
         
-        return champion;
+        return new TransitionData(champion);
     }
     
     public int absoluteLeafScore(Board board) {

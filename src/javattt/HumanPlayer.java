@@ -12,7 +12,7 @@ public class HumanPlayer extends Player {
         super(side);
     }
     
-    public int[] determineNextMove(Board board, UI ui) {
+    public TransitionData determineNextMove(Board board, UI ui) {
         return ui.promptMove(board);
     }
 }

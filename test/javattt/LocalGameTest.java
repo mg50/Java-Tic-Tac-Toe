@@ -12,10 +12,6 @@ import static javattt.Side._;
 
 public class LocalGameTest extends TestCase {
 
-
-
-
-
     public void testNewGameStage() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
@@ -26,10 +22,11 @@ public class LocalGameTest extends TestCase {
 
     public void testNewGameTwo() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("b\nexit\n".getBytes()), out);
+        Console ui = new Console(new ByteArrayInputStream("b\n".getBytes()), out);
         Game game = new LocalGame(ui);
         TransitionData result = game.transition();
         game.transition(result);
+
         assertEquals(game.stage, Stage.newGame);
     }
 
@@ -58,10 +55,11 @@ public class LocalGameTest extends TestCase {
 
     public void testAIPromptTwo() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("y\nn\nexit\n".getBytes()), out);
+        Console ui = new Console(new ByteArrayInputStream("y\nn\n".getBytes()), out);
         Game game = new LocalGame(ui);
         TransitionData result = game.transition();
         game.transition(result);
+        game.transition();
         assertEquals(game.stage, Stage.receivingPlayAsX);
     }
 
@@ -155,7 +153,7 @@ public class LocalGameTest extends TestCase {
         move = game.transition(move);
         move = game.transition(move);
         move = game.transition(move);
-        
+
         assertEquals(game.stage, Stage.queryingMove);
         assertEquals(game.board.getCell(0, 1), Side.X);
         assertEquals(game.board.getCell(2, 1), Side.O);
@@ -174,14 +172,14 @@ public class LocalGameTest extends TestCase {
         game.stage = Stage.queryingMove;
         TransitionData move = game.transition();
         TransitionData victor = game.transition(move);
-        
+
         assertEquals(game.stage, Stage.gameOver);
         assertEquals(victor.side, Side.X);
 
         game.transition(victor);
-        
+
         assertEquals(game.stage, Stage.newGame);
         assertEquals(game.xWinsCount, 1);
         assertEquals(game.oWinsCount, 0);
-    }
+    }                                          */
 }

@@ -28,18 +28,20 @@ public class Game {
     }
     
     public TransitionData transition(TransitionData data) {
+        if(data != null && data.signal == TransitionData.Signal.EXIT) stage = Stage.halt;
+        if(data != null && data.signal == TransitionData.Signal.DEBUG) return null;
 
         switch(stage) {
             case newGame:
                 board = new Board();
                 stage = Stage.receivingPlayVsAI;
-                return new TransitionData(ui.promptPlayVsAi());
+                return ui.promptPlayVsAI();
 
             case receivingPlayVsAI:
-                if(data.bool == null) { //If player enters invalid input
+                if(data.signal == TransitionData.Signal.INVALID) { //If player enters invalid input
                     stage = Stage.newGame;
                 }
-                else if(data.bool) {
+                else if(data.signal == TransitionData.Signal.YES) {
                     stage = Stage.promptingPlayAsX;
                 }
                 else {
@@ -52,15 +54,15 @@ public class Game {
 
             case promptingPlayAsX:
                 stage = Stage.receivingPlayAsX;
-                return new TransitionData(ui.promptPlayAsX());
+                return ui.promptPlayAsX();
 
             case receivingPlayAsX:
-                if(data.bool == null) {
+                if(data.signal == TransitionData.Signal.INVALID) {
                     stage = Stage.promptingPlayAsX;
                     break;
                 }
 
-                if(data.bool) {
+                if(data.signal == TransitionData.Signal.YES) {
                     playerX = currentPlayer = new HumanPlayer(Side.X);
                     playerO = new AIPlayer(Side.O);
                 }
@@ -75,11 +77,15 @@ public class Game {
 
             case queryingMove:
                 stage = Stage.receivingMove;
-                return new TransitionData(currentPlayer.determineNextMove(board, ui));
+                return currentPlayer.determineNextMove(board, ui);
             
             case receivingMove:
-                int x = data.move[0];
-                int y = data.move[1];
+                if(data.signal == TransitionData.Signal.INVALID) {
+                    stage = Stage.queryingMove;
+                    break;
+                }
+                int x = data.coords[0];
+                int y = data.coords[1];
                 if(board.getCell(x, y) == Side._) {
                     move(x, y, currentPlayer);
                     ui.update(board);
@@ -113,18 +119,20 @@ public class Game {
 
             case promptingStarNewGame:
                 stage = Stage.receivingStartNewGame;
-                return new TransitionData(ui.promptStartNewGame());
+                return ui.promptStartNewGame();
 
             case receivingStartNewGame:
-                if(data == null) {
+                if(data.signal == TransitionData.Signal.INVALID) {
                     stage = Stage.promptingStarNewGame;
                 }
-                else if(data.bool) {
+                else if(data.signal == TransitionData.Signal.YES) {
                     stage = Stage.newGame;
                 }
                 else {
                     stage = Stage.halt;
                 }
+                break;
+
             case halt:
                 break;
         }
@@ -132,10 +140,9 @@ public class Game {
         return null;
     }
 
-    public void start() {
-        TransitionData result = null;
+    public void start(TransitionData data) {
         while(stage != Stage.halt) {
-            result = transition(result);
+            data = transition(data);
         }
     }
 }

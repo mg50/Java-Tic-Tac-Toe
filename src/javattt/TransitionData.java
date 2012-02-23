@@ -1,5 +1,7 @@
 package javattt;
 
+import sun.font.TrueTypeFont;
+
 /**
  * Created by IntelliJ IDEA.
  * User: MGT
@@ -9,20 +11,36 @@ package javattt;
  */
 public class TransitionData {
 
-    public Boolean bool;
-    public int[] move;
+    public enum Signal {
+        YES,
+        NO,
+        EXIT,
+        MOVE,
+        INVALID,
+        VICTOR,
+        DEBUG
+    }
+
+    public Signal signal;
+    public int[] coords;
     public Side side;
     
-    TransitionData(Boolean b) {
-        bool = b;
+    TransitionData(Signal s) {
+        if(s == null) signal = Signal.EXIT;
+        else signal = s;
     }
     
-    TransitionData(int[] move) {
-        this.move = move;
+    TransitionData(int[] coords) {
+        signal = Signal.MOVE;
+        this.coords = coords;
+    }
+    
+    TransitionData(Boolean b) {
+        if(b) signal = Signal.YES;
+        else signal = Signal.NO;
     }
     
     TransitionData(Side s) {
         side = s;
     }
-    
 }

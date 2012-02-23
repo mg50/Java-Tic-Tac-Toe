@@ -44,51 +44,53 @@ public class Console implements UI {
         }
     }
     
-    public int[] promptMove(Board board) {
+    public TransitionData promptMove(Board board) {
         int[] move = null;
 
-        while(move == null || board.getCell(move[0], move[1]) != Side._) {
-            try {
-                outputStream.write("Please enter your next move (or \"help\"): ");
-                outputStream.flush();
-                String moveString = inputStream.readLine();
-                if(moveString.equals("exit")) return null;
-                move = parseMove(moveString);
-            }
-            catch (Exception e) {
-                System.out.println("Error reading move!");
-            }
+        try {
+            outputStream.write("Please enter your next move (or \"help\"): ");
+            outputStream.flush();
+            String moveString = inputStream.readLine();
+            if(moveString.equals("exit")) return new TransitionData(TransitionData.Signal.EXIT);
+            if(moveString.equals("DEBUG")) return new TransitionData(TransitionData.Signal.DEBUG);
+            move = parseMove(moveString);
         }
-        return move;
+        catch (Exception e) {
+            System.out.println("Error reading move!");
+        }
+
+        if(move != null) return new TransitionData(move);
+        else return new TransitionData(TransitionData.Signal.INVALID);
     }
     
-    public Boolean prompt(String msg) {
+    public TransitionData prompt(String msg) {
         String answer = null;
 
         try {
-            while(answer == null || (!answer.equals("y") && !answer.equals("n"))) {
-                outputStream.write(msg + " y/n ");
-                outputStream.flush();
-                answer = inputStream.readLine();
-                if(answer.equals("exit")) return null;
-            }
+            outputStream.write(msg + " y/n ");
+            outputStream.flush();
+            answer = inputStream.readLine();
+            if(answer.equals("exit")) return new TransitionData(TransitionData.Signal.EXIT);
+            if(answer.equals("DEBUG")) return new TransitionData(TransitionData.Signal.DEBUG);
         }
         catch (Exception e) {
             System.out.println("Error reading/writing prompt!");
         }
 
-        return answer.equals("y");
+        if(answer.equals("y")) return new TransitionData(true);
+        else if(answer.equals("n")) return new TransitionData(false);
+        else return new TransitionData(TransitionData.Signal.INVALID);
     }
     
-    public Boolean promptPlayAsX() {
+    public TransitionData promptPlayAsX() {
         return prompt("Play as X?");
     }
     
-    public Boolean promptPlayVsAi() {
+    public TransitionData promptPlayVsAI() {
         return prompt("Play vs. AI?");
     }
     
-    public Boolean promptStartNewGame() {
+    public TransitionData promptStartNewGame() {
         return prompt("Start another game?");
     }
     

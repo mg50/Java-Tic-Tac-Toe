@@ -10,9 +10,9 @@ package javattt;
 public interface UI {
 
     void update(Board board);
-    int[] promptMove(Board board);
-    Boolean promptPlayAsX();
-    Boolean promptPlayVsAi();
-    Boolean promptStartNewGame();
+    TransitionData promptMove(Board board);
+    TransitionData promptPlayAsX();
+    TransitionData promptPlayVsAI();
+    TransitionData promptStartNewGame();
     void victoryMessage(Side winner, int xWinCount, int oWinCount);
 }

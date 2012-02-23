@@ -76,6 +76,13 @@ $(document).ready(function() {
 			board.move(2, 0);
 			var side = board.getCell(2, 0);
 			expect(side).toEqual(O);
-		})
+		});
+/*
+		it("makes a move when instructed by the server", function() {
+			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
+			var board = new Board(stage, game);
+			board.receiveResponse({move:[2, 1]});
+			expect(board.getCell(2, 1)).toEqual(O);
+		})*/
 	})
 });
