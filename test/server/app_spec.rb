@@ -1,7 +1,102 @@
 TEST = true
 
 require '../../src/server/app'
+require 'net/http'
+require 'json'
 
+
+def get_req(path)
+	json = Net::HTTP.get('localhost', path)
+	yield JSON.parse json
+end
+
+def post_req(path, params)
+	uri = URI('http://localhost' + path)
+	json = Net::HTTP.post_form(uri, params)
+	yield JSON.parse json
+end
+
+describe App, "" do
+	after :each do
+		send_req('/clear_all_data')
+	end
+
+	it "starts a new game and gives me an id" do
+		get_req('/') do |resp|
+			resp.sessionId.should == 1
+		end
+	end
+
+	it "wants to know if you'd like to play vs. an AI" do
+		get_req('/')
+		get_req('/status') do |resp|
+			resp.stage.should == 'receivingAIResponse'
+		end
+	end
+
+	it "understands a query to play against an AI" do
+		get_req('/')
+		send_req('/query', :response => true)
+		get_req('/status') do |resp|
+			resp.stage.should == 'receivingPlayAsX'
+	end
+
+	it "makes the first move as an AI" do
+		get_req('/')
+		send_req('/query', "response" => true)
+		get_req('/query', "response" => false)
+		get_req('/status') do |resp|
+			resp.status.should == 'receivingMove'
+			resp.board.should == [["X", "", ""], ["", "", ""], ["", "", ""]]
+		end
+	end
+
+	it "plays the second move as O" do
+		get_req('/')
+		send_req('/query', "response" => true)
+		get_req('/query', "response" => true)
+		get_req('/status') do |resp|
+			resp.status.should == 'receivingMove'
+			resp.board.should == [["", "", ""], ["", "", ""], ["", "", ""]]
+		end
+		send_req('/query', "move" => [2, 2])
+		get_req('/status') do |resp|
+			resp.status.should == 'receivingMove'
+			resp.board.should == [["", "", ""], ["", "O", ""], ["", "", "X"]]
+		end
+	end
+
+	it "plays the third move as X" do
+		get_req('/')
+		send_req('/query', "response" => true)
+		get_req('/query', "response" => false)
+		send_req('/query', "move" => [1, 1])
+		get_req('/status') do |resp|
+			resp.status.should == 'receivingMove'
+			resp.board.should == [["X", "", ""], ["X", "O", ""], ["", "", ""]]
+		end
+	end
+
+	it "plays ignores moves on empty squares" do
+		get_req('/')
+		send_req('/query', "response" => true)
+		get_req('/query', "response" => true)
+		send_req('/query', "move" => [2, 0])
+		send_req('/query', "move" => [2, 0])
+
+		get_req('/status') do |resp|
+			resp.status.should == 'receivingMove'
+			resp.board.should == [["", "", "X"], ["", "O", ""], ["", "", ""]]
+		end
+	end		
+end
+
+
+
+
+
+
+=begin
 describe App, "#respond_to_ttt_request"  do
 	it "moves on a blank board" do
 		game_string = '[["","",""],["","",""],["","",""]]'
@@ -43,3 +138,4 @@ describe App, "#respond_to_ttt_request"  do
 		App.respond_to_ttt_request(game_string, num_players).should == json
 	end
 end
+=end
