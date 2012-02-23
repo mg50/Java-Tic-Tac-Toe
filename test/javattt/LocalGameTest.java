@@ -23,7 +23,6 @@ public class LocalGameTest extends TestCase {
         game.transition();
         assertEquals(game.stage, Stage.receivingPlayVsAI);
     }
-        /*
 
     public void testNewGameTwo() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -33,7 +32,6 @@ public class LocalGameTest extends TestCase {
         game.transition(result);
         assertEquals(game.stage, Stage.newGame);
     }
-       */
 
     public void testNewGameThree() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -54,6 +52,7 @@ public class LocalGameTest extends TestCase {
         TransitionData result = game.transition();
         result = game.transition(result);
         result = game.transition(result);
+
         assertEquals(game.stage, Stage.receivingPlayAsX);
     }
 
@@ -162,7 +161,8 @@ public class LocalGameTest extends TestCase {
         assertEquals(game.board.getCell(2, 1), Side.O);
         assertEquals(game.board.getCell(1, 0), Side._);
     }
-    
+
+
     public void testEndGame() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Board board = new Board(new Side[][] {{X, O, X}, {O, X, O}, {X, O, _}});

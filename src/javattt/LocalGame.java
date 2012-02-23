@@ -36,45 +36,4 @@ public class LocalGame extends Game {
     public void move(int x, int y, Player player) {
         board.setCell(x, y, player.side);
     }
-    
-
-    public Side startOneGame() {
-        board = new Board();
-        playerX = null;
-        playerO = null;
-
-        if(ui.promptPlayVsAi()) {
-            if(ui.promptPlayAsX()) {
-                playerX = new HumanPlayer(Side.X);
-                playerO = new AIPlayer(Side.O);
-            }
-            else {
-                playerX = new AIPlayer(Side.X);
-                playerO = new HumanPlayer(Side.O);
-            }
-        }
-        else {
-            playerX = new HumanPlayer(Side.X);
-            playerO = new HumanPlayer(Side.O);
-        }
-
-        Player currentPlayer = playerX;
-        int[] moveCoords;
-        Side winner = null;
-        do {
-            ui.update(board);
-            moveCoords = currentPlayer.determineNextMove(board, ui);
-
-            move(moveCoords[0], moveCoords[1], currentPlayer);
-            winner = board.winner();
-            if(currentPlayer == playerX) currentPlayer = playerO;
-            else currentPlayer = playerX;
-        } while(winner == null && !board.isDraw());
-
-        ui.update(board);
-
-        return winner;
-    }
-
-
 }

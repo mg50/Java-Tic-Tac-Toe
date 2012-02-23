@@ -12,11 +12,9 @@ public class Game {
     public UI ui;
     public Board board = new Board() {};
     public void move(int x, int y, Player player) {};
-    public void start() {};
     public Player playerX;
     public Player playerO;
     public Player currentPlayer;
-    public Side winner;
     public int xWinsCount;
     public int oWinsCount;
 
@@ -34,7 +32,7 @@ public class Game {
                 return new TransitionData(ui.promptPlayVsAi());
 
             case receivingPlayVsAI:
-                if(data == null) { //If player enters invalid input
+                if(data.bool == null) { //If player enters invalid input
                     stage = Stage.newGame;
                 }
                 else if(data.bool) {
@@ -48,10 +46,11 @@ public class Game {
                 break;
 
             case promptingPlayAsX:
+                stage = Stage.receivingPlayAsX;
                 return new TransitionData(ui.promptPlayAsX());
 
             case receivingPlayAsX:
-                if(data == null) {
+                if(data.bool == null) {
                     stage = Stage.promptingPlayAsX;
                     break;
                 }
@@ -120,5 +119,12 @@ public class Game {
         }
 
         return null;
+    }
+
+    public void start() {
+        TransitionData result = null;
+        while(stage != Stage.halt) {
+            transition(result);
+        }
     }
 }
