@@ -75,30 +75,6 @@ public class LocalGame extends Game {
 
         return winner;
     }
-    
-    public Side startOneGame1() {
 
-        while(stage != Stage.gameOver) {
-            progressGame();
-        }
-    }
 
-    public int[] start() {
-
-        int xScore = 0;
-        int oScore = 0;
-        int draws = 0;
-        boolean gamePlaying = true;
-
-        do {
-            Side victor = startOneGame();
-            if(victor == Side.X) xScore++;
-            else if(victor == Side.O) oScore++;
-            else draws++;
-            ui.victoryMessage(victor, xScore, oScore);
-            if(!ui.promptStartNewGame()) gamePlaying = false;
-        } while(gamePlaying);
-        
-        return new int[] {xScore, oScore, draws};
-    }
 }

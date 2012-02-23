@@ -8,7 +8,7 @@ package javattt;
  * To change this template use File | Settings | File Templates.
  */
 public class Game {
-    public Stage stage = Stage.promptingPlayVsAi;
+    public Stage stage = Stage.newGame;
     public UI ui;
     public Board board = new Board() {};
     public void move(int x, int y, Player player) {};
@@ -17,53 +17,108 @@ public class Game {
     public Player playerO;
     public Player currentPlayer;
     public Side winner;
+    public int xWinsCount;
+    public int oWinsCount;
 
-    public void processStage() {
-        if(stage == Stage.newGame) {
-            if(ui.promptPlayVsAi()) {
-
-            };
-        }
-        else if(stage == Stage.promptingPlayerSide) {
-            ui.promptPlayVsAi();
-        }
-        else if(stage == Stage.waitingForMove) {
-
-        }
-        else {
-
-        }
-        while(stage != Stage.gameOver) {
-
-        }
+    
+    public TransitionData transition() {
+        return transition(null);
     }
     
-    public Side progressGame() {
+    public TransitionData transition(TransitionData data) {
 
-        if(stage == Stage.newGame) {
-            if(ui.promptPlayVsAi()) {
-                stage = Stage.promptingPlayerSide;
-            }
-            else stage = Stage.queryingMove;
+        switch(stage) {
+            case newGame:
+                board = new Board();
+                stage = Stage.receivingPlayVsAI;
+                return new TransitionData(ui.promptPlayVsAi());
+
+            case receivingPlayVsAI:
+                if(data == null) { //If player enters invalid input
+                    stage = Stage.newGame;
+                }
+                else if(data.bool) {
+                    stage = Stage.promptingPlayAsX;
+                }
+                else {
+                    playerX = currentPlayer = new HumanPlayer(Side.X);
+                    playerO = new HumanPlayer(Side.O);
+                    stage = Stage.queryingMove;
+                }
+                break;
+
+            case promptingPlayAsX:
+                return new TransitionData(ui.promptPlayAsX());
+
+            case receivingPlayAsX:
+                if(data == null) {
+                    stage = Stage.promptingPlayAsX;
+                    break;
+                }
+
+                if(data.bool) {
+                    playerX = currentPlayer = new HumanPlayer(Side.X);
+                    playerO = new AIPlayer(Side.O);
+                }
+                else {
+                    playerX = currentPlayer = new AIPlayer(Side.X);
+                    playerO = new HumanPlayer(Side.O);
+                }
+
+                stage = Stage.queryingMove;
+                ui.update(board);
+                break;
+
+            case queryingMove:
+                stage = Stage.receivingMove;
+                return new TransitionData(currentPlayer.determineNextMove(board, ui));
+            
+            case receivingMove:
+                int x = data.move[0];
+                int y = data.move[1];
+                if(board.getCell(x, y) == Side._) {
+                    move(x, y, currentPlayer);
+                    Side victor = board.winner();
+                    if(victor != null || board.isDraw()) {
+                        stage = Stage.gameOver;
+                        return new TransitionData(victor);
+                    }
+                    else {
+                        stage = Stage.queryingMove;
+                        currentPlayer = currentPlayer == playerX ? playerO : playerX;
+                    }
+                }
+                else {
+                    stage = Stage.queryingMove;
+                }
+
+                break;
+
+            case gameOver:
+                Side victor = data.side;
+                if(victor == Side.X) xWinsCount++;
+                else if(victor == Side.O) oWinsCount++;
+                ui.victoryMessage(victor, xWinsCount, oWinsCount);
+                
+                break;
+
+            case promptingStarNewGame:
+                return new TransitionData(ui.promptStartNewGame());
+
+            case receivingStartNewGame:
+                if(data == null) {
+                    stage = Stage.promptingStarNewGame;
+                }
+                else if(data.bool) {
+                    stage = Stage.newGame;
+                }
+                else {
+                    stage = Stage.halt;
+                }
+            case halt:
+                break;
         }
-        else if(stage == Stage.queryingMove) {
-            stage = Stage.receivedMove;
-            currentPlayer.determineNextMove(board, ui);
-        }
-        else if(stage == Stage.receivedMove) {
-            move(x, y, currentPlayer);
-            winner = board.winner();
 
-            if(winner != null || board.isDraw()) {
-                stage = Stage.newGame;
-                ui.victoryMessage(winner);
-            }
-
-            if(board.winner() == Side.X) {
-                stage =  ;
-            }
-        }
-
-        return winner;
+        return null;
     }
 }

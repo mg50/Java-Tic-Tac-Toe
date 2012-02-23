@@ -9,9 +9,13 @@ package javattt;
  */
 public enum Stage {
     newGame,
-    promptingPlayVsAi,
-    promptingPlayerSide,
+    receivingPlayVsAI,
+    promptingPlayAsX,
+    receivingPlayAsX,
     queryingMove,
-    receivedMove,
-    gameOver
+    receivingMove,
+    gameOver,
+    promptingStarNewGame,
+    receivingStartNewGame,
+    halt
 }

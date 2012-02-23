@@ -52,6 +52,7 @@ public class Console implements UI {
                 outputStream.write("Please enter your next move (or \"help\"): ");
                 outputStream.flush();
                 String moveString = inputStream.readLine();
+                if(moveString.equals("exit")) return null;
                 move = parseMove(moveString);
             }
             catch (Exception e) {
@@ -61,7 +62,7 @@ public class Console implements UI {
         return move;
     }
     
-    public boolean prompt(String msg) {
+    public Boolean prompt(String msg) {
         String answer = null;
 
         try {
@@ -69,6 +70,7 @@ public class Console implements UI {
                 outputStream.write(msg + " y/n ");
                 outputStream.flush();
                 answer = inputStream.readLine();
+                if(answer.equals("exit")) return null;
             }
         }
         catch (Exception e) {
@@ -78,15 +80,15 @@ public class Console implements UI {
         return answer.equals("y");
     }
     
-    public boolean promptPlayAsX() {
+    public Boolean promptPlayAsX() {
         return prompt("Play as X?");
     }
     
-    public boolean promptPlayVsAi() {
+    public Boolean promptPlayVsAi() {
         return prompt("Play vs. AI?");
     }
     
-    public boolean promptStartNewGame() {
+    public Boolean promptStartNewGame() {
         return prompt("Start another game?");
     }
     
