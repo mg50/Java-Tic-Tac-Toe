@@ -32,8 +32,4 @@ public class LocalGame extends Game {
         return board;
     }
 
-
-    public void move(int x, int y, Player player) {
-        board.setCell(x, y, player.side);
-    }
 }

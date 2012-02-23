@@ -11,12 +11,16 @@ public class Game {
     public Stage stage = Stage.newGame;
     public UI ui;
     public Board board = new Board() {};
-    public void move(int x, int y, Player player) {};
     public Player playerX;
     public Player playerO;
     public Player currentPlayer;
     public int xWinsCount;
     public int oWinsCount;
+
+
+    public void move(int x, int y, Player player) {
+        board.setCell(x, y, player.side);
+    }
 
     
     public TransitionData transition() {
