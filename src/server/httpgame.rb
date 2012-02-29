@@ -15,7 +15,7 @@ end
 class HTTPGame < Java::Javattt.Game
 	attr_accessor :opponent, :waiting_for_opponent
 
-	@@waiting_games = []
+	@@waiting_games = {}
 
 	def initialize
 		super
@@ -74,6 +74,10 @@ class HTTPGame < Java::Javattt.Game
 		start data
 	end
 
+	def current_player_human?
+		currentPlayer.class == Java::Javattt.HumanPlayer
+	end
+
 	def switch_player
 		self.currentPlayer = self.currentPlayer == playerX ? playerO : playerX
 	end
@@ -86,25 +90,35 @@ class HTTPGame < Java::Javattt.Game
 
 	def onSuccessfulMove(move)
 		touch
-		return if not two_player? or self.waiting_for_opponent
+		if not two_player?
+			self.waiting_for_opponent = !current_player_human?
+			#binding.pry
+		else
+			return if self.waiting_for_opponent
 
-		opponent.start move
-		self.waiting_for_opponent = true
-		opponent.waiting_for_opponent = false
+			opponent.start move
+			self.waiting_for_opponent = true
+			opponent.waiting_for_opponent = false
+		end
 	end
 
 	def onReceivingPlayVsAI
 		return unless two_player?
 
+		size = self.board.size.to_i
 		self.waiting_for_opponent = true
 
-		if @@waiting_games.empty?
-			@@waiting_games << self
+		if @@waiting_games[size].nil? or @@waiting_games[size].empty?
+			@@waiting_games[size] = [self]
 		else
-			self.opponent = @@waiting_games.shift
+			self.opponent = @@waiting_games[size].shift
 			opponent.opponent = self
 			opponent.waiting_for_opponent = false
 		end
+	end
+
+	def onReceivingPlayAsX(data)
+		self.waiting_for_opponent = !current_player_human?		
 	end
 
 	def onHalt

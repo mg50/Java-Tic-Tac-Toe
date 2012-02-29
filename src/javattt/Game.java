@@ -94,6 +94,7 @@ public class Game {
                     playerO = new HumanPlayer(Side.O);
                 }
 
+                onReceivingPlayAsX(data);
                 stage = Stage.queryingMove;
                 ui.update(board);
 
@@ -178,4 +179,5 @@ public class Game {
     public void onSuccessfulMove(TransitionData data) {}
     public void onReceivingPlayVsAI() {}
     public void onHalt() {}
+    public void onReceivingPlayAsX(TransitionData data) {}
 }

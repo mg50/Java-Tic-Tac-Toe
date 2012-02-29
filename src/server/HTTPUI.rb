@@ -16,6 +16,10 @@ class HTTPUI
 		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
 	end
 
+	def promptPlay3x3
+		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
+	end
+
 	def promptPlayAsX
 		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
 	end

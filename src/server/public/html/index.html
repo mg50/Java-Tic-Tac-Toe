@@ -2,7 +2,9 @@
 <html>
 	<head>
 		<title>Tic-Tac-Toe</title>
+		<link rel="stylesheet" href="css/jquery-ui.css" type="text/css" />				
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+		<script type="text/javascript" src="js/lib/jquery-ui.js"></script>
 		<script type="text/javascript" src="/js/lib/json.js"></script>
 		<script type="text/javascript" src="/js/src/ttt.js"></script>
 		<script type="text/javascript">
@@ -39,8 +41,8 @@
 
 			td {
 				border: 1px solid white;
-				width: 33%;
-				height: 33%;
+				width: 150px;
+				height: 150px;
 				vertical-align: middle;
 				text-align: center;
 				font-size: 100px;				
@@ -62,6 +64,11 @@
 
 			<div id="message">
 			
+			</div>
+			<div id="confirm">
+				<div id="question"></div>
+				<a href="#" onclick="return false;"></a>
+				<a href="#" onclick="return false;"></a>
 			</div>
 		</div>
 	</body>

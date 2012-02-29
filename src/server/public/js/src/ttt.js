@@ -11,17 +11,18 @@ var PAUSE;
 		ROW_SELECTOR = '.' + ROW_CLASS,
 		CELL_SELECTOR = '.' + CELL_CLASS,
 		MESSAGE_SELECTOR = '#message'
+		CONFIRM_SELECTOR = '#confirm'
+		QUESTION_SELECTOR = "#question"
 
 	var HOST = 'http://localhost:3000/'
 
 
 	Board = function(stage, gameState) {
-		this.dom = Board.buildDom(gameState);
-		$(stage).append(this.dom);
+		this.stage = stage;
+		this.buildDom(gameState);
 		this.lastTime = 0;
 
 		this.gamePlaying = false;
-		this.createListeners();
 		this.statusInterval = null;
 	}
 
@@ -29,19 +30,38 @@ var PAUSE;
 		$(MESSAGE_SELECTOR).html(msg);
 	}
 
-	Board.buildDom = function(gameState) {
+	Board.prototype.buildDom = function(gameState) {
+		var self = this;
+		var size = gameState ? gameState.length : 3;
 		var dom = $('<table id="board"></table>')
-		for(var i = 0; i < 3; i++) {
+		for(var i = 0; i < size; i++) {
 			var tr = $('<tr class="' + ROW_CLASS + '"/>')
-			for(var j = 0; j < 3; j++) {
+			for(var j = 0; j < size; j++) {
 				var td = $('<td class="' + CELL_CLASS + '" />');
 				if(gameState) td.html(gameState[i][j]);
 				tr.append(td)
 			}
 			dom.append(tr);
 		}
+		this.createListeners(dom);
+		this.dom = dom.get(0);
+		$(this.stage).append(dom);
 
-		return dom.get(0);
+		$(CONFIRM_SELECTOR).find("*").unbind().end()
+		.dialog({
+			modal: true,
+			autoOpen: false
+		})
+		.find('a').each(function(idx) {
+			var signal;
+			if(idx === 0) signal = "YES";
+			else signal = "NO";
+
+			$(this).click(function() {
+				self.query({signal: signal});
+				$(CONFIRM_SELECTOR).dialog('close');
+			})
+		})
 	}
 
 	Board.prototype.getCell = function(x, y) {
@@ -53,9 +73,9 @@ var PAUSE;
 		$(this.dom).remove();
 	}
 
-	Board.prototype.createListeners = function() {
+	Board.prototype.createListeners = function(dom) {
 		var self = this;
-		$(this.dom).find(CELL_SELECTOR).click(function() {
+		$(dom).find(CELL_SELECTOR).click(function() {
 			var row = $(this).closest(ROW_SELECTOR).get(0);
 			var x = $(row).find(CELL_SELECTOR).index(this);
 			var y = $(self.dom).find(ROW_SELECTOR).index(row);
@@ -86,9 +106,14 @@ var PAUSE;
 				dataType: 'json',
 				success: function(r) {
 					console.log("Server status: ", r);
-					if(board.lastTime <= r.timestamp) return;
+					//if(board.lastTime <= r.timestamp) return;
 
-					self.updateDom(r.board)
+					var currentBoardSize = $(ROW_SELECTOR).length;
+					if(r.board.length !== currentBoardSize) {
+						self.remove();
+						self.buildDom(r.board);
+					}
+					self.updateDom(r.board);
 					self.respondToServerStatus(r);
 				}
 			});
@@ -108,10 +133,25 @@ var PAUSE;
 		})
 	}
 
+	Board.prototype.confirm = function(msg, opt1, opt2) {
+		var confirm = $(CONFIRM_SELECTOR);
+		confirm.dialog('open');
+		confirm.find(QUESTION_SELECTOR).html(msg);
+		confirm.find('a').each(function(idx) {
+			if(idx === 0) $(this).html(opt1);
+			else $(this).html(opt2);
+		})
+	}
+
 	Board.prototype.respondToServerStatus = function(msg) {
+		var self = this;
 		if(msg.stage === 'receivingMove') {
 			this.readyForMove = true;
 			this.displayMessage("It's player " + msg.currentPlayer + "'s turn.")
+		}
+
+		else if(msg.stage === "receivingPlay3x3") {
+			self.confirm("What size board would you like to play on?", "3x3", "4x4")
 		}
 
 		else if(msg.stage === "receivingPlayVsAI") {
@@ -119,6 +159,7 @@ var PAUSE;
 				signal: confirm("Play vs. AI?") ? "YES" : "NO"
 			});
 		}
+
 
 		else if(msg.stage === "receivingPlayAsX") {
 			this.query({

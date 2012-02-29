@@ -7,12 +7,13 @@ include_class Java::Javattt.Stage
 describe HTTPGame do
 	def start_two_player_game
 		game1 = HTTPGame.new
-		game1.start nil
-		game1.receive_signal "signal" => "NO"
-
 		game2 = HTTPGame.new
-		game2.start nil
-		game2.receive_signal "signal" => "NO"
+
+		[game1, game2].each do |game|
+			game.start nil
+			game.receive_signal "signal" => "YES" # for 3x3
+			game.receive_signal "signal" => "NO"  # for 2-player game
+		end
 
 		[game1, game2]
 	end
@@ -36,6 +37,9 @@ describe HTTPGame do
 		game.stage.should == Stage::newGame
 
 		game.start nil
+		game.stage.should == Stage::receivingPlay3x3
+
+		game.receive_signal "signal" => "YES"
 		game.stage.should == Stage::receivingPlayVsAI
 
 		game.receive_signal "signal" => "YES"
@@ -46,6 +50,7 @@ describe HTTPGame do
 
 		game.receive_signal "signal" => "MOVE", "coords" => [2, 0]
 		game.receive_signal "signal" => "MOVE", "coords" => [2, 1]
+
 		game.stage.should == Stage::receivingStartNewGame
 	end
 
@@ -54,12 +59,14 @@ describe HTTPGame do
 		game2 = HTTPGame.new
 
 		game1.start nil
+		game1.receive_signal "signal" => "YES"
 		game1.receive_signal "signal" => "NO"
 
 		game1.opponent.should be_nil
 		game1.waiting_for_opponent.should be_true
 
 		game2.start nil
+		game2.receive_signal "signal" => "YES"
 		game2.receive_signal "signal" => "NO"
 
 		game1.opponent.should == game2
@@ -118,9 +125,10 @@ describe HTTPGame do
 		game1, game2 = start_two_player_game
 		game2.receive_signal "signal" => "EXIT"
 
-		game1.receive_signal "signal" => "YES"
-		game1.receive_signal "signal" => "YES"
-		game1.receive_signal "signal" => "YES"
+		game1.receive_signal "signal" => "YES" # start a new game
+		game1.receive_signal "signal" => "YES" # play 3x3 game
+		game1.receive_signal "signal" => "YES" # play vs. AI
+		game1.receive_signal "signal" => "YES" # play as X
 
 		game1.two_player?.should == false
 		game1.stage.should == Stage::receivingMove
@@ -128,5 +136,22 @@ describe HTTPGame do
 
 		game1.receive_signal "signal" => "MOVE", "coords" => [0, 0]
 		game1.get_ruby_grid[0][0].should == "X"
+	end
+
+	it "shouldn't connect a 3x3 player with a 4x4 player" do
+		game1 = HTTPGame.new
+		game1.start nil
+		game1.receive_signal "signal" => "YES"
+		game1.receive_signal "signal" => "NO"
+		game1.get_ruby_grid.length.should == 3
+
+		game2 = HTTPGame.new
+		game2.start nil
+		game2.receive_signal "signal" => "NO"
+		game2.receive_signal "signal" => "NO"
+		game2.get_ruby_grid.length.should == 4
+
+		game1.opponent.should be_nil
+		game2.opponent.should be_nil
 	end
 end
