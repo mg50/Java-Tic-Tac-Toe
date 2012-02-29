@@ -1,6 +1,8 @@
 package javattt;
 
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,10 +31,16 @@ public class Console implements UI {
 
     public void update(Board board) {
         String display = "";
-        for(int y = 0; y < 3; y++) {
-            display += getCellSymbol(board, 0, y) + "|" + getCellSymbol(board, 1, y) + "|" +
-                       getCellSymbol(board, 2, y) + "\n";
-            if(y < 2) display += "-----\n";
+        for(int y = 0; y < board.size; y++) {
+            for(int x = 0; x < board.size; x++) {
+                display += getCellSymbol(board, x, y);
+                if(x < board.size - 1) display += "|";
+                else display += "\n";
+            }
+            if(y < board.size - 1) {
+                for(int i = 0; i < board.size * 2 - 1; i++) display += "-";
+                display += "\n";
+            }
         }
         
         try {            
@@ -58,8 +66,9 @@ public class Console implements UI {
             System.out.println("Error reading move!");
         }
 
-        if(move != null) return new TransitionData(move);
-        else return new TransitionData(TransitionData.Signal.INVALID);
+        if(move == null || move[0] < 0 || move[0] >+ board.size || move[1] < 0 || move[1] >= board.size)
+            return new TransitionData(TransitionData.Signal.INVALID);
+        else return new TransitionData(move);
     }
     
     public TransitionData prompt(String msg) {
@@ -79,7 +88,11 @@ public class Console implements UI {
         else if(answer.equals("n")) return new TransitionData(false);
         else return new TransitionData(TransitionData.Signal.INVALID);
     }
-    
+
+    public TransitionData promptPlay3x3() {
+        return prompt("Play a 3x3 game?");
+    }
+
     public TransitionData promptPlayAsX() {
         return prompt("Play as X?");
     }
@@ -122,8 +135,26 @@ public class Console implements UI {
     }
     
     public int[] parseMove(String moveString) {
-        int[] move;
+        int[] move = null;
         
+        Pattern p = Pattern.compile("^(\\d+) (\\d+)$");
+        Matcher m = p.matcher(moveString);
+        m.matches();
+        String xString = m.group(1);
+        String yString = m.group(2);
+        
+        if(moveString.equals("help")) {
+
+        }
+        else if(xString == null || yString == null) {
+
+        }
+        else {
+            int x = Integer.parseInt(xString);
+            int y = Integer.parseInt(yString);
+            move = new int[] {x - 1, y - 1};
+        }
+/*
         if(moveString.equals("help")) {
             try {
                 String helpString = "Type one of the following to make a move: top left, top middle, top right, " +
@@ -135,17 +166,8 @@ public class Console implements UI {
                 System.out.println("Error printing help message!");
             }
         }
-        
-        if(moveString.equals("top left")) move = new int[] {0, 0};
-        else if(moveString.equals("top middle")) move = new int[] {1, 0};
-        else if(moveString.equals("top right")) move = new int[] {2, 0};
-        else if(moveString.equals("middle left")) move = new int[] {0, 1};
-        else if(moveString.equals("center")) move = new int[] {1, 1};
-        else if(moveString.equals("middle right")) move = new int[] {2, 1};
-        else if(moveString.equals("bottom left")) move = new int[] {0, 2};
-        else if(moveString.equals("bottom middle")) move = new int[] {1, 2};
-        else if(moveString.equals("bottom right")) move = new int[] {2, 2};
-        else move = null;
+
+*/
         return move;
     }
 }

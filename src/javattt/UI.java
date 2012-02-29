@@ -11,6 +11,7 @@ public interface UI {
 
     void update(Board board);
     TransitionData promptMove(Board board);
+    TransitionData promptPlay3x3();
     TransitionData promptPlayAsX();
     TransitionData promptPlayVsAI();
     TransitionData promptStartNewGame();

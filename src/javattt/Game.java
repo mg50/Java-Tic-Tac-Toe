@@ -43,16 +43,24 @@ public class Game {
 
         switch(stage) {
             case newGame:
-                board = new Board();
                 playerX = null;
                 playerO = null;
-                stage = Stage.receivingPlayVsAI;
+                stage = Stage.receivingPlay3x3;
                 onNewGame();
+                return ui.promptPlay3x3();
+
+            case receivingPlay3x3:
+                if(data.signal == TransitionData.Signal.INVALID) break;
+                
+                if(data.signal == TransitionData.Signal.YES) board = new Board(3);
+                else board = new Board(4);
+                
+                stage = Stage.receivingPlayVsAI;
                 return ui.promptPlayVsAI();
 
             case receivingPlayVsAI:
                 if(data.signal == TransitionData.Signal.INVALID) { //If player enters invalid input
-                    stage = Stage.newGame;
+                    return ui.promptPlayVsAI();
                 }
                 else if(data.signal == TransitionData.Signal.YES) {
                     stage = Stage.promptingPlayAsX;
@@ -79,10 +87,10 @@ public class Game {
 
                 if(data.signal == TransitionData.Signal.YES) {
                     playerX = currentPlayer = new HumanPlayer(Side.X);
-                    playerO = new AIPlayer(Side.O);
+                    playerO = new AIPlayer(Side.O, board.size);
                 }
                 else {
-                    playerX = currentPlayer = new AIPlayer(Side.X);
+                    playerX = currentPlayer = new AIPlayer(Side.X, board.size);
                     playerO = new HumanPlayer(Side.O);
                 }
 

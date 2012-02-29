@@ -9,6 +9,7 @@ package javattt;
  */
 public enum Stage {
     newGame,
+    receivingPlay3x3,
     receivingPlayVsAI,
     promptingPlayAsX,
     receivingPlayAsX,

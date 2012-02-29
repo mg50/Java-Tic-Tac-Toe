@@ -31,7 +31,7 @@ public class BoardTest extends TestCase {
 
     @Test
     public void testGetCell() throws Exception {
-        Board board1 = new Board();
+        Board board1 = new Board(3);
         assertEquals(board1.getCell(0, 0), _);
         
         Board board2 = new Board(TestGrid1);
@@ -40,7 +40,7 @@ public class BoardTest extends TestCase {
     
     @Test
     public void testSetCell() throws Exception {
-        Board board1 = new Board();
+        Board board1 = new Board(3);
         board1.setCell(0, 0, O);
         assertEquals(board1.getCell(0, 0), O);
 
@@ -51,7 +51,7 @@ public class BoardTest extends TestCase {
 
     @Test
     public void testRows() throws Exception {
-        Board board1 = new Board();
+        Board board1 = new Board(3);
         assertArrayEquals(board1.rows()[1], new Side[] {_, _, _});
         
         Board board2 = new Board(TestGrid1);
@@ -59,7 +59,7 @@ public class BoardTest extends TestCase {
     }
 
     public void testColumns() throws Exception {
-        Board board1 = new Board();
+        Board board1 = new Board(3);
         assertArrayEquals(board1.columns()[2], new Side[] {_, _, _});
         
         Board board2 = new Board(TestGrid1);
@@ -67,7 +67,7 @@ public class BoardTest extends TestCase {
     }
     
     public void testDiagonals() throws Exception {
-        Board board1 = new Board();
+        Board board1 = new Board(3);
         assertArrayEquals(board1.diagonals()[0], new Side[] {_, _, _});
 
         Board board2 = new Board(TestGrid1);
@@ -102,12 +102,12 @@ public class BoardTest extends TestCase {
     }
     
     public void testEqualsOne() throws Exception {
-        Board board = new Board();
+        Board board = new Board(3);
         assertTrue(board.equals(board.duplicateBoard()));
     }
     
     public void testEqualsTwo() throws Exception {
-        Board board = new Board();
+        Board board = new Board(3);
         Board board2 = board.duplicateBoard();
         board2.setCell(0, 0, X);
         assertFalse(board.equals(board2));
@@ -131,6 +131,36 @@ public class BoardTest extends TestCase {
 
         Board board3 = new Board(TestGrid3);
         assertEquals(board3.winner(), null);
+    }
+
+    public void testWinnerTwo() throws Exception {
+        Side[][] grid = {{X, X, X, X},
+                         {O, O, O, _},
+                         {_, _, _, _},
+                         {_, _, _, _}};
+
+        Board board = new Board(grid);
+        assertEquals(board.winner(), X);
+    }
+    
+    public void testWinnerThree() throws Exception {
+        Side[][] grid = {{O, _, _, X},
+                         {O, _, _, X},
+                         {O, _, _, X},
+                         {_, _, _, X}};
+        
+        Board board = new Board(grid);
+        assertEquals(board.winner(), X);
+    }
+
+    public void testWinnerFour() throws Exception {
+        Side[][] grid = {{O, X, X, X},
+                         {X, O, _, _},
+                         {_, _, O, _},
+                         {_, _, _, O}};
+
+        Board board = new Board(grid);
+        assertEquals(board.winner(), O);
     }
 
     public void testChildNodesOne() {

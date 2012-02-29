@@ -14,10 +14,20 @@ import java.util.Arrays;
 public class Board {
 
 
-    private final static Side[][] BlankGrid = {{Side._, Side._, Side._},
-                                               {Side._, Side._, Side._},
-                                               {Side._, Side._, Side._}};
+    public static Side[][] blankGrid(int size) {
+        Side[][] blank = new Side[size][size];
+        for(int y = 0; y < size; y++) {
+            for(int x = 0; x < size; x++) {
+                blank[x][y] = Side._;
+            }
+        }
 
+        return blank;
+    }
+
+    public static final int DEFAULT_SIZE = 3;
+
+    public int size;
 
     public static Side otherSide(Side side) {
         if(side == Side.X) return Side.O;
@@ -26,10 +36,11 @@ public class Board {
 
     private Side[][] grid;
     
-    private Side[][] copyGrid(Side[][] input_grid) {
-        Side[][] out = new Side[3][3];
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
+    private static Side[][] copyGrid(Side[][] input_grid) {
+        int size = input_grid.length;
+        Side[][] out = new Side[size][size];
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
                 out[i][j] = input_grid[i][j];
             }
         }
@@ -38,7 +49,12 @@ public class Board {
     }
 
     public Board() {
-        grid = copyGrid(BlankGrid);
+        this(DEFAULT_SIZE);
+    }
+    
+    public Board(int size) {
+        this.size = size;
+        grid = copyGrid(blankGrid(size));
     }
 
     public Board duplicateBoard() {
@@ -50,6 +66,7 @@ public class Board {
     }
 
     public Board(Side[][] input_grid) {
+        size = input_grid.length;
         grid = copyGrid(input_grid);
     }
 
@@ -66,9 +83,9 @@ public class Board {
     }
     
     public Side[][] columns() {
-        Side[][] cols = new Side[3][3];
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
+        Side[][] cols = new Side[size][size];
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
                 cols[i][j] = grid[j][i];
             }
         }
@@ -77,8 +94,14 @@ public class Board {
     }
     
     public Side[][] diagonals() {
-        Side[] left_diag = {getCell(0, 0), getCell(1, 1), getCell(2, 2)};
-        Side[] right_diag = {getCell(0, 2), getCell(1, 1), getCell(2, 0)};
+        Side[] left_diag = new Side[size];
+        Side[] right_diag = new Side[size];
+        
+        for(int i = 0; i < size; i++) {
+            left_diag[i] = getCell(i, i);
+            right_diag[i] = getCell(size - i - 1, i);
+        }
+
         return new Side[][] {left_diag, right_diag};
     }
     
@@ -86,15 +109,25 @@ public class Board {
         Side[][] rows = rows();
         Side[][] columns = columns();
         Side[][] diagonals = diagonals();
-    
-        return new Side[][] {rows[0], rows[1], rows[2], columns[0], columns[1], columns[2], diagonals[0], diagonals[1]};
+        
+        ArrayList<Side[]> lines = new ArrayList<Side[]>();
+        for(Side[] row : rows) lines.add(row);
+        for(Side[] column : columns) lines.add(column);
+        for(Side[] diag : diagonals) lines.add(diag);
+        
+        Side[][] ret = new Side[lines.size()][size];
+        int numLines = lines.size();
+        for(int i = 0; i < numLines; i++) ret[i] = lines.get(i);
+
+        return ret;
     }
 
     public Boolean hasEmptyCell() {
         Side[][] lines = lines();
         for(Side[] line : lines) {
-            if(line[0] == Side._ || line[1] == Side._ || line[2] == Side._)
-                return true;
+            for(int i = 0; i < line.length; i++) {
+                if(line[i] == Side._) return true;
+            }
         }
 
         return false;
@@ -102,8 +135,8 @@ public class Board {
     
     public ArrayList<int[]> emptyCoords() {
         ArrayList<int[]> list = new ArrayList<int[]>();
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
                 if(getCell(i, j) == Side._) {
                     list.add(new int[] {i, j});
                 }
@@ -117,9 +150,13 @@ public class Board {
     public Side winner() {
         Side[][] lines = lines();
 
-        Side[] winningXLine = {Side.X, Side.X, Side.X};
-        Side[] winningOLine = {Side.O, Side.O, Side.O};
-        
+        Side[] winningXLine = new Side[size];
+        Side[] winningOLine = new Side[size];
+        for(int i = 0; i < size; i++) {
+            winningXLine[i] = Side.X;
+            winningOLine[i] = Side.O;
+        }
+
         for(Side[] line : lines) {
             if(Arrays.equals(line, winningXLine)) return Side.X;
             else if(Arrays.equals(line, winningOLine)) return Side.O;
@@ -141,8 +178,8 @@ public class Board {
     
     public int hashCode() {
         int hash = 0;
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
                 hash = 10*hash + sideValue(getCell(j, i));
             }
         }
@@ -158,9 +195,9 @@ public class Board {
     
     public Board[] childNodes(Side side) {
         ArrayList<int[]> emptyCoords = emptyCoords();
-        int size = emptyCoords.size();
-        Board[] children = new Board[size];
-        for(int i = 0; i < size; i++) {
+        int numEmptyCoords = emptyCoords.size();
+        Board[] children = new Board[numEmptyCoords];
+        for(int i = 0; i < numEmptyCoords; i++) {
             int[] coords = emptyCoords.get(i);
             children[i] = duplicateBoard();
             children[i].setCell(coords[0], coords[1], side);
