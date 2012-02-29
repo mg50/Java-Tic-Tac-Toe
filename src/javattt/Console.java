@@ -52,7 +52,6 @@ public class Console implements UI {
             outputStream.flush();
             String moveString = inputStream.readLine();
             if(moveString.equals("exit")) return new TransitionData(TransitionData.Signal.EXIT);
-            if(moveString.equals("DEBUG")) return new TransitionData(TransitionData.Signal.DEBUG);
             move = parseMove(moveString);
         }
         catch (Exception e) {
@@ -71,7 +70,6 @@ public class Console implements UI {
             outputStream.flush();
             answer = inputStream.readLine();
             if(answer.equals("exit")) return new TransitionData(TransitionData.Signal.EXIT);
-            if(answer.equals("DEBUG")) return new TransitionData(TransitionData.Signal.DEBUG);
         }
         catch (Exception e) {
             System.out.println("Error reading/writing prompt!");

@@ -7,6 +7,8 @@ package javattt;
  * Time: 1:34 PM
  * To change this template use File | Settings | File Templates.
  */
+
+
 public class Game {
     public Stage stage = Stage.newGame;
     public UI ui;
@@ -17,7 +19,7 @@ public class Game {
     public int xWinsCount;
     public int oWinsCount;
 
-
+    
     public void move(int x, int y, Player player) {
         board.setCell(x, y, player.side);
     }
@@ -28,13 +30,24 @@ public class Game {
     }
     
     public TransitionData transition(TransitionData data) {
-        if(data != null && data.signal == TransitionData.Signal.EXIT) stage = Stage.halt;
-        if(data != null && data.signal == TransitionData.Signal.DEBUG) return null;
+        TransitionData returnData = null;
+
+        if(data != null) {
+            if(data.signal == TransitionData.Signal.EXIT) stage = Stage.halt;
+            else if(data.signal == TransitionData.Signal.PAUSE) return null;
+            else if(data.signal == TransitionData.Signal.RESTART) {
+                stage = Stage.newGame;
+            }
+        }
+        
 
         switch(stage) {
             case newGame:
                 board = new Board();
+                playerX = null;
+                playerO = null;
                 stage = Stage.receivingPlayVsAI;
+                onNewGame();
                 return ui.promptPlayVsAI();
 
             case receivingPlayVsAI:
@@ -50,6 +63,8 @@ public class Game {
                     stage = Stage.queryingMove;
                     ui.update(board);
                 }
+                
+                onReceivingPlayVsAI();
                 break;
 
             case promptingPlayAsX:
@@ -73,6 +88,7 @@ public class Game {
 
                 stage = Stage.queryingMove;
                 ui.update(board);
+
                 break;
 
             case queryingMove:
@@ -92,16 +108,17 @@ public class Game {
                     Side victor = board.winner();
                     if(victor != null || board.isDraw()) {
                         stage = Stage.gameOver;
-                        if(victor != null) return new TransitionData(victor);
-                        else return null;
+                        if(victor != null) returnData = new TransitionData(victor);
                     }
                     else {
                         stage = Stage.queryingMove;
                         currentPlayer = currentPlayer == playerX ? playerO : playerX;
                     }
+
+                    onSuccessfulMove(data);
                 }
                 else {
-                    stage = Stage.queryingMove;
+                    returnData = new TransitionData(TransitionData.Signal.INVALID);
                 }
 
                 break;
@@ -134,15 +151,23 @@ public class Game {
                 break;
 
             case halt:
+                onHalt();
                 break;
         }
 
-        return null;
+        return returnData;
     }
 
     public void start(TransitionData data) {
-        while(stage != Stage.halt) {
+        while(stage != Stage.halt && (data == null || data.signal != TransitionData.Signal.PAUSE)) {
             data = transition(data);
         }
     }
+
+    //hooks
+
+    public void onNewGame() {};
+    public void onSuccessfulMove(TransitionData data) {}
+    public void onReceivingPlayVsAI() {}
+    public void onHalt() {}
 }

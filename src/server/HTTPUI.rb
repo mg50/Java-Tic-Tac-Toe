@@ -1,30 +1,33 @@
 
 include_class Java::Javattt.UI
+include_class Java::Javattt.TransitionData::Signal
 
 class HTTPUI
-	include Java::Javattt.UI
+	include UI
 
 	def initialize
-		touch
 	end
 
 
 	def update(board)
-
 	end
 
-	def promptMove
+	def promptMove(board)
+		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
 	end
 
 	def promptPlayAsX
+		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
 	end
 
-	def promptVsAi
+	def promptPlayVsAI
+		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
 	end
 
 	def promptStartNewGame
+		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
 	end
 
-	def victoryMessage
+	def victoryMessage(victor, xWinsCount, oWinsCount)
 	end
 end

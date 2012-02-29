@@ -1,8 +1,7 @@
-
 $(document).ready(function() {
 	var X = SIDES.X,
 		O = SIDES.O,
-		EMPTY = SIDES.EMPTY
+		_ = SIDES.EMPTY
 
 	var stage = "#board_wrapper"
 
@@ -15,7 +14,7 @@ $(document).ready(function() {
 		})
 
 		it("initializes properly", function() {
-			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
+			var game = [[X, X, O], [X, O, _], [_, _, O]];
 
 			board = new Board(stage, game);
 			for(var i = 0; i < 3; i++) {
@@ -27,7 +26,7 @@ $(document).ready(function() {
 		});
 
 		it("it gets the value of a cell", function() {
-			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
+			var game = [[X, X, O], [X, O, _], [_, _, O]];
 
 			board = new Board(stage, game);
 			for(var i = 0; i < 3; i++) {
@@ -38,51 +37,16 @@ $(document).ready(function() {
 			}
 		});		
 
-		it("encodes itself as JSON correctly", function() {
-			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
-			var board = new Board(stage, game);
-			expect(board.jsonify()).toEqual('[["X","X","O"],["X","O",""],["","","O"]]');
+		it("updates the game", function() {
+			board = new Board(stage);
 
-			var game2 = [[EMPTY, EMPTY, O], [O, X, X], [X, X, O]];
-			var board2 = new Board(stage, game2);
-			expect(board2.jsonify()).toEqual('[["","","O"],["O","X","X"],["X","X","O"]]');			
+			var gameState = [[X, O, X], [O, _, _], [_, _, X]]
+			board.updateDom(gameState);
+
+			expect(board.getCell(0, 0)).toEqual(X);
+			expect(board.getCell(1, 0)).toEqual(O);
+			expect(board.getCell(1, 1)).toEqual(_);
+			expect(board.getCell(2, 2)).toEqual(X);
 		})
-
-		it("moves as X", function() {
-			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
-			var board = new Board(stage, game);
-			board.currentPlayer = X;
-						
-			board.move(2, 1);
-			var side = board.getCell(2, 1);
-			expect(side).toEqual(X);
-		})
-
-		it("moves as O", function() {
-			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
-			var board = new Board(stage, game);
-			board.currentPlayer = O;
-						
-			board.move(0, 2);
-			var side = board.getCell(0, 2);
-			expect(side).toEqual(O);
-		})
-
-		it("doesn't move on a non-empty square", function() {
-			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
-			var board = new Board(stage, game);
-			board.currentPlayer = X;
-						
-			board.move(2, 0);
-			var side = board.getCell(2, 0);
-			expect(side).toEqual(O);
-		});
-/*
-		it("makes a move when instructed by the server", function() {
-			var game = [[X, X, O], [X, O, EMPTY], [EMPTY, EMPTY, O]];
-			var board = new Board(stage, game);
-			board.receiveResponse({move:[2, 1]});
-			expect(board.getCell(2, 1)).toEqual(O);
-		})*/
-	})
+	});
 });

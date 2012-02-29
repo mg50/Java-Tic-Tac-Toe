@@ -15,17 +15,12 @@ class Connection
 
 	def self.register
 		@@id_counter += 1
-		@@connections[@@id_counter] = Connection.new
+		@@connections[@@id_counter] = Connection.new @@id_counter
 		@@id_counter
 	end
 
-	def initialize
+	def initialize(id)
 		@game = HTTPGame.new
-		@game.ui = HTTPUI.new
-	end
-
-	def self.create
-		Connection[@@id_counter]
 	end
 
 	def self.[](id)

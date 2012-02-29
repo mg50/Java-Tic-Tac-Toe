@@ -1,3 +1,5 @@
 .idea
 out
 test.iml
+src/javattt/*.txt
+src/javattt/*.jar

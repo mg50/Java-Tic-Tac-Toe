@@ -7,11 +7,11 @@ require 'json'
 
 describe App, "" do
 	before :each do
-		conn1 = Connection.new(1)
-		conn2 = Connection.new(2)
+		conn1 = Connection.register
+		conn2 = Connection.register
 
 		Connection.class_eval do
-			@@connections = {1 => conn1, 2 => conn2}
+			@@connections = {1 => Connection[conn1], 2 => Connection[conn2]}
 		end
 	end
 

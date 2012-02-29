@@ -1,6 +1,6 @@
 var Board, 
 	SIDES = {X: "X", O: "O", EMPTY: ""};
-
+var PAUSE;
 (function() {
 	var X = SIDES.X,
 		O = SIDES.O,
@@ -9,19 +9,24 @@ var Board,
 	var ROW_CLASS = 'row',
 		CELL_CLASS = 'cell',
 		ROW_SELECTOR = '.' + ROW_CLASS,
-		CELL_SELECTOR = '.' + CELL_CLASS;
+		CELL_SELECTOR = '.' + CELL_CLASS,
+		MESSAGE_SELECTOR = '#message'
 
+	var HOST = 'http://localhost:3000/'
 
 
 	Board = function(stage, gameState) {
 		this.dom = Board.buildDom(gameState);
 		$(stage).append(this.dom);
+		this.lastTime = 0;
 
-		this.currentPlayer = X;
-		this.readyForMove = true;
-		this.playVsAi = false;
-
+		this.gamePlaying = false;
 		this.createListeners();
+		this.statusInterval = null;
+	}
+
+	Board.prototype.displayMessage = function(msg) {
+		$(MESSAGE_SELECTOR).html(msg);
 	}
 
 	Board.buildDom = function(gameState) {
@@ -54,80 +59,106 @@ var Board,
 			var row = $(this).closest(ROW_SELECTOR).get(0);
 			var x = $(row).find(CELL_SELECTOR).index(this);
 			var y = $(self.dom).find(ROW_SELECTOR).index(row);
-			self.move(x, y, function() {
-				self.sendBoardState();
+			self.query({
+				signal: "MOVE",
+				coords: [x, y]
+			})
+		})
+	}
+
+	Board.prototype.updateDom = function(gameState) {
+		$(ROW_SELECTOR, this.dom).each(function(y) {
+			$(CELL_SELECTOR, this).each(function(x) {
+				$(this).html(gameState[y][x])
 			});
 		})
 	}
 
-	Board.prototype.jsonify = function() {
-		var gameState = [];
-		$(this.dom).find(ROW_SELECTOR).each(function() {
-			var row = [];
-			$(this).find(CELL_SELECTOR).each(function() {
-				row.push($(this).html());
-			})
-			gameState.push(row);
-		})
+	Board.prototype.getStatus = function() {
+		var self = this;
+		if(!self.gamePlaying) return;
 
-		return JSON.stringify(gameState);
+		this.statusInterval = setInterval(function() {
+			if(PAUSE) return;
+			$.ajax({
+				url: HOST + 'status',
+				type: 'post',
+				dataType: 'json',
+				success: function(r) {
+					console.log("Server status: ", r);
+					if(board.lastTime <= r.timestamp) return;
+
+					self.updateDom(r.board)
+					self.respondToServerStatus(r);
+				}
+			});
+		}, 500);
+	}
+
+	Board.prototype.query = function(params, cb) {
+		$.ajax({
+			url: HOST + 'query',
+			type: 'post',
+			data: 'json=' + JSON.stringify(params),
+			dataType: 'json',
+			success: function(r) {
+				console.log("Response from query: ", r);
+				if(typeof cb === 'function') cb();
+			}
+		})
+	}
+
+	Board.prototype.respondToServerStatus = function(msg) {
+		if(msg.stage === 'receivingMove') {
+			this.readyForMove = true;
+			this.displayMessage("It's player " + msg.currentPlayer + "'s turn.")
+		}
+
+		else if(msg.stage === "receivingPlayVsAI") {
+			this.query({
+				signal: confirm("Play vs. AI?") ? "YES" : "NO"
+			});
+		}
+
+		else if(msg.stage === "receivingPlayAsX") {
+			this.query({
+				signal: confirm('Play as X?') ? "YES" : "NO"
+			});
+		}
+
+		else if(msg.stage === "receivingStartNewGame") {
+			this.query({
+				signal: confirm("Start new game?") ? "YES" : "NO"
+			});
+		}
+
+		else if(msg.stage === 'halt') {
+			this.gamePlaying = false;
+			this.displayMessage("");
+			clearInterval(this.statusInterval);
+		}
+
+
+		else console.log("Can't understand response: ", msg);
 	}
 
 	Board.prototype.begin = function() {
-		//Clear board		
-		$(this.dom).find(CELL_SELECTOR).each(function() {
-			$(this).html(EMPTY);
-		});
-
-		this.currentPlayer = X;
-		if(confirm("Play vs. AI?")) {
-			this.playVsAi = true;
-
-			if(!confirm("Play as X?")) {
-				this.sendBoardState();
-			}
-		}
-		else {
-			this.playVsAi = false;
-		}
-	}
-
-	Board.prototype.move = function(x, y, callback) {
-		var cell = $(this.dom).find(ROW_SELECTOR).eq(y).find(CELL_SELECTOR).eq(x)
-		if(!this.readyForMove || cell.html() !== EMPTY) return;
-
-		cell.html(this.currentPlayer);
-		this.currentPlayer = this.currentPlayer === X ? O : X;
-
-		if(typeof callback === "function") callback();
-	}
-
-	Board.prototype.sendBoardState = function() {
 		var self = this;
-		self.readyForMove = false;
 		$.ajax({
-			url: 'http://localhost:3000/',
+			url: HOST,
 			type: 'post',
 			dataType: 'json',
-			data: 'gameState=' + self.jsonify() + '&numPlayers=' + (self.playVsAi ? 1 : 2),
-			success: function(response) {
-				self.readyForMove = true;
-
-				if(response.move && self.playVsAi) {
-					self.move(response.move[0], response.move[1]);
-				}
-				if(response.outcome) {
-					alert(response.outcome);
-					if(confirm('Play again?')) {
-						self.begin();
-					}
-					else self.readyForMove = false;
-				}
+			success: function(r) {
+				console.log(r);
+				self.gamePlaying = true;
+				self.lastTime = r.timestamp;
+				self.getStatus();
+				console.log(r);
 			},
-			error: function(e) {
-				console.log(e);
-				alert("Error!");
+			error: function(r) {
+				//alert("Couldn't connect to server!");
+				console.log(r.responseText)
 			}
-		});
+		})		
 	}
 })();
