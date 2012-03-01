@@ -136,17 +136,27 @@ public class Console implements UI {
     
     public int[] parseMove(String moveString) {
         int[] move = null;
-        
+
+        if(moveString.equals("help")) {
+            try {
+                String helpString = "Type in the x-y coordinates of the square you'd like to play, separated by a space. " +
+                                    "For example, typing '1 1' attempts to play the top-left square.\n";
+                outputStream.write(helpString);
+                outputStream.flush();
+                return null;
+            }
+            catch (Exception e) {
+                System.out.println("Error printing message!");
+            }
+        }
+
         Pattern p = Pattern.compile("^(\\d+) (\\d+)$");
         Matcher m = p.matcher(moveString);
-        m.matches();
+        if(!m.matches()) return null;
         String xString = m.group(1);
         String yString = m.group(2);
-        
-        if(moveString.equals("help")) {
 
-        }
-        else if(xString == null || yString == null) {
+        if(xString == null || yString == null) {
 
         }
         else {
@@ -154,20 +164,7 @@ public class Console implements UI {
             int y = Integer.parseInt(yString);
             move = new int[] {x - 1, y - 1};
         }
-/*
-        if(moveString.equals("help")) {
-            try {
-                String helpString = "Type one of the following to make a move: top left, top middle, top right, " +
-                                    "middle left, center, middle right, bottom left, bottom middle, bottom right.\n";
-                outputStream.write(helpString);
-                outputStream.flush();
-            }
-            catch (Exception e) {
-                System.out.println("Error printing help message!");
-            }
-        }
 
-*/
         return move;
     }
 }

@@ -47,7 +47,7 @@ public class AIPlayer extends Player {
                 champion = emptyCoord;
             }
         }
-        
+
         return new TransitionData(champion);
     }
     

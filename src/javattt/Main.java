@@ -11,6 +11,6 @@ public class Main {
     
     public static void main(String[] args) {
         LocalGame game = new LocalGame(new Console());
-        game.start(null);
+        game.start();
     }
 }
