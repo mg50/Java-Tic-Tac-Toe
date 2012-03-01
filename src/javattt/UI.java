@@ -16,4 +16,5 @@ public interface UI {
     TransitionData promptPlayVsAI();
     TransitionData promptStartNewGame();
     void victoryMessage(Side winner, int xWinCount, int oWinCount);
+    void displayHelp();
 }

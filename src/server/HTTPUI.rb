@@ -34,4 +34,7 @@ class HTTPUI
 
 	def victoryMessage(victor, xWinsCount, oWinsCount)
 	end
+
+	def displayHelp
+	end
 end

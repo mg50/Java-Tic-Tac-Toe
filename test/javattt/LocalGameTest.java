@@ -27,7 +27,6 @@ public class LocalGameTest extends TestCase {
         assertNull(game.playerX);
         assertNull(game.playerO);
         assertNull(game.currentPlayer);
-
     }
 
     public void test3x3Prompt() throws Exception {
@@ -426,6 +425,4 @@ public class LocalGameTest extends TestCase {
 
         assertTrue(game.state instanceof HaltState);
     }
-
-
 }
