@@ -13,9 +13,13 @@ Java::Javattt.Side.class_eval do
 end
 
 class HTTPGame < Java::Javattt.Game
-	attr_accessor :opponent, :waiting_for_opponent
+	attr_accessor :opponent_game, :waiting_for_opponent, :room
 
 	@@waiting_games = {}
+
+	def self.clear_waiting_games
+		@@waiting_games = {}
+	end
 
 	def initialize
 		super
@@ -84,7 +88,7 @@ class HTTPGame < Java::Javattt.Game
 
 	#Game hooks
 	def onNewGame
-		opponent = nil
+		opponent_game = nil
 		self.waiting_for_opponent = false
 	end
 
@@ -96,9 +100,9 @@ class HTTPGame < Java::Javattt.Game
 		else
 			return if self.waiting_for_opponent
 
-			opponent.start move
+			opponent_game.start move
 			self.waiting_for_opponent = true
-			opponent.waiting_for_opponent = false
+			opponent_game.waiting_for_opponent = false
 		end
 	end
 
@@ -108,12 +112,17 @@ class HTTPGame < Java::Javattt.Game
 		size = self.board.size.to_i
 		self.waiting_for_opponent = true
 
-		if @@waiting_games[size].nil? or @@waiting_games[size].empty?
-			@@waiting_games[size] = [self]
+		@@waiting_games[size] ||= []
+
+		opponent_in_same_room = @@waiting_games[size].find {|game| game.room == self.room}
+
+		if opponent_in_same_room
+			self.opponent_game = opponent_in_same_room
+			opponent_in_same_room.opponent_game = self
+			@@waiting_games[size].delete opponent_in_same_room
+			opponent_in_same_room.waiting_for_opponent = false
 		else
-			self.opponent = @@waiting_games[size].shift
-			opponent.opponent = self
-			opponent.waiting_for_opponent = false
+			@@waiting_games[size] << self
 		end
 	end
 
@@ -124,7 +133,7 @@ class HTTPGame < Java::Javattt.Game
 	def onHalt
 		return unless two_player?
 
-		opponent.stage = Java::Javattt.Stage::gameOver
-		opponent.start nil
+		opponent_game.stage = Java::Javattt.Stage::gameOver
+		opponent_game.start nil
 	end
 end

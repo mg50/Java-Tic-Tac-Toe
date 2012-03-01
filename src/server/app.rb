@@ -16,8 +16,9 @@ class App < Sinatra::Base
 		game.start(nil) if game.stage.toString == "newGame"
 	end
 
-	get '/' do
+	get '/r/:room?' do
 		session[:id] = Connection.register unless session[:id]
+		Connection[session[:id]].game.room = params[:room]
 		conn = Connection[session[:id]]
 		if conn.game.stage == Java::Javattt.Stage::halt
 			conn.game.stage = Java::Javattt.Stage::newGame
