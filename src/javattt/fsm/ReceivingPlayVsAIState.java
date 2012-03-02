@@ -20,6 +20,7 @@ public class ReceivingPlayVsAIState extends State{
     
     public TransitionData yes() {
         game.state = new PromptingPlayAsXState(game);
+        game.onReceivingPlayVsAI();
         return null;
     }
     
@@ -27,6 +28,7 @@ public class ReceivingPlayVsAIState extends State{
         game.playerX = new HumanPlayer(Side.X);
         game.playerO = new HumanPlayer(Side.O);
         game.state = new BeginningGameState(game);
+        game.onReceivingPlayVsAI();
         return null;
     }
 

@@ -1,7 +1,6 @@
 package javattt;
 
-import javattt.fsm.HaltState;
-import javattt.fsm.NewGameState;
+import javattt.fsm.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,7 +27,7 @@ public abstract class Game {
     }
     
     public void start(TransitionData data) {
-        while(!(state instanceof HaltState) && (data == null || data.signal != TransitionData.Signal.PAUSE)) {
+        while(!(state instanceof javattt.fsm.HaltState) && (data == null || data.signal != TransitionData.Signal.PAUSE)) {
             data = state.transition(data);
         }
     }
@@ -36,8 +35,8 @@ public abstract class Game {
     //hooks
 
     public void onNewGame() {};
-    public void onSuccessfulMove(TransitionData data) {}
+    public void onSuccessfulMove(int[] coords) {}
     public void onReceivingPlayVsAI() {}
     public void onHalt() {}
-    public void onReceivingPlayAsX(TransitionData data) {}
+    public void onReceivingPlayAsX() {}
 }

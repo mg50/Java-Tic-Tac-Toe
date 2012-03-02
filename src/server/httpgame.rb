@@ -4,7 +4,6 @@ require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
 require File.join(File.dirname(__FILE__), 'HTTPUI')
 include_class Java::Javattt.Side
 include_class Java::Javattt.Game
-include_class Java::Javattt.Stage
 include_class Java::Javattt.TransitionData
 include_class Java::Javattt.TransitionData::Signal
 
@@ -31,10 +30,6 @@ class HTTPGame < Java::Javattt.Game
 		@timestamp = Time.now.to_i
 	end
 
-	def started?
-		stage == Stage.newGame
-	end
-
 	def get_ruby_grid
 		board.grid.map do |row|
 			row.map do |sym|
@@ -52,8 +47,8 @@ class HTTPGame < Java::Javattt.Game
 	def status
 		stat = {}
 		stat["timestamp"] = @timestamp
-		stat["stage"] = stage.toString
-		stat["board"] = get_ruby_grid
+		stat["state"] = state.class.name.split("::").last
+		stat["board"] = get_ruby_grid if board
 		stat["currentPlayer"] = currentPlayer == playerX ? "X" : "O"
 		stat
 	end
@@ -92,15 +87,14 @@ class HTTPGame < Java::Javattt.Game
 		self.waiting_for_opponent = false
 	end
 
-	def onSuccessfulMove(move)
+	def onSuccessfulMove(coords)
 		touch
 		if not two_player?
 			self.waiting_for_opponent = !current_player_human?
-			#binding.pry
 		else
 			return if self.waiting_for_opponent
 
-			opponent_game.start move
+			opponent_game.start TransitionData.new(coords)
 			self.waiting_for_opponent = true
 			opponent_game.waiting_for_opponent = false
 		end
@@ -126,14 +120,14 @@ class HTTPGame < Java::Javattt.Game
 		end
 	end
 
-	def onReceivingPlayAsX(data)
-		self.waiting_for_opponent = !current_player_human?		
+	def onReceivingPlayAsX
+		self.waiting_for_opponent = !(playerX.class == Java::Javattt.HumanPlayer)
 	end
 
 	def onHalt
 		return unless two_player?
 
-		opponent_game.stage = Java::Javattt.Stage::gameOver
+		opponent_game.state = Java::Javattt::fsm.GameOverState.new(opponent_game)
 		opponent_game.start nil
 	end
 end
