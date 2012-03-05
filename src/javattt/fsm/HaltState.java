@@ -15,7 +15,7 @@ public class HaltState extends State {
         super(game);
     }
     
-    public TransitionData pass() {
+    public TransitionData execute() {
         return null;
     }
 }

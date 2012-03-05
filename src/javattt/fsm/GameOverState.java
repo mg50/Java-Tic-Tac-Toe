@@ -16,6 +16,11 @@ public class GameOverState extends State {
         super(game);
     }
 
+    public TransitionData execute() {
+        game.state = new PromptingStartNewGameState(game);
+        return null;
+    }
+
     public TransitionData victor(Side side) {
         if(side == Side.X) game.xWinsCount++;
         else if(side == Side.O) game.oWinsCount++;

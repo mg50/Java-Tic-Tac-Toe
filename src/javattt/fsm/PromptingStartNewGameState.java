@@ -15,7 +15,7 @@ public class PromptingStartNewGameState extends State {
         super(game);
     }
 
-    public TransitionData pass() {
+    public TransitionData execute() {
         game.state = new ReceivingStartNewGameState(game);
         return game.ui.promptStartNewGame();
     }

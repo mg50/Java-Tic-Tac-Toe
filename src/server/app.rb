@@ -3,21 +3,33 @@ require 'sinatra'
 require 'json'
 require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
 require File.join(File.dirname(__FILE__), 'connection')
-require File.join(File.dirname(__FILE__), 'solver')
-require File.join(File.dirname(__FILE__), 'HTTPUI')
+require File.join(File.dirname(__FILE__), 'httpui')
+require File.join(File.dirname(__FILE__), 'serializer')
 
 TEST = false unless defined? TEST
 
 class App < Sinatra::Base
 	enable :sessions
 
+	all_previous_games = Serializer.new.deserialize_all || []
+	ip_hash = {}
+	all_previous_games.each do |game|
+		ip_hash[game.ip] = game
+	end
+
+
 	def self.handshake(id)
 		game = Connection[id].game
 		game.start(nil) if game.stage.toString == "newGame"
 	end
 
-	get '/' do
-		session[:id] = Connection.register unless session[:id]
+	get '/r/:room?' do
+		unless session[:id]
+			session[:id] = Connection.register(request.ip) 			
+			Connection[session[:id]].game = ip_hash[@env['REMOTE_ADDR']] if ip_hash[@env['REMOTE_ADDR']]
+		end
+		Connection[session[:id]].game.room = params[:room]
+
 		conn = Connection[session[:id]]
 		if conn.game.stage == Java::Javattt.Stage::halt
 			conn.game.stage = Java::Javattt.Stage::newGame
@@ -43,6 +55,7 @@ class App < Sinatra::Base
 	post '/query' do
 		id = session[:id]
 		Connection[id].game.receive_signal JSON.parse params['json']
+		Serializer.new.serialize_and_save
 		JSON.generate "response" => true
 	end
 

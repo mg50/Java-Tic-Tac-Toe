@@ -1,0 +1,4 @@
+[{:
+state"HaltState:waiting_for_opponentT:playerX"HumanPlayer:playerO"AIPlayer:ip"127.0.0.1:currentPlayer"O:
+board[["X"O"X["X"O"O["O"X"X:	room"
+hello

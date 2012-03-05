@@ -16,7 +16,7 @@ public class PromptingMoveState extends State {
         super(game);
     }
 
-    public TransitionData pass() {
+    public TransitionData execute() {
         game.state = new ReceivingMoveState(game);
         return game.currentPlayer.determineNextMove(game.board, game.ui);
     }

@@ -19,7 +19,7 @@ public abstract class State {
     }
     
     public TransitionData transition(TransitionData data) {
-        if(data == null) return pass();
+        if(data == null) return execute();
 
         TransitionData ret = null;
         switch(data.signal) {
@@ -49,12 +49,8 @@ public abstract class State {
     public State(Game game) {
         this.game = game;
     }
-    
-    public TransitionData move(TransitionData move) {
-        return null;
-    };
-    
-    public TransitionData pass() {return null;}
+
+    public TransitionData execute() {return null;}
     public TransitionData yes() {return null;}
     public TransitionData no() {return null;}
     public TransitionData move(int[] coords) {return null;}

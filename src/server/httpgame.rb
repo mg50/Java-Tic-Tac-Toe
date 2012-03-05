@@ -13,7 +13,8 @@ Java::Javattt.Side.class_eval do
 end
 
 class HTTPGame < Java::Javattt.Game
-	attr_accessor :opponent, :waiting_for_opponent
+	attr_accessor :opponent_game, :waiting_for_opponent, :room, :ip
+
 
 	@@waiting_games = {}
 

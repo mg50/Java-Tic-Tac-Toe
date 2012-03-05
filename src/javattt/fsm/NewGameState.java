@@ -16,7 +16,7 @@ public class NewGameState extends State {
         super(game);
     }
 
-    public TransitionData pass() {
+    public TransitionData execute() {
         game.playerX = null;
         game.playerO = null;
         game.currentPlayer = null;

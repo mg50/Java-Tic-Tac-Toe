@@ -13,18 +13,23 @@ class Connection
 		@@connections.delete id
 	end
 
-	def self.register
+	def self.register(ip=nil)
 		@@id_counter += 1
-		@@connections[@@id_counter] = Connection.new @@id_counter
+		@@connections[@@id_counter] = Connection.new @@id_counter, ip
 		@@id_counter
-	end
+ 	end
 
-	def initialize(id)
+	def initialize(id, ip)
 		@game = HTTPGame.new
+		@game.ip = ip
 	end
 
-	def self.[](id)
-		@@connections[id]
+	def self.[](id=nil)
+		if id.nil?
+			@@connections
+		else
+			@@connections[id]
+		end
 	end
 
 	def self.clear_all

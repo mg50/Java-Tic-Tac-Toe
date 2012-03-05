@@ -15,7 +15,7 @@ public class PromptingPlayVsAIState extends State {
         super(game);
     }
 
-    public TransitionData pass() {
+    public TransitionData execute() {
         game.state = new ReceivingPlayVsAIState(game);
         return game.ui.promptPlayVsAI();
     }

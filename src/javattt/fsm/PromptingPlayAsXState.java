@@ -16,7 +16,7 @@ public class PromptingPlayAsXState extends State {
         super(game);
     }
 
-    public TransitionData pass() {
+    public TransitionData execute() {
         game.state = new ReceivingPlayAsXState(game);
         return game.ui.promptPlayAsX();
     }

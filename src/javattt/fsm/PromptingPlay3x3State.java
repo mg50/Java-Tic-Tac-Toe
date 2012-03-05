@@ -15,7 +15,7 @@ public class PromptingPlay3x3State extends State {
         super(game);
     }
 
-    public TransitionData pass() {
+    public TransitionData execute() {
         game.state = new ReceivingPlay3x3State(game);
         return game.ui.promptPlay3x3();
     }
