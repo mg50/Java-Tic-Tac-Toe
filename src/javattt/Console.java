@@ -134,21 +134,22 @@ public class Console implements UI {
         return getSideSymbol(board.getCell(x, y));
     }
     
+    public void displayHelp() {
+        try {
+            String helpString = "Type in the x-y coordinates of the square you'd like to play, separated by a space. " +
+                    "For example, typing '1 1' attempts to play the top-left square.\n";
+            outputStream.write(helpString);
+            outputStream.flush();
+        }
+        catch (Exception e) {
+            System.out.println("Error printing message!");
+        }        
+    }
+    
     public int[] parseMove(String moveString) {
         int[] move = null;
 
-        if(moveString.equals("help")) {
-            try {
-                String helpString = "Type in the x-y coordinates of the square you'd like to play, separated by a space. " +
-                                    "For example, typing '1 1' attempts to play the top-left square.\n";
-                outputStream.write(helpString);
-                outputStream.flush();
-                return null;
-            }
-            catch (Exception e) {
-                System.out.println("Error printing message!");
-            }
-        }
+        if(moveString.equals("help")) displayHelp();
 
         Pattern p = Pattern.compile("^(\\d+) (\\d+)$");
         Matcher m = p.matcher(moveString);

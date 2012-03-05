@@ -18,6 +18,7 @@ public class BeginningGameState extends State {
     public TransitionData execute() {
         game.currentPlayer = game.playerX;
         game.ui.update(game.board);
+        game.ui.displayHelp();
         game.state = new PromptingMoveState(game);
         return null;
     }

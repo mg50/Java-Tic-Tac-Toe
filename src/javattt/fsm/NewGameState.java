@@ -20,9 +20,8 @@ public class NewGameState extends State {
         game.playerX = null;
         game.playerO = null;
         game.currentPlayer = null;
-        game.board = null;
-        game.onNewGame();
         game.state = new PromptingPlay3x3State(game);
+        game.onNewGame();
         return null;
     }
 }

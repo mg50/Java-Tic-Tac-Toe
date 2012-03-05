@@ -40,6 +40,7 @@ public abstract class State {
                 break;
             case EXIT:
                 game.onHalt();
+                game.state = new HaltState(game);
                 break;
         }
 

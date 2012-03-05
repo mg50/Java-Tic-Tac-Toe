@@ -145,35 +145,35 @@ var PAUSE;
 
 	Board.prototype.respondToServerStatus = function(msg) {
 		var self = this;
-		if(msg.stage === 'receivingMove') {
+		if(msg.state === 'ReceivingMoveState') {
 			this.readyForMove = true;
 			this.displayMessage("It's player " + msg.currentPlayer + "'s turn.")
 		}
 
-		else if(msg.stage === "receivingPlay3x3") {
+		else if(msg.state === "ReceivingPlay3x3State") {
 			self.confirm("What size board would you like to play on?", "3x3", "4x4")
 		}
 
-		else if(msg.stage === "receivingPlayVsAI") {
+		else if(msg.state === "ReceivingPlayVsAIState") {
 			this.query({
 				signal: confirm("Play vs. AI?") ? "YES" : "NO"
 			});
 		}
 
 
-		else if(msg.stage === "receivingPlayAsX") {
+		else if(msg.state === "ReceivingPlayAsXState") {
 			this.query({
 				signal: confirm('Play as X?') ? "YES" : "NO"
 			});
 		}
 
-		else if(msg.stage === "receivingStartNewGame") {
+		else if(msg.state === "ReceivingStartNewGameState") {
 			this.query({
 				signal: confirm("Start new game?") ? "YES" : "NO"
 			});
 		}
 
-		else if(msg.stage === 'halt') {
+		else if(msg.State === 'HaltState') {
 			this.gamePlaying = false;
 			this.displayMessage("");
 			clearInterval(this.statusInterval);

@@ -32,6 +32,6 @@ describe Connection, "#initialize" do
 		game = Connection[id].game
 
 		game.class.should == HTTPGame
-		game.stage.toString.should == "newGame"
+		game.state.class.should == Java::Javattt::fsm.NewGameState
 	end
 end

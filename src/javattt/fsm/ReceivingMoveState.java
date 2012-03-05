@@ -24,6 +24,7 @@ public class ReceivingMoveState extends State {
     public TransitionData move(int[] coords) {
         int x = coords[0];
         int y = coords[1];
+        TransitionData ret = null;
         
         if(game.board.getCell(x, y) == Side._) {
             game.board.setCell(x, y, game.currentPlayer.side);
@@ -33,14 +34,17 @@ public class ReceivingMoveState extends State {
             Side winner = game.board.winner();
             if(winner == null && !game.board.isDraw()) {
                 game.state = new PromptingMoveState(game);
-                return null;
+                ret = null;
             }
             else {
                 game.state = new GameOverState(game);
                 TransitionData data = new TransitionData(TransitionData.Signal.VICTOR);
                 data.side = winner;
-                return data;
+                ret = data;
             }
+
+            game.onSuccessfulMove(coords);
+            return ret;
         }
         else {
             return invalid();

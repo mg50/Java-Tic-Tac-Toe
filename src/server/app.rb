@@ -20,10 +20,11 @@ class App < Sinatra::Base
 
 	def self.handshake(id)
 		game = Connection[id].game
-		game.start(nil) if game.stage.toString == "newGame"
+		game.start(nil) if game.state.class == Java::Javattt::fsm.NewGameState
 	end
 
 	get '/r/:room?' do
+<<<<<<< HEAD
 		unless session[:id]
 			session[:id] = Connection.register(request.ip) 			
 			Connection[session[:id]].game = ip_hash[@env['REMOTE_ADDR']] if ip_hash[@env['REMOTE_ADDR']]
@@ -31,8 +32,8 @@ class App < Sinatra::Base
 		Connection[session[:id]].game.room = params[:room]
 
 		conn = Connection[session[:id]]
-		if conn.game.stage == Java::Javattt.Stage::halt
-			conn.game.stage = Java::Javattt.Stage::newGame
+		if conn.game.state.class == Java::Javattt::fsm.HaltState
+			conn.game.state.class = Java::Javattt::fsm.State::NewGameState
 		end		
 
 		File.read(File.join('public/html', 'index.html'))
@@ -46,7 +47,7 @@ class App < Sinatra::Base
 
 	post '/status' do
 		conn = Connection[session[:id]]
-		App.handshake(session[:id]) unless conn.game.started?
+		App.handshake(session[:id])
 		resp = conn.game.status
 
 		JSON.generate resp

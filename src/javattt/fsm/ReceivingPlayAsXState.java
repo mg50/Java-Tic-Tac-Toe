@@ -34,6 +34,7 @@ public class ReceivingPlayAsXState extends State {
     
     public TransitionData finish() {
         game.state = new BeginningGameState(game);
+        game.onReceivingPlayAsX();
         return null;
     }
 }

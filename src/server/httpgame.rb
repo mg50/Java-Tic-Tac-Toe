@@ -4,7 +4,6 @@ require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
 require File.join(File.dirname(__FILE__), 'HTTPUI')
 include_class Java::Javattt.Side
 include_class Java::Javattt.Game
-include_class Java::Javattt.Stage
 include_class Java::Javattt.TransitionData
 include_class Java::Javattt.TransitionData::Signal
 
@@ -15,8 +14,11 @@ end
 class HTTPGame < Java::Javattt.Game
 	attr_accessor :opponent_game, :waiting_for_opponent, :room, :ip
 
-
 	@@waiting_games = {}
+
+	def self.clear_waiting_games
+		@@waiting_games = {}
+	end
 
 	def initialize
 		super
@@ -26,10 +28,6 @@ class HTTPGame < Java::Javattt.Game
 
 	def touch
 		@timestamp = Time.now.to_i
-	end
-
-	def started?
-		stage == Stage.newGame
 	end
 
 	def get_ruby_grid
@@ -49,8 +47,8 @@ class HTTPGame < Java::Javattt.Game
 	def status
 		stat = {}
 		stat["timestamp"] = @timestamp
-		stat["stage"] = stage.toString
-		stat["board"] = get_ruby_grid
+		stat["state"] = state.class.name.split("::").last
+		stat["board"] = get_ruby_grid if board
 		stat["currentPlayer"] = currentPlayer == playerX ? "X" : "O"
 		stat
 	end
@@ -85,21 +83,20 @@ class HTTPGame < Java::Javattt.Game
 
 	#Game hooks
 	def onNewGame
-		opponent = nil
+		opponent_game = nil
 		self.waiting_for_opponent = false
 	end
 
-	def onSuccessfulMove(move)
+	def onSuccessfulMove(coords)
 		touch
 		if not two_player?
 			self.waiting_for_opponent = !current_player_human?
-			#binding.pry
 		else
 			return if self.waiting_for_opponent
 
-			opponent.start move
+			opponent_game.start TransitionData.new(coords)
 			self.waiting_for_opponent = true
-			opponent.waiting_for_opponent = false
+			opponent_game.waiting_for_opponent = false
 		end
 	end
 
@@ -109,23 +106,28 @@ class HTTPGame < Java::Javattt.Game
 		size = self.board.size.to_i
 		self.waiting_for_opponent = true
 
-		if @@waiting_games[size].nil? or @@waiting_games[size].empty?
-			@@waiting_games[size] = [self]
+		@@waiting_games[size] ||= []
+
+		opponent_in_same_room = @@waiting_games[size].find {|game| game.room == self.room}
+
+		if opponent_in_same_room
+			self.opponent_game = opponent_in_same_room
+			opponent_in_same_room.opponent_game = self
+			@@waiting_games[size].delete opponent_in_same_room
+			opponent_in_same_room.waiting_for_opponent = false
 		else
-			self.opponent = @@waiting_games[size].shift
-			opponent.opponent = self
-			opponent.waiting_for_opponent = false
+			@@waiting_games[size] << self
 		end
 	end
 
-	def onReceivingPlayAsX(data)
-		self.waiting_for_opponent = !current_player_human?		
+	def onReceivingPlayAsX
+		self.waiting_for_opponent = !(playerX.class == Java::Javattt.HumanPlayer)
 	end
 
 	def onHalt
 		return unless two_player?
 
-		opponent.stage = Java::Javattt.Stage::gameOver
-		opponent.start nil
+		opponent_game.state = Java::Javattt::fsm.GameOverState.new(opponent_game)
+		opponent_game.start nil
 	end
 end
