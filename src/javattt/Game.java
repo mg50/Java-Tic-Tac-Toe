@@ -27,16 +27,18 @@ public abstract class Game {
     public void start() {
         start(null);
     }
-    
+
     public void start(Command cmd) {
-        while(!(state instanceof javattt.fsm.HaltState) && !(cmd instanceof PauseCommand)) {
+        while(!(state instanceof HaltState) && !(cmd instanceof PauseCommand)) {
             cmd = state.transition(cmd);
         }
+
+        if(state instanceof HaltState) onHalt();
     }
 
     //hooks
 
-    public void onNewGame() {};
+    public void onNewGame() {}
     public void onSuccessfulMove(int[] coords) {}
     public void onReceivingPlayVsAI() {}
     public void onHalt() {}
