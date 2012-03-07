@@ -1,7 +1,7 @@
 package javattt;
 
-import command.Command;
-import command.NullCommand;
+import javattt.command.Command;
+import javattt.command.NullCommand;
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,7 +1,7 @@
 package javattt;
 
-import command.Command;
-import command.PauseCommand;
+import javattt.command.Command;
+import javattt.command.PauseCommand;
 import javattt.fsm.*;
 
 /**

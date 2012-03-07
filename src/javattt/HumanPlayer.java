@@ -1,6 +1,6 @@
 package javattt;
 
-import command.Command;
+import javattt.command.Command;
 
 /**
  * Created by IntelliJ IDEA.

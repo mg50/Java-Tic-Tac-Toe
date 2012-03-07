@@ -1,6 +1,6 @@
 package javattt;
 
-import command.*;
+import javattt.command.*;
 
 import java.io.*;
 import java.util.regex.Matcher;
@@ -138,7 +138,7 @@ public class Console implements UI {
     
     public void displayHelp() {
         try {
-            String helpString = "Type in the x-y coordinates of the square you'd like to play, separated by a space. " +
+            String helpString = "Type in the x-y coordinates of the square you'd like to play, separated by a space.\n" +
                     "For example, typing '1 1' attempts to play the top-left square.\n";
             outputStream.write(helpString);
             outputStream.flush();

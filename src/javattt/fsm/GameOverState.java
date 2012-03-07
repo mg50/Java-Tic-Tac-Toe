@@ -1,10 +1,9 @@
 package javattt.fsm;
 
-import command.Command;
-import command.NullCommand;
+import javattt.command.Command;
+import javattt.command.NullCommand;
 import javattt.Game;
 import javattt.Side;
-import javattt.TransitionData;
 
 /**
  * Created by IntelliJ IDEA.

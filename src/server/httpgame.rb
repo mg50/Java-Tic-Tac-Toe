@@ -26,6 +26,18 @@ class HTTPGame < Java::Javattt.Game
 		self.ui = HTTPUI.new
 	end
 
+	def restart
+		self.state = Java::Javattt.fsm.NewGameState.new(self)
+
+		start nil
+		if opp = self.opponent_game
+			self.opponent_game = nil
+			opp.opponent_game = nil
+
+			opp.restart
+		end
+	end
+
 	def touch
 		@timestamp = Time.now.to_i
 	end

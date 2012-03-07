@@ -1,7 +1,7 @@
 package javattt;
 
-import command.Command;
-import command.MoveCommand;
+import javattt.command.Command;
+import javattt.command.MoveCommand;
 
 import java.util.ArrayList;
 import java.util.HashMap;

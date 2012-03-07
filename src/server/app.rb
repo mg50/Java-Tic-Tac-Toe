@@ -17,6 +17,8 @@ class App < Sinatra::Base
 		ip_hash[game.ip] = game
 	end
 
+	def self.start_game
+	end
 
 	def self.handshake(id)
 		game = Connection[id].game
@@ -24,16 +26,22 @@ class App < Sinatra::Base
 	end
 
 	get '/r/:room?' do
-<<<<<<< HEAD
 		unless session[:id]
 			session[:id] = Connection.register(request.ip) 			
-			Connection[session[:id]].game = ip_hash[@env['REMOTE_ADDR']] if ip_hash[@env['REMOTE_ADDR']]
+			if saved_game = ip_hash[@env['REMOTE_ADDR']] and saved_game.room == params[:room]
+				Connection[session[:id]].game = saved_game
+			end
 		end
-		Connection[session[:id]].game.room = params[:room]
 
-		conn = Connection[session[:id]]
-		if conn.game.state.class == Java::Javattt::fsm.HaltState
-			conn.game.state.class = Java::Javattt::fsm.State::NewGameState
+		game = Connection[session[:id]].game
+
+		if game.room != params[:room]
+			game.room = params[:room]
+			game.restart
+		end
+
+		if game.state.class == Java::Javattt::fsm.HaltState
+			game.restart
 		end		
 
 		File.read(File.join('public/html', 'index.html'))
