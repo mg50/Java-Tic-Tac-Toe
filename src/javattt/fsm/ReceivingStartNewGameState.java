@@ -1,5 +1,8 @@
 package javattt.fsm;
 
+import command.Command;
+import command.InvalidCommand;
+import command.NullCommand;
 import javattt.Game;
 import javattt.TransitionData;
 
@@ -16,18 +19,18 @@ public class ReceivingStartNewGameState extends State {
         super(game);
     }
     
-    public TransitionData yes() {
+    public Command yes() {
         game.state = new NewGameState(game);
-        return null;
+        return new NullCommand();
     }
     
-    public TransitionData no() {
+    public Command no() {
         game.state = new HaltState(game);
-        return null;
+        return new NullCommand();
     }
     
-    public TransitionData invalid() {
+    public Command invalid() {
         game.state = new PromptingStartNewGameState(game);
-        return null;
+        return new InvalidCommand();
     }
 }

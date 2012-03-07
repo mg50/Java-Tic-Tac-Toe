@@ -1,5 +1,7 @@
 package javattt;
 
+import command.Command;
+import command.PauseCommand;
 import javattt.fsm.*;
 
 /**
@@ -26,9 +28,9 @@ public abstract class Game {
         start(null);
     }
     
-    public void start(TransitionData data) {
-        while(!(state instanceof javattt.fsm.HaltState) && (data == null || data.signal != TransitionData.Signal.PAUSE)) {
-            data = state.transition(data);
+    public void start(Command cmd) {
+        while(!(state instanceof javattt.fsm.HaltState) && !(cmd instanceof PauseCommand)) {
+            cmd = state.transition(cmd);
         }
     }
 

@@ -1,5 +1,7 @@
 package javattt;
 
+import command.Command;
+
 /**
  * Created by IntelliJ IDEA.
  * User: MGT
@@ -10,11 +12,11 @@ package javattt;
 public interface UI {
 
     void update(Board board);
-    TransitionData promptMove(Board board);
-    TransitionData promptPlay3x3();
-    TransitionData promptPlayAsX();
-    TransitionData promptPlayVsAI();
-    TransitionData promptStartNewGame();
+    Command promptMove(Board board);
+    Command promptPlay3x3();
+    Command promptPlayAsX();
+    Command promptPlayVsAI();
+    Command promptStartNewGame();
     void victoryMessage(Side winner, int xWinCount, int oWinCount);
     void displayHelp();
 }

@@ -1,5 +1,8 @@
 package javattt.fsm;
 
+import command.Command;
+import command.InvalidCommand;
+import command.NullCommand;
 import javattt.Game;
 import javattt.HumanPlayer;
 import javattt.Side;
@@ -18,22 +21,22 @@ public class ReceivingPlayVsAIState extends State{
         super(game);
     }
     
-    public TransitionData yes() {
+    public Command yes() {
         game.state = new PromptingPlayAsXState(game);
         game.onReceivingPlayVsAI();
-        return null;
+        return new NullCommand();
     }
     
-    public TransitionData no() {
+    public Command no() {
         game.playerX = new HumanPlayer(Side.X);
         game.playerO = new HumanPlayer(Side.O);
         game.state = new BeginningGameState(game);
         game.onReceivingPlayVsAI();
-        return null;
+        return new NullCommand();
     }
 
-    public TransitionData invalid() {
+    public Command invalid() {
         game.state = new PromptingPlayVsAIState(game);
-        return null;
+        return new InvalidCommand();
     }
 }

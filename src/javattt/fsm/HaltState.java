@@ -1,5 +1,7 @@
 package javattt.fsm;
 
+import command.Command;
+import command.NullCommand;
 import javattt.Game;
 import javattt.TransitionData;
 
@@ -15,7 +17,7 @@ public class HaltState extends State {
         super(game);
     }
     
-    public TransitionData execute() {
-        return null;
+    public Command execute() {
+        return new NullCommand();
     }
 }

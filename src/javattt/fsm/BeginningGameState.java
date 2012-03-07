@@ -1,5 +1,7 @@
 package javattt.fsm;
 
+import command.Command;
+import command.NullCommand;
 import javattt.Game;
 import javattt.TransitionData;
 
@@ -15,11 +17,11 @@ public class BeginningGameState extends State {
         super(game);
     }
     
-    public TransitionData execute() {
+    public Command execute() {
         game.currentPlayer = game.playerX;
         game.ui.update(game.board);
         game.ui.displayHelp();
         game.state = new PromptingMoveState(game);
-        return null;
+        return new NullCommand();
     }
 }

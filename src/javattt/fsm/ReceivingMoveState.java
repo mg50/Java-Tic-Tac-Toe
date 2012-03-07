@@ -1,5 +1,8 @@
 package javattt.fsm;
 
+import command.Command;
+import command.NullCommand;
+import command.VictorCommand;
 import javattt.Game;
 import javattt.Side;
 import javattt.TransitionData;
@@ -16,15 +19,15 @@ public class ReceivingMoveState extends State {
         super(game);
     }
     
-    public TransitionData invalid() {
+    public Command invalid() {
         game.state = new PromptingMoveState(game);
-        return null;
+        return new NullCommand();
     }
 
-    public TransitionData move(int[] coords) {
+    public Command move(int[] coords) {
         int x = coords[0];
         int y = coords[1];
-        TransitionData ret = null;
+        Command ret = null;
         
         if(game.board.getCell(x, y) == Side._) {
             game.board.setCell(x, y, game.currentPlayer.side);
@@ -34,13 +37,11 @@ public class ReceivingMoveState extends State {
             Side winner = game.board.winner();
             if(winner == null && !game.board.isDraw()) {
                 game.state = new PromptingMoveState(game);
-                ret = null;
+                ret = new NullCommand();
             }
             else {
                 game.state = new GameOverState(game);
-                TransitionData data = new TransitionData(TransitionData.Signal.VICTOR);
-                data.side = winner;
-                ret = data;
+                ret = new VictorCommand(winner);
             }
 
             game.onSuccessfulMove(coords);

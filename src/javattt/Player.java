@@ -1,5 +1,8 @@
 package javattt;
 
+import command.Command;
+import command.NullCommand;
+
 /**
  * Created by IntelliJ IDEA.
  * User: MGT
@@ -15,7 +18,7 @@ public abstract class Player {
         this.side = side;
     }
 
-    public TransitionData determineNextMove(Board board, UI ui) { // No-op
-        return null;
+    public Command determineNextMove(Board board, UI ui) { // No-op
+        return new NullCommand();
     }
 }

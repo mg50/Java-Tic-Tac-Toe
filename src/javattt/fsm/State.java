@@ -1,8 +1,9 @@
 package javattt.fsm;
 
+import command.Command;
+import command.NullCommand;
 import javattt.Game;
 import javattt.Side;
-import javattt.TransitionData;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,47 +15,23 @@ import javattt.TransitionData;
 public abstract class State {
     public Game game;
     
-    public TransitionData transition() {
-        return transition(null);
+    public Command transition() {
+        return transition(new NullCommand());
     }
     
-    public TransitionData transition(TransitionData data) {
-        if(data == null) return execute();
-
-        TransitionData ret = null;
-        switch(data.signal) {
-            case YES:
-                ret = yes();
-                break;
-            case NO:
-                ret = no();
-                break;
-            case MOVE:
-                ret = move(data.coords);
-                break;
-            case VICTOR:
-                ret = victor(data.side);
-                break;
-            case INVALID:
-                ret = invalid();
-                break;
-            case EXIT:
-                game.onHalt();
-                game.state = new HaltState(game);
-                break;
-        }
-
-        return ret;
+    public Command transition(Command cmd) {
+        if(cmd == null) cmd = new NullCommand();
+        return cmd.sendToGame(game);
     }
     
     public State(Game game) {
         this.game = game;
     }
 
-    public TransitionData execute() {return null;}
-    public TransitionData yes() {return null;}
-    public TransitionData no() {return null;}
-    public TransitionData move(int[] coords) {return null;}
-    public TransitionData victor(Side s) {return null;}
-    public TransitionData invalid() {return null;}
+    public Command execute() {return null;}
+    public Command yes() {return null;}
+    public Command no() {return null;}
+    public Command move(int[] coords) {return null;}
+    public Command victor(Side s) {return null;}
+    public Command invalid() {return null;}
 }

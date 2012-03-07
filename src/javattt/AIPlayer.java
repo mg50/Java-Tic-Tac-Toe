@@ -1,5 +1,8 @@
 package javattt;
 
+import command.Command;
+import command.MoveCommand;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,7 +26,7 @@ public class AIPlayer extends Player {
         negInfinity = -1 * infinity;
     }
     
-    public TransitionData determineNextMove(Board board, UI ui) {
+    public Command determineNextMove(Board board, UI ui) {
         
         ArrayList<int[]> emptyCoords = board.emptyCoords();
         int size = emptyCoords.size();
@@ -48,7 +51,7 @@ public class AIPlayer extends Player {
             }
         }
 
-        return new TransitionData(champion);
+        return new MoveCommand(champion);
     }
     
     public int absoluteLeafScore(Board board) {

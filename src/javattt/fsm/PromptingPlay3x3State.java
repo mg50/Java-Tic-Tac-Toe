@@ -1,5 +1,6 @@
 package javattt.fsm;
 
+import command.Command;
 import javattt.Game;
 import javattt.TransitionData;
 
@@ -15,7 +16,7 @@ public class PromptingPlay3x3State extends State {
         super(game);
     }
 
-    public TransitionData execute() {
+    public Command execute() {
         game.state = new ReceivingPlay3x3State(game);
         return game.ui.promptPlay3x3();
     }

@@ -1,5 +1,7 @@
 package javattt.fsm;
 
+import command.Command;
+import command.NullCommand;
 import javattt.Game;
 import javattt.Side;
 import javattt.TransitionData;
@@ -16,17 +18,17 @@ public class GameOverState extends State {
         super(game);
     }
 
-    public TransitionData execute() {
+    public Command execute() {
         game.state = new PromptingStartNewGameState(game);
-        return null;
+        return new NullCommand();
     }
 
-    public TransitionData victor(Side side) {
+    public Command victor(Side side) {
         if(side == Side.X) game.xWinsCount++;
         else if(side == Side.O) game.oWinsCount++;
         game.ui.victoryMessage(side, game.xWinsCount, game.oWinsCount);
 
         game.state = new PromptingStartNewGameState(game);
-        return null;
+        return new NullCommand();
     }
 }

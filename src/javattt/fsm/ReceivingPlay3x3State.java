@@ -1,5 +1,8 @@
 package javattt.fsm;
 
+import command.Command;
+import command.InvalidCommand;
+import command.NullCommand;
 import javattt.Board;
 import javattt.Game;
 import javattt.TransitionData;
@@ -17,20 +20,20 @@ public class ReceivingPlay3x3State extends State {
         super(game);
     }
         
-    public TransitionData yes() {
+    public Command yes() {
         game.board = new Board(3);
         game.state = new PromptingPlayVsAIState(game);
-        return null;
+        return new NullCommand();
     }
     
-    public TransitionData no() {
+    public Command no() {
         game.board = new Board(4);
         game.state = new PromptingPlayVsAIState(game);
-        return null;
+        return new NullCommand();
     }
 
-    public TransitionData invalid() {
+    public Command invalid() {
         game.state = new PromptingPlay3x3State(game);
-        return null;
+        return new InvalidCommand();
     }
 }

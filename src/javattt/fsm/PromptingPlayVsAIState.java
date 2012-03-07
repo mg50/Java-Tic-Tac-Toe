@@ -1,5 +1,6 @@
 package javattt.fsm;
 
+import command.Command;
 import javattt.Game;
 import javattt.TransitionData;
 
@@ -15,7 +16,7 @@ public class PromptingPlayVsAIState extends State {
         super(game);
     }
 
-    public TransitionData execute() {
+    public Command execute() {
         game.state = new ReceivingPlayVsAIState(game);
         return game.ui.promptPlayVsAI();
     }

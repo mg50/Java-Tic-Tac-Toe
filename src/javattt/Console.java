@@ -1,5 +1,7 @@
 package javattt;
 
+import command.*;
+
 import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,14 +54,14 @@ public class Console implements UI {
         }
     }
     
-    public TransitionData promptMove(Board board) {
+    public Command promptMove(Board board) {
         int[] move = null;
 
         try {
             outputStream.write("Please enter your next move (or \"help\"): ");
             outputStream.flush();
             String moveString = inputStream.readLine();
-            if(moveString.equals("exit")) return new TransitionData(TransitionData.Signal.EXIT);
+            if(moveString.equals("exit")) return new ExitCommand();
             move = parseMove(moveString);
         }
         catch (Exception e) {
@@ -67,41 +69,41 @@ public class Console implements UI {
         }
 
         if(move == null || move[0] < 0 || move[0] >+ board.size || move[1] < 0 || move[1] >= board.size)
-            return new TransitionData(TransitionData.Signal.INVALID);
-        else return new TransitionData(move);
+            return new InvalidCommand();
+        else return new MoveCommand(move);
     }
     
-    public TransitionData prompt(String msg) {
+    public Command prompt(String msg) {
         String answer = null;
 
         try {
             outputStream.write(msg + " y/n ");
             outputStream.flush();
             answer = inputStream.readLine();
-            if(answer.equals("exit")) return new TransitionData(TransitionData.Signal.EXIT);
+            if(answer.equals("exit")) return new ExitCommand();
         }
         catch (Exception e) {
             System.out.println("Error reading/writing prompt!");
         }
 
-        if(answer.equals("y")) return new TransitionData(true);
-        else if(answer.equals("n")) return new TransitionData(false);
-        else return new TransitionData(TransitionData.Signal.INVALID);
+        if(answer.equals("y")) return new YesCommand();
+        else if(answer.equals("n")) return new NoCommand();
+        else return new InvalidCommand();
     }
 
-    public TransitionData promptPlay3x3() {
+    public Command promptPlay3x3() {
         return prompt("Play a 3x3 game?");
     }
 
-    public TransitionData promptPlayAsX() {
+    public Command promptPlayAsX() {
         return prompt("Play as X?");
     }
     
-    public TransitionData promptPlayVsAI() {
+    public Command promptPlayVsAI() {
         return prompt("Play vs. AI?");
     }
     
-    public TransitionData promptStartNewGame() {
+    public Command promptStartNewGame() {
         return prompt("Start another game?");
     }
     

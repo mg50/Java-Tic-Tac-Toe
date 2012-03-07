@@ -1,5 +1,7 @@
 package javattt;
 
+import command.Command;
+
 /**
  * Created by IntelliJ IDEA.
  * User: MGT
@@ -12,7 +14,7 @@ public class HumanPlayer extends Player {
         super(side);
     }
     
-    public TransitionData determineNextMove(Board board, UI ui) {
+    public Command determineNextMove(Board board, UI ui) {
         return ui.promptMove(board);
     }
 }

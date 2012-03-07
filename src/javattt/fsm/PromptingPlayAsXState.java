@@ -1,5 +1,6 @@
 package javattt.fsm;
 
+import command.Command;
 import javattt.Game;
 import javattt.TransitionData;
 
@@ -16,7 +17,7 @@ public class PromptingPlayAsXState extends State {
         super(game);
     }
 
-    public TransitionData execute() {
+    public Command execute() {
         game.state = new ReceivingPlayAsXState(game);
         return game.ui.promptPlayAsX();
     }

@@ -1,5 +1,6 @@
 package javattt.fsm;
 
+import command.Command;
 import javattt.Game;
 import javattt.TransitionData;
 
@@ -16,7 +17,7 @@ public class PromptingMoveState extends State {
         super(game);
     }
 
-    public TransitionData execute() {
+    public Command execute() {
         game.state = new ReceivingMoveState(game);
         return game.currentPlayer.determineNextMove(game.board, game.ui);
     }
