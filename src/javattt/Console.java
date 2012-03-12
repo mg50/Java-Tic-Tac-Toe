@@ -15,6 +15,10 @@ import java.util.regex.Pattern;
  */
 public class Console implements UI {
 
+    public static String helpString = "Type in the x-y coordinates of the square you'd like to play, separated by a space.\n" +
+            "For example, typing '1 1' attempts to play the top-left square.\n";
+
+
     BufferedReader inputStream;
     BufferedWriter outputStream;
 
@@ -62,6 +66,8 @@ public class Console implements UI {
             outputStream.flush();
             String moveString = inputStream.readLine();
             if(moveString.equals("exit")) return new ExitCommand();
+            else if (moveString.equals("restart")) return new RestartCommand();
+
             move = parseMove(moveString);
         }
         catch (Exception e) {
@@ -81,6 +87,7 @@ public class Console implements UI {
             outputStream.flush();
             answer = inputStream.readLine();
             if(answer.equals("exit")) return new ExitCommand();
+            else if (answer.equals("restart")) return new RestartCommand();
         }
         catch (Exception e) {
             System.out.println("Error reading/writing prompt!");
@@ -136,16 +143,20 @@ public class Console implements UI {
         return getSideSymbol(board.getCell(x, y));
     }
     
-    public void displayHelp() {
+    public Command displayMessage(String message) {
         try {
-            String helpString = "Type in the x-y coordinates of the square you'd like to play, separated by a space.\n" +
-                    "For example, typing '1 1' attempts to play the top-left square.\n";
-            outputStream.write(helpString);
+            outputStream.write(message);
             outputStream.flush();
         }
         catch (Exception e) {
             System.out.println("Error printing message!");
-        }        
+        }
+
+        return new NullCommand();
+    }
+
+    public void displayHelp() {
+        displayMessage(helpString);
     }
     
     public int[] parseMove(String moveString) {

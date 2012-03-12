@@ -17,10 +17,13 @@ public class BeginningGameState extends State {
     }
     
     public Command execute() {
+        game.playing = true;
         game.currentPlayer = game.playerX;
         game.ui.update(game.board);
         game.ui.displayHelp();
         game.state = new PromptingMoveState(game);
+
+        game.onBeginningGame();
         return new NullCommand();
     }
 }

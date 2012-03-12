@@ -41,6 +41,8 @@ public class AIPlayer extends Player {
             child.setCell(emptyCoord[0], emptyCoord[1], side);
             int minimaxValue = scoreChild(child);
 
+            //System.out.println("[" + emptyCoord[0] + ", " + emptyCoord[1] + "]: " + minimaxValue);
+            
             if(side == Side.X && minimaxValue > championValue) {
                 championValue = minimaxValue;
                 champion = emptyCoord;
@@ -68,7 +70,7 @@ public class AIPlayer extends Player {
     public int minimax(Board board, int depth, int alpha, int beta, Side side) {
         int boardHash = board.hashCode();
         if(side == Side.X && gameHashForX.get(new Integer(boardHash)) != null) {
-            return gameHashForX.get(new Integer(boardHash)) / 2;
+            return gameHashForX.get(new Integer(boardHash));
         }
         
         else if(side == Side.O && gameHashForO.get(new Integer(boardHash)) != null) {
@@ -96,11 +98,11 @@ public class AIPlayer extends Player {
 
         int ret;
         if(side == Side.X) {
-            ret = alpha / 2;
+            ret = alpha;
             gameHashForX.put(new Integer(boardHash), new Integer(ret));
         }
         else {
-            ret = beta / 2;
+            ret = beta;
             gameHashForO.put(new Integer(boardHash), new Integer(ret));
         }
 

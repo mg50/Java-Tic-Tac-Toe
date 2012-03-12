@@ -17,6 +17,7 @@ public class HaltState extends State {
     }
     
     public Command execute() {
+        game.playing = false;
         return new NullCommand();
     }
 }

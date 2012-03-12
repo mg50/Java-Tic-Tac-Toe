@@ -18,5 +18,6 @@ public interface UI {
     Command promptPlayVsAI();
     Command promptStartNewGame();
     void victoryMessage(Side winner, int xWinCount, int oWinCount);
+    Command displayMessage(String message);
     void displayHelp();
 }

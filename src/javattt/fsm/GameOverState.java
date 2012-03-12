@@ -18,16 +18,21 @@ public class GameOverState extends State {
     }
 
     public Command execute() {
+        game.playing = false;
         game.state = new PromptingStartNewGameState(game);
+        game.onGameOver(null);
         return new NullCommand();
     }
 
     public Command victor(Side side) {
+        game.playing = false;
         if(side == Side.X) game.xWinsCount++;
         else if(side == Side.O) game.oWinsCount++;
         game.ui.victoryMessage(side, game.xWinsCount, game.oWinsCount);
 
         game.state = new PromptingStartNewGameState(game);
+
+        game.onGameOver(side);
         return new NullCommand();
     }
 }

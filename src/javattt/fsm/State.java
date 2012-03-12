@@ -34,4 +34,10 @@ public abstract class State {
     public Command move(int[] coords) {return null;}
     public Command victor(Side s) {return null;}
     public Command invalid() {return null;}
+    public Command suspend() {return null;}
+    public Command restart() {
+        game.state = new NewGameState(game);
+        game.onRestart();
+        return new NullCommand();
+    }
 }

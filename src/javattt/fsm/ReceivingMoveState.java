@@ -27,7 +27,6 @@ public class ReceivingMoveState extends State {
         int x = coords[0];
         int y = coords[1];
         Command ret = null;
-        
         if(game.board.getCell(x, y) == Side._) {
             game.board.setCell(x, y, game.currentPlayer.side);
             game.ui.update(game.board);
@@ -49,5 +48,9 @@ public class ReceivingMoveState extends State {
         else {
             return invalid();
         }
+    }
+    
+    public Command execute() {
+        return invalid();
     }
 }

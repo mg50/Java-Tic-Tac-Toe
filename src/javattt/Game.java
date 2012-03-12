@@ -2,6 +2,7 @@ package javattt;
 
 import javattt.command.Command;
 import javattt.command.PauseCommand;
+import javattt.command.RestartCommand;
 import javattt.fsm.*;
 
 /**
@@ -22,15 +23,26 @@ public abstract class Game {
     public int xWinsCount;
     public int oWinsCount;
     public javattt.fsm.State state = new NewGameState(this);
+    public javattt.fsm.State suspendedState;
+    public boolean playing = false;
 
+    public void suspend() {
+        suspendedState = state;
+    }
+
+    public void unsuspend() {
+        state = suspendedState;
+        suspendedState = null;
+    }
 
     public void start() {
         start(null);
     }
 
     public void start(Command cmd) {
-        while(!(state instanceof HaltState) && !(cmd instanceof PauseCommand)) {
+        while(cmd instanceof RestartCommand || !(state instanceof HaltState || cmd instanceof PauseCommand)) {
             cmd = state.transition(cmd);
+            onStateTransition();
         }
 
         if(state instanceof HaltState) onHalt();
@@ -43,4 +55,8 @@ public abstract class Game {
     public void onReceivingPlayVsAI() {}
     public void onHalt() {}
     public void onReceivingPlayAsX() {}
+    public void onGameOver(Side victor) {}
+    public void onRestart() {}
+    public void onBeginningGame() {}
+    public void onStateTransition() {}
 }
