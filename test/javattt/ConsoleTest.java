@@ -1,15 +1,13 @@
 package javattt;
 
 
+import javattt.command.MoveCommand;
 import junit.framework.TestCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import static org.junit.Assert.*;
-
-import static javattt.Side.X;
-import static javattt.Side._;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +29,8 @@ public class ConsoleTest extends TestCase {
         HumanPlayer player = new HumanPlayer(Side.X);
         Console console = new Console(inputStream, new ByteArrayOutputStream());
         LocalGame game = new LocalGame(console);
-        assertArrayEquals(console.promptMove(game.getBoard()).coords, new int[] {1, 1});
+        MoveCommand cmd = (MoveCommand) console.promptMove(game.getBoard());
+        assertArrayEquals(cmd.coords, new int[] {1, 1});
     }
 
     public void testPromptMoveTwo() {
@@ -39,7 +38,8 @@ public class ConsoleTest extends TestCase {
         HumanPlayer player = new HumanPlayer(Side.X);
         Console console = new Console(inputStream, new ByteArrayOutputStream());
         LocalGame game = new LocalGame(console);
-        assertArrayEquals(console.promptMove(game.getBoard()).coords, new int[] {2, 0});
+        MoveCommand cmd = (MoveCommand) console.promptMove(game.getBoard());
+        assertArrayEquals(cmd.coords, new int[] {2, 0});
     }
 
     public void testPromptMoveThree() {
@@ -48,6 +48,7 @@ public class ConsoleTest extends TestCase {
         Console console = new Console(inputStream, new ByteArrayOutputStream());
         LocalGame game = new LocalGame(console);
         game.board = new Board(4);
-        assertArrayEquals(console.promptMove(game.getBoard()).coords, new int[] {3, 3});
+        MoveCommand cmd = (MoveCommand) console.promptMove(game.getBoard());
+        assertArrayEquals(cmd.coords, new int[] {3, 3});
     }
 }

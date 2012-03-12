@@ -1,9 +1,11 @@
 
 include_class Java::Javattt.UI
-include_class Java::Javattt.TransitionData::Signal
+include_class Java::Javattt.command::PauseCommand
 
 class HTTPUI
 	include UI
+
+	attr_accessor :message
 
 	def initialize
 	end
@@ -13,28 +15,33 @@ class HTTPUI
 	end
 
 	def promptMove(board)
-		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
+		PauseCommand.new
 	end
 
 	def promptPlay3x3
-		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
+		PauseCommand.new
 	end
 
 	def promptPlayAsX
-		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
+		PauseCommand.new
 	end
 
 	def promptPlayVsAI
-		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
+		PauseCommand.new
 	end
 
 	def promptStartNewGame
-		Java::Javattt.TransitionData.new(Java::Javattt.TransitionData::Signal::PAUSE)
+		PauseCommand.new
 	end
 
 	def victoryMessage(victor, xWinsCount, oWinsCount)
 	end
 
 	def displayHelp
+	end
+
+	def displayMessage(msg)
+		self.message = msg
+		PauseCommand.new
 	end
 end

@@ -1,4 +1,5 @@
 require File.join(File.dirname(__FILE__), 'httpgame')
+include_class Java::Javattt::fsm.WaitingState
 
 class Room
 
@@ -6,8 +7,17 @@ class Room
 
 	attr_accessor :name, :owner, :player
 
+	def self.room_of_game(game)
+		@@rooms.each do |name, room|
+			return room if room.owner == game or room.player == game
+		end
+
+		nil
+	end
+
 	def initialize(name)
 		self.name = name
+		@observers = []
 		@@rooms[name] = self unless @@rooms[name]
 	end
 
@@ -16,7 +26,10 @@ class Room
 			self.owner = self.player
 			self.player = nil
 		elsif game == self.player
-			self.player = nil
+			self.player = @observers[0]
+			@observers.shift unlesss @observers.empty?
+		elsif @observers.include? game
+			@observers.delete game
 		end
 
 		game.room = nil
@@ -30,11 +43,36 @@ class Room
 	def add_game game
 		if self.owner.nil?
 			self.owner = game
-		elsif self.player.nil?
-			self.player = game
+		else
+			game.duplicate_game_state owner
+
+			if self.player.nil?
+				self.player = game
+			else
+				@observers << game
+			end
 		end
 
+		self.owner.opponent_game = self.player if self.owner
+		self.player.opponent_game = self.owner if self.player
+
 		game.room = self
+
+		suspend_games_until_owner_starts unless game == self.owner or self.owner.playing		
+	end
+
+	def suspend_games_until_owner_starts
+		games = self.player ? [self.player] + @observers : @observers
+		games.each do |game|
+			unless game.state.class == WaitingState
+				game.receive_signal "signal" => "WAIT", 
+									"message" => "Waiting for room owner to begin two-player game."
+			end
+		end
+	end
+
+	def full?
+		self.owner and self.player
 	end
 
 	def self.exists? name

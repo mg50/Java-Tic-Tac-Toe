@@ -1,7 +1,7 @@
 
 <html>
 	<head>
-		<base href="http://localhost:3000/" />
+		<base href="http://localhost:4567/" />
 		<title>Tic-Tac-Toe</title>
 		<link rel="stylesheet" href="css/jquery-ui.css" type="text/css" />				
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
@@ -55,10 +55,23 @@
 				width: 100%;
 				text-align: center;
 			}
+			#restart {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				z-index: 2;
+			}
+			#restart a {
+				color: white;
+			}
 		</style>
 	</head>	
 	<body>
 		<div id="wrapper">
+			<div id="restart">
+				<a href="#">Restart</a>
+			</div>
+
 			<div id="board_wrapper">
 			
 			</div>
@@ -70,6 +83,10 @@
 				<div id="question"></div>
 				<a href="#" onclick="return false;"></a>
 				<a href="#" onclick="return false;"></a>
+			</div>
+			<div id="alert">
+				<div id="alert_message"></div>
+				<a href="#" onclick="return false;">OK</a>
 			</div>
 		</div>
 	</body>

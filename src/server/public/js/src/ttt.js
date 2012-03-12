@@ -14,7 +14,10 @@ var PAUSE;
 		CONFIRM_SELECTOR = '#confirm'
 		QUESTION_SELECTOR = "#question"
 
-	var HOST = 'http://localhost:3000/'
+		ALERT_SELECTOR = "#alert"
+		ALERT_MESSAGE_SELECTOR = "#alert_message"
+
+	var HOST = 'http://localhost:4567/'
 
 
 	Board = function(stage, gameState) {
@@ -52,7 +55,7 @@ var PAUSE;
 			modal: true,
 			autoOpen: false
 		})
-		.find('a').each(function(idx) {
+		.find('a').each(function(idx) {			
 			var signal;
 			if(idx === 0) signal = "YES";
 			else signal = "NO";
@@ -61,6 +64,21 @@ var PAUSE;
 				self.query({signal: signal});
 				$(CONFIRM_SELECTOR).dialog('close');
 			})
+		})
+
+		$(ALERT_SELECTOR).dialog({
+			modal: true,
+			autoOpen: false
+		})
+		.find('a').unbind().click(function() {
+			self.query({signal: "INVALID"})
+			$(ALERT_SELECTOR).dialog('close')
+		})
+
+		$("#restart a").click(function() {
+			self.query({signal: "RESTART"})
+
+			return false;
 		})
 	}
 
@@ -143,6 +161,12 @@ var PAUSE;
 		})
 	}
 
+	Board.prototype.alert = function(msg) {
+		var alert = $(ALERT_SELECTOR);
+		alert.dialog('open');
+		alert.find(ALERT_MESSAGE_SELECTOR).html(msg);
+	}
+
 	Board.prototype.respondToServerStatus = function(msg) {
 		var self = this;
 		if(msg.state === 'ReceivingMoveState') {
@@ -155,30 +179,29 @@ var PAUSE;
 		}
 
 		else if(msg.state === "ReceivingPlayVsAIState") {
-			this.query({
-				signal: confirm("Play vs. AI?") ? "YES" : "NO"
-			});
+			self.confirm("Play vs. an AI?", "Yes", "No")
 		}
 
 
 		else if(msg.state === "ReceivingPlayAsXState") {
-			this.query({
-				signal: confirm('Play as X?') ? "YES" : "NO"
-			});
+			self.confirm("Play as X or O?", "X", "O")
 		}
 
 		else if(msg.state === "ReceivingStartNewGameState") {
-			this.query({
-				signal: confirm("Start new game?") ? "YES" : "NO"
-			});
+			self.confirm("Start a new game?", "Yes", "No")
 		}
 
-		else if(msg.State === 'HaltState') {
-			this.gamePlaying = false;
+		else if(msg.state === 'HaltState') {
 			this.displayMessage("");
-			clearInterval(this.statusInterval);
 		}
 
+		else if(msg.state === "ReceivingAlertState") {
+			self.alert(msg.message);
+		}
+
+		else if(msg.state == "WaitingState") {
+			self.displayMessage(msg.message);
+		}
 
 		else console.log("Can't understand response: ", msg);
 	}

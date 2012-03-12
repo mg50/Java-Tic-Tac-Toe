@@ -2,6 +2,7 @@ require 'json'
 require 'pry'
 require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
 require File.join(File.dirname(__FILE__), 'HTTPUI')
+include_class Java::Javattt.Board
 include_class Java::Javattt.Side
 include_class Java::Javattt.Game
 include_class Java::Javattt.command.YesCommand
@@ -10,6 +11,7 @@ include_class Java::Javattt.command.ExitCommand
 include_class Java::Javattt.command.MoveCommand
 include_class Java::Javattt.command.AlertCommand
 include_class Java::Javattt.command.RestartCommand
+include_class Java::Javattt.command.WaitCommand
 
 Java::Javattt.Side.class_eval do
 	field_reader :X, :O
@@ -37,6 +39,14 @@ class HTTPGame < Java::Javattt.Game
 	def alert(msg)
 		AlertCommand.new(msg).sendToGame(self)
 		start
+	end
+
+	def duplicate_game_state game
+		self.board = Board.new(game.board.getGrid)
+		self.playerX = game.playerX.class.new(Side.X) if game.playerX
+		self.playerO = game.playerO.class.new(Side.O) if game.playerO
+		self.currentPlayer = game.currentPlayer == game.playerX ? self.playerX : self.playerO
+		self.state = game.state.class.new self
 	end
 
 	def initialize
@@ -74,7 +84,8 @@ class HTTPGame < Java::Javattt.Game
 	end
 
 	def two_player?
-		playerX.class == Java::Javattt.HumanPlayer and playerO.class == Java::Javattt.HumanPlayer
+		playerX and playerO and playerX.class == Java::Javattt.HumanPlayer and 
+	  		playerO.class == Java::Javattt.HumanPlayer
 	end
 
 	def receive_signal params
@@ -92,6 +103,9 @@ class HTTPGame < Java::Javattt.Game
 			cmd = MoveCommand.new move
 		elsif params["signal"] == "NULL"
 			cmd = NullCommand.new
+		elsif params["signal"] == "WAIT"
+			cmd = WaitCommand.new
+			self.ui.message = params["message"] || ""
 		end
 
 		start cmd
@@ -106,9 +120,25 @@ class HTTPGame < Java::Javattt.Game
 	end
 
 	#Game hooks
+
+	def onStateTransition
+		self.room.suspend_games_until_owner_starts if self.room and not (self.room.owner.playing and
+																		 self.room.owner.two_player?)
+	end
+
 	def onNewGame
 		opponent_game = nil
 		self.waiting_for_opponent = false
+	end
+
+	def onBeginningGame
+		return unless two_player? and self.room and self == self.room.owner
+
+		if opp = self.opponent_game
+			opp.duplicate_game_state self
+
+			opp.start
+		end
 	end
 
 	def onSuccessfulMove(coords)

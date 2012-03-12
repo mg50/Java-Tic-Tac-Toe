@@ -1,5 +1,6 @@
 package javattt;
 
+import javattt.command.MoveCommand;
 import junit.framework.TestCase;
 
 import static org.junit.Assert.*;
@@ -47,8 +48,13 @@ public class AIPlayerTest extends TestCase {
                                          {_, O, X, O},
                                          {X, _, _, _},
                                          {X, O, _, _}};
-    
-    
+
+    private static Side[][] TestGrid10 = {{O, _, _, X},
+                                          {O, O, O, X},
+                                          {_, X, X, _},
+                                          {X, _, _, _}};
+
+
     public void testLeafValueOne() {
         Board board = new Board(TestGrid1);
 
@@ -132,29 +138,52 @@ public class AIPlayerTest extends TestCase {
         Board board = new Board(TestGrid4);
         AIPlayer x = new AIPlayer(Side.X, board.size);
         AIPlayer o = new AIPlayer(Side.O, board.size);
-        assertArrayEquals(x.determineNextMove(board, new Console()).coords, new int[]{0, 2});
-        assertArrayEquals(o.determineNextMove(board, new Console()).coords, new int[]{0, 2});
+        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(board, new Console());
+        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(board, new Console());
+        assertArrayEquals(cmd1.coords, new int[]{0, 2});
+        assertArrayEquals(cmd2.coords, new int[]{0, 2});
     }
 
     public void testCalculateMoveTwo() {
         Board board = new Board(TestGrid7);
         AIPlayer x = new AIPlayer(Side.X, board.size);
         AIPlayer o = new AIPlayer(Side.O, board.size);
-        assertArrayEquals(x.determineNextMove(board, new Console()).coords, new int[]{0, 2});
+        MoveCommand cmd = (MoveCommand) x.determineNextMove(board, new Console());
+
+        assertArrayEquals(cmd.coords, new int[]{0, 2});
     }
 
     public void testCalculateMoveThree() {
         Board board = new Board(TestGrid8);
         AIPlayer x = new AIPlayer(Side.X, board.size);
         AIPlayer o = new AIPlayer(Side.O, board.size);
-        assertArrayEquals(o.determineNextMove(board, new Console()).coords, new int[]{1, 2});
+        MoveCommand cmd = (MoveCommand) o.determineNextMove(board, new Console());
+
+        assertArrayEquals(cmd.coords, new int[]{1, 2});
     }
 
     public void testCalculateMoveFour() {
         Board board = new Board(TestGrid9);
         AIPlayer x = new AIPlayer(Side.X, board.size);
         AIPlayer o = new AIPlayer(Side.O, board.size);
-        assertArrayEquals(x.determineNextMove(board, new Console()).coords, new int[]{0, 1});
-        assertArrayEquals(o.determineNextMove(board, new Console()).coords, new int[]{1, 2});
+        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(board, new Console());
+        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(board, new Console());
+
+
+        assertArrayEquals(cmd1.coords, new int[]{0, 1});
+        assertArrayEquals(cmd2.coords, new int[]{1, 2});
     }
+
+    public void testCalculateMoveFive() {
+        Board board = new Board(TestGrid10);
+        AIPlayer x = new AIPlayer(Side.X, board.size);
+        AIPlayer o = new AIPlayer(Side.O, board.size);
+        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(board, new Console());
+        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(board, new Console());
+
+
+        assertArrayEquals(cmd1.coords, new int[]{3, 2});
+        assertArrayEquals(cmd2.coords, new int[]{0, 2});
+    }
+
 }
