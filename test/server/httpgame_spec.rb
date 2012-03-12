@@ -2,7 +2,14 @@ require 'rubygems'
 require 'json'
 require 'java'
 require '../../src/server/httpgame'
-include_class Java::Javattt.Stage
+
+include_class Java::Javattt.Side
+include_class Java::Javattt.Board
+include_class Java::Javattt.HumanPlayer
+include_class Java::Javattt.AIPlayer
+include_class Java::Javattt::fsm.ReceivingMoveState
+include_class Java::Javattt::fsm.ReceivingAlertState
+include_class Java::Javattt::command.AlertCommand
 
 describe HTTPGame do
 	def start_two_player_game(room1=nil, room2=nil)
@@ -25,11 +32,26 @@ describe HTTPGame do
 		HTTPGame.clear_waiting_games
 	end
 
+	it "refers to a game by session" do
+		session = {:session_id => 1}
+		HTTPGame[session].class.should == HTTPGame
+	end
+
+	it "creates multiple games" do
+		sess1 = {:session_id => 1}
+		sess2 = {:session_id => 2}
+
+		HTTPGame[sess1].class.should == HTTPGame
+		HTTPGame[sess2].class.should == HTTPGame
+
+		HTTPGame[sess1].should_not == HTTPGame[sess2]
+	end
+
 	it "returns valid JSON about its state" do
 		time = Time.now.to_i
 		game = HTTPGame.new
 		game_info = game.status
-		game_info['timestamp'].should == time
+		game_info['timestamp'].to_i.should == time.to_i
 		game_info['state'].should == "NewGameState"
 		game_info['board'].should == [["", "", ""], ["", "", ""], ["", "", ""]]
 	end
@@ -174,5 +196,42 @@ describe HTTPGame do
 
 		game1.opponent_game.should be_nil
 		game2.opponent_game.should be_nil
+	end
+
+	it "restarts a game for one player" do
+		game = HTTPGame.new
+		game.state = Java::Javattt::fsm.HaltState.new game
+
+		game.receive_signal "signal" => "RESTART"
+
+		game.state.class.should == Java::Javattt::fsm.ReceivingPlay3x3State
+	end
+
+	it "restarts a game for two players" do
+		game1, game2 = start_two_player_game("room", "room")
+
+		game1.receive_signal "signal" => "RESTART"
+
+		game1.state.class.should == Java::Javattt::fsm.ReceivingPlay3x3State
+		game2.state.class.should == Java::Javattt::fsm.ReceivingAlertState
+
+		game1.opponent_game.should be_nil
+		game2.opponent_game.should be_nil
+	end
+
+	it "sends an alert message" do
+		game = HTTPGame.new
+		game.board = Board.new(3)
+		game.playerX = game.currentPlayer = HumanPlayer.new(Side.X)
+		game.playerO = AIPlayer.new(Side.O, game.board.size)
+		game.state = ReceivingMoveState.new game
+
+
+		game.alert "Test alert message"
+		game.state.class.should == ReceivingAlertState
+		game.status["message"].should == "Test alert message"
+
+		game.receive_signal "signal" => "INVALID"
+		game.state.class.should == ReceivingMoveState
 	end
 end

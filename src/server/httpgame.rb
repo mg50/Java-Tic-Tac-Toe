@@ -4,20 +4,39 @@ require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
 require File.join(File.dirname(__FILE__), 'HTTPUI')
 include_class Java::Javattt.Side
 include_class Java::Javattt.Game
-include_class Java::Javattt.TransitionData
-include_class Java::Javattt.TransitionData::Signal
+include_class Java::Javattt.command.YesCommand
+include_class Java::Javattt.command.NoCommand
+include_class Java::Javattt.command.ExitCommand
+include_class Java::Javattt.command.MoveCommand
+include_class Java::Javattt.command.AlertCommand
+include_class Java::Javattt.command.RestartCommand
 
 Java::Javattt.Side.class_eval do
 	field_reader :X, :O
 end
 
 class HTTPGame < Java::Javattt.Game
-	attr_accessor :opponent_game, :waiting_for_opponent, :room, :ip
+	attr_accessor :opponent_game, :waiting_for_opponent, :room, :ip, :timestamp
 
 	@@waiting_games = {}
+	@@games = {}
 
 	def self.clear_waiting_games
 		@@waiting_games = {}
+	end
+
+	def self.[](session)
+		unless @@games[session[:session_id]]
+			@@games[session[:session_id]] = self.new
+			@@games[session[:session_id]].start
+		end
+		@@games[session[:session_id]]
+	end
+
+
+	def alert(msg)
+		AlertCommand.new(msg).sendToGame(self)
+		start
 	end
 
 	def initialize
@@ -26,20 +45,8 @@ class HTTPGame < Java::Javattt.Game
 		self.ui = HTTPUI.new
 	end
 
-	def restart
-		self.state = Java::Javattt.fsm.NewGameState.new(self)
-
-		start nil
-		if opp = self.opponent_game
-			self.opponent_game = nil
-			opp.opponent_game = nil
-
-			opp.restart
-		end
-	end
-
 	def touch
-		@timestamp = Time.now.to_i
+		@timestamp = Time.now.to_f
 	end
 
 	def get_ruby_grid
@@ -62,6 +69,7 @@ class HTTPGame < Java::Javattt.Game
 		stat["state"] = state.class.name.split("::").last
 		stat["board"] = get_ruby_grid if board
 		stat["currentPlayer"] = currentPlayer == playerX ? "X" : "O"
+		stat["message"] = self.ui.message
 		stat
 	end
 
@@ -71,18 +79,22 @@ class HTTPGame < Java::Javattt.Game
 
 	def receive_signal params
 		if params["signal"] == "YES"
-			data = TransitionData.new Signal::YES
+			cmd = YesCommand.new
 		elsif params["signal"] == "NO"
-			data = TransitionData.new Signal::NO
+			cmd = NoCommand.new
 		elsif params["signal"] == "EXIT"
-			data = TransitionData.new Signal::EXIT
+			cmd = ExitCommand.new
+		elsif params["signal"] == "RESTART"
+			cmd = RestartCommand.new
 		elsif params["signal"] == "MOVE"
 			return if self.waiting_for_opponent
 			move = params["coords"].to_java :int
-			data = TransitionData.new move
+			cmd = MoveCommand.new move
+		elsif params["signal"] == "NULL"
+			cmd = NullCommand.new
 		end
 
-		start data
+		start cmd
 	end
 
 	def current_player_human?
@@ -106,7 +118,7 @@ class HTTPGame < Java::Javattt.Game
 		else
 			return if self.waiting_for_opponent
 
-			opponent_game.start TransitionData.new(coords)
+			opponent_game.start MoveCommand.new coords
 			self.waiting_for_opponent = true
 			opponent_game.waiting_for_opponent = false
 		end
@@ -132,6 +144,16 @@ class HTTPGame < Java::Javattt.Game
 		end
 	end
 
+	def onRestart
+		if opp = self.opponent_game
+			self.opponent_game = nil
+			opp.opponent_game = nil
+
+			opp.receive_signal "signal" => "RESTART"
+			opp.alert "Your opponent has left the game."			
+		end
+	end
+
 	def onReceivingPlayAsX
 		self.waiting_for_opponent = !(playerX.class == Java::Javattt.HumanPlayer)
 	end
@@ -141,5 +163,21 @@ class HTTPGame < Java::Javattt.Game
 
 		opponent_game.state = Java::Javattt::fsm.GameOverState.new(opponent_game)
 		opponent_game.start nil
+	end
+
+	def onGameOver(victor)		
+		if victor == Side.X
+			str = "X"
+		elsif victor == Side.O
+			str = "O"
+		else
+			str = nil
+		end
+
+		if str.nil?
+			alert "The game ended in a draw."
+		else
+			alert "Player " + str + " has won!"
+		end
 	end
 end
