@@ -1,7 +1,5 @@
 package javattt.fsm;
 
-import javattt.command.Command;
-import javattt.command.NullCommand;
 import javattt.Game;
 
 /**
@@ -16,8 +14,7 @@ public class HaltState extends State {
         super(game);
     }
     
-    public Command execute() {
+    public void step() {
         game.playing = false;
-        return new NullCommand();
     }
 }

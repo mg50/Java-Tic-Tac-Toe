@@ -11,7 +11,7 @@ import javattt.Game;
  */
 public class RestartCommand implements Command{
     
-    public Command sendToGame(Game game) {
-        return game.state.restart();
+    public void issue(Game game) {
+        game.state.restart();
     }
 }

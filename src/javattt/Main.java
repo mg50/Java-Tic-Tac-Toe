@@ -10,7 +10,7 @@ package javattt;
 public class Main {
     
     public static void main(String[] args) {
-        LocalGame game = new LocalGame(new Console());
+        LocalGame game = new LocalGame();
         game.start();
     }
 }

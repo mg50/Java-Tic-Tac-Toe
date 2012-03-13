@@ -11,7 +11,7 @@ import javattt.Game;
  */
 public class NoCommand implements Command {
     
-    public Command sendToGame(Game game) {
-        return game.state.no();
+    public void issue(Game game) {
+        game.state.no();
     }
 }

@@ -1,7 +1,5 @@
 package javattt.fsm;
 
-import javattt.command.Command;
-import javattt.command.NullCommand;
 import javattt.Game;
 
 /**
@@ -16,14 +14,15 @@ public class BeginningGameState extends State {
         super(game);
     }
     
-    public Command execute() {
+    public void step() {
         game.playing = true;
         game.currentPlayer = game.playerX;
-        game.ui.update(game.board);
-        game.ui.displayHelp();
-        game.state = new PromptingMoveState(game);
+        game.playerX.ui.update(game.board);
+        game.playerX.ui.displayHelp();
+        game.playerO.ui.update(game.board);
+        game.playerO.ui.displayHelp();
+        game.state = new MoveState(game);
 
         game.onBeginningGame();
-        return new NullCommand();
     }
 }

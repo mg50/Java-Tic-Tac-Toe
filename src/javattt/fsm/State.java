@@ -1,7 +1,7 @@
 package javattt.fsm;
 
 import javattt.command.Command;
-import javattt.command.NullCommand;
+import javattt.command.StepCommand;
 import javattt.Game;
 import javattt.Side;
 
@@ -14,30 +14,24 @@ import javattt.Side;
  */
 public abstract class State {
     public Game game;
-    
-    public Command transition() {
-        return transition(new NullCommand());
-    }
-    
-    public Command transition(Command cmd) {
-        if(cmd == null) cmd = new NullCommand();
-        return cmd.sendToGame(game);
-    }
-    
+
     public State(Game game) {
         this.game = game;
     }
 
-    public Command execute() {return null;}
-    public Command yes() {return null;}
-    public Command no() {return null;}
-    public Command move(int[] coords) {return null;}
-    public Command victor(Side s) {return null;}
-    public Command invalid() {return null;}
-    public Command suspend() {return null;}
-    public Command restart() {
+    public Command readNextCommand() {
+        return new StepCommand();
+    }
+    
+    public void step() {}
+    public void yes() {}
+    public void no() {}
+    public void move(int[] coords) {}
+    public void victor(Side s) {}
+    public void invalid() {}
+    public void suspend() {}
+    public void restart() {
         game.state = new NewGameState(game);
         game.onRestart();
-        return new NullCommand();
     }
 }

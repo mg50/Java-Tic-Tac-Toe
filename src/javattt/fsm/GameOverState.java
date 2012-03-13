@@ -1,9 +1,9 @@
 package javattt.fsm;
 
 import javattt.command.Command;
-import javattt.command.NullCommand;
 import javattt.Game;
 import javattt.Side;
+import javattt.command.VictorCommand;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,23 +16,25 @@ public class GameOverState extends State {
     public GameOverState(Game game) {
         super(game);
     }
-
-    public Command execute() {
-        game.playing = false;
-        game.state = new PromptingStartNewGameState(game);
-        game.onGameOver(null);
-        return new NullCommand();
+    
+    public Command readNextCommand() {
+        return new VictorCommand(game.board.winner());
     }
 
-    public Command victor(Side side) {
+    public void step() {
+        game.playing = false;
+        game.state = new StartNewGameState(game);
+        game.onGameOver(null);
+    }
+
+    public void victor(Side side) {
         game.playing = false;
         if(side == Side.X) game.xWinsCount++;
         else if(side == Side.O) game.oWinsCount++;
-        game.ui.victoryMessage(side, game.xWinsCount, game.oWinsCount);
+        //game.ui.victoryMessage(side, game.xWinsCount, game.oWinsCount);
 
-        game.state = new PromptingStartNewGameState(game);
+        game.state = new StartNewGameState(game);
 
         game.onGameOver(side);
-        return new NullCommand();
     }
 }

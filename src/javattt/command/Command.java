@@ -11,5 +11,5 @@ import javattt.Game;
  */
 public interface Command {
     
-    public Command sendToGame(Game game);
+    public void issue(Game game);
 }

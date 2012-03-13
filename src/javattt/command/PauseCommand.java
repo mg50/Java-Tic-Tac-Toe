@@ -11,7 +11,6 @@ import javattt.Game;
  */
 public class PauseCommand implements Command {
     
-    public Command sendToGame(Game game) {
-        return null;
+    public void issue(Game game) {
     }
 }

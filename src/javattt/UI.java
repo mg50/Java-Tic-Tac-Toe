@@ -13,10 +13,7 @@ public interface UI {
 
     void update(Board board);
     Command promptMove(Board board);
-    Command promptPlay3x3();
-    Command promptPlayAsX();
-    Command promptPlayVsAI();
-    Command promptStartNewGame();
+    Command prompt(String message);
     void victoryMessage(Side winner, int xWinCount, int oWinCount);
     Command displayMessage(String message);
     void displayHelp();

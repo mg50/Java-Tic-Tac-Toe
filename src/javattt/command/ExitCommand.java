@@ -12,8 +12,7 @@ import javattt.fsm.HaltState;
  */
 public class ExitCommand implements Command {
     
-    public Command sendToGame(Game game) {
+    public void issue(Game game) {
         game.state = new HaltState(game);
-        return null;
     }
 }

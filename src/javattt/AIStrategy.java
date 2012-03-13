@@ -13,20 +13,20 @@ import java.util.HashMap;
  * Time: 11:02 AM
  * To change this template use File | Settings | File Templates.
  */
-public class AIPlayer extends Player {
+public class AIStrategy extends GameStrategy {
 
     public static HashMap<Integer, Integer> gameHashForX = new HashMap<Integer, Integer>();
     public static HashMap<Integer, Integer> gameHashForO = new HashMap<Integer, Integer>();
 
     public int infinity;
     public int negInfinity;
-    public AIPlayer(Side side, int boardSize) {
-        super(side);
+    public AIStrategy(int boardSize) {
+        super();
         infinity = (int) Math.pow(2, boardSize*boardSize);
         negInfinity = -1 * infinity;
     }
     
-    public Command determineNextMove(Board board, UI ui) {
+    public Command determineNextMove(Side side, Board board, UI ui) {
         
         ArrayList<int[]> emptyCoords = board.emptyCoords();
         int size = emptyCoords.size();

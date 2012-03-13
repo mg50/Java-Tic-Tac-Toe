@@ -11,7 +11,7 @@ import javattt.Game;
  */
 public class InvalidCommand implements Command {
     
-    public Command sendToGame(Game game) {
-        return game.state.invalid();
+    public void issue(Game game) {
+        game.state.invalid();
     }
 }

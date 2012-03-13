@@ -1,8 +1,8 @@
 package javattt.fsm;
 
-import javattt.command.Command;
-import javattt.command.NullCommand;
 import javattt.Game;
+import javattt.Player;
+import javattt.Side;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,12 +17,11 @@ public class NewGameState extends State {
         super(game);
     }
 
-    public Command execute() {
-        game.playerX = null;
-        game.playerO = null;
+    public void step() {
+        game.playerX = new Player(Side.X);
+        game.playerO = new Player(Side.O);
         game.currentPlayer = null;
-        game.state = new PromptingPlay3x3State(game);
+        game.state = new PlayVsAIState(game);
         game.onNewGame();
-        return new NullCommand();
     }
 }

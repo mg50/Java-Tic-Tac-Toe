@@ -11,7 +11,7 @@ import javattt.Game;
  */
 public class YesCommand implements Command {
     
-    public Command sendToGame(Game game) {
-        return game.state.yes();
+    public void issue(Game game) {
+        game.state.yes();
     }
 }

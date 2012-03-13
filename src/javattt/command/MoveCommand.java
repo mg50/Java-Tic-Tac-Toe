@@ -16,7 +16,7 @@ public class MoveCommand implements Command {
         this.coords = coords;
     }
     
-    public Command sendToGame(Game game) {
-        return game.state.move(coords);
+    public void issue(Game game) {
+        game.state.move(coords);
     }
 }

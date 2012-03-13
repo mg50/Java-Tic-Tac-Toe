@@ -9,9 +9,9 @@ import javattt.Game;
  * Time: 4:59 PM
  * To change this template use File | Settings | File Templates.
  */
-public class NullCommand implements Command {
+public class StepCommand implements Command {
     
-    public Command sendToGame(Game game) {
-        return game.state.execute();
+    public void issue(Game game) {
+        game.state.step();
     }
 }

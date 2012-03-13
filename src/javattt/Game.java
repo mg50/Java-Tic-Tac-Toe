@@ -3,6 +3,7 @@ package javattt;
 import javattt.command.Command;
 import javattt.command.PauseCommand;
 import javattt.command.RestartCommand;
+import javattt.command.StepCommand;
 import javattt.fsm.*;
 
 /**
@@ -15,25 +16,15 @@ import javattt.fsm.*;
 
 
 public abstract class Game {
-    public UI ui;
     public Board board = new Board() {};
-    public Player playerX;
-    public Player playerO;
+    public Player playerX = new Player(Side.X);
+    public Player playerO = new Player(Side.O);
     public Player currentPlayer;
+    public Player masterPlayer;
     public int xWinsCount;
     public int oWinsCount;
     public javattt.fsm.State state = new NewGameState(this);
-    public javattt.fsm.State suspendedState;
     public boolean playing = false;
-
-    public void suspend() {
-        suspendedState = state;
-    }
-
-    public void unsuspend() {
-        state = suspendedState;
-        suspendedState = null;
-    }
 
     public void start() {
         start(null);
@@ -41,11 +32,16 @@ public abstract class Game {
 
     public void start(Command cmd) {
         while(cmd instanceof RestartCommand || !(state instanceof HaltState || cmd instanceof PauseCommand)) {
-            cmd = state.transition(cmd);
-            onStateTransition();
+            if(cmd == null) cmd = new StepCommand();
+            cmd.issue(this);
+            cmd = state.readNextCommand();
         }
 
         if(state instanceof HaltState) onHalt();
+    }
+    
+    public Player nonMasterPlayer() {
+        return masterPlayer == playerX ? playerO : playerX;
     }
 
     //hooks

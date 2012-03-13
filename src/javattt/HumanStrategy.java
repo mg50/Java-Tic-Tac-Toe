@@ -9,8 +9,13 @@ import javattt.command.Command;
  * Time: 3:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class HumanPlayer extends Player {
-    public HumanPlayer(Side side) {
+public class HumanStrategy extends GameStrategy {
+
+    public HumanStrategy() {
+
+    }
+
+    public HumanStrategy(Side side) {
         super(side);
     }
     

@@ -117,9 +117,9 @@ public class Console implements UI {
     public void victoryMessage(Side winner, int xWinsCount, int oWinsCount) {
 
         try {
-            if(winner != null) outputStream.write("Player " + getSideSymbol(winner) + " has won!\n");
+            if(winner != null) outputStream.write("GameStrategy " + getSideSymbol(winner) + " has won!\n");
             else outputStream.write("The game has ended in a draw.\n");
-            outputStream.write("Player X has won " + inflectWinCount(xWinsCount) + " and player O has won " +
+            outputStream.write("GameStrategy X has won " + inflectWinCount(xWinsCount) + " and player O has won " +
                                inflectWinCount(oWinsCount) + ".\n");
             outputStream.flush();
             
@@ -152,7 +152,7 @@ public class Console implements UI {
             System.out.println("Error printing message!");
         }
 
-        return new NullCommand();
+        return new StepCommand();
     }
 
     public void displayHelp() {

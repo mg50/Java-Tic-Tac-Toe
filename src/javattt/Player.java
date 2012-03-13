@@ -1,24 +1,28 @@
 package javattt;
 
-import javattt.command.Command;
-import javattt.command.NullCommand;
-
 /**
  * Created by IntelliJ IDEA.
  * User: MGT
- * Date: 2/14/12
- * Time: 2:11 PM
+ * Date: 3/12/12
+ * Time: 11:40 PM
  * To change this template use File | Settings | File Templates.
  */
-public abstract class Player {
+public class Player {
+    public GameStrategy gameStrategy;
+    public Side side;
+    public UI ui;
+    public LanguageStore languageStore = LanguageStore.instance;
 
-    public final Side side;
+    public Player() {
+
+    }
 
     public Player(Side side) {
         this.side = side;
     }
-
-    public Command determineNextMove(Board board, UI ui) { // No-op
-        return new NullCommand();
+    
+    public Player(Side side, UI ui) {
+        this.side = side;
+        this.ui = ui;
     }
 }

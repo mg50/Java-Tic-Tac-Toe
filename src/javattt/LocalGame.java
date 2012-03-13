@@ -15,10 +15,15 @@ import java.util.Arrays;
  */
 public class LocalGame extends Game {
 
-    public LocalGame(UI ui) {
+    public LocalGame() {
+        Player p = new Player();
+        p.ui = new Console();
+        p.gameStrategy = new HumanStrategy();
+        masterPlayer = p;
         board = new Board();
-        this.ui = ui;
     }
+
+    /*
     public LocalGame(Board inputBoard) {
         board = inputBoard;
     }
@@ -27,9 +32,14 @@ public class LocalGame extends Game {
         board = inputBoard;
         this.ui = ui;
     }
-
+                        */
     public Board getBoard() {
         return board;
     }
 
+    public void onNewGame() {
+        masterPlayer.ui = new Console();
+        playerX.ui = new MockUI();
+        playerO.ui = new MockUI();
+    }
 }

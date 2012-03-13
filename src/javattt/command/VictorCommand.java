@@ -17,7 +17,7 @@ public class VictorCommand implements Command {
         side = s;
     }
     
-    public Command sendToGame(Game game) {
-        return game.state.victor(side);
+    public void issue(Game game) {
+        game.state.victor(side);
     }
 }
