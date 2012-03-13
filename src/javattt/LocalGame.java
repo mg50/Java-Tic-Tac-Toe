@@ -1,10 +1,8 @@
 package javattt;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.Arrays;
+import javattt.strategy.HumanStrategy;
+import javattt.ui.Console;
+import javattt.ui.MockUI;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,6 +12,8 @@ import java.util.Arrays;
  * To change this template use File | Settings | File Templates.
  */
 public class LocalGame extends Game {
+
+    public final boolean chooseMarkerInPvP = false;
 
     public LocalGame() {
         Player p = new Player();
@@ -37,9 +37,22 @@ public class LocalGame extends Game {
         return board;
     }
 
+    public boolean chooseMarkerInPvP() {
+        playerX = masterPlayer;
+        masterPlayer.side = Side.X;
+
+        playerO.gameStrategy = new HumanStrategy();
+        playerO.ui = masterPlayer.ui;
+        return false;
+    }
+
     public void onNewGame() {
-        masterPlayer.ui = new Console();
         playerX.ui = new MockUI();
         playerO.ui = new MockUI();
+    }
+
+    public void onBeginningGame() {
+        masterPlayer.ui = new Console();
+        //nonMasterPlayer().ui = masterPlayer.ui;
     }
 }

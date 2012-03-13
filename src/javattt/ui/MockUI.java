@@ -1,6 +1,9 @@
-package javattt;
+package javattt.ui;
 
+import javattt.Board;
+import javattt.Side;
 import javattt.command.Command;
+import javattt.ui.UI;
 
 /**
  * Created by IntelliJ IDEA.

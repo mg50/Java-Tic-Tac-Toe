@@ -1,5 +1,8 @@
 package javattt;
 
+import javattt.strategy.GameStrategy;
+import javattt.ui.UI;
+
 /**
  * Created by IntelliJ IDEA.
  * User: MGT

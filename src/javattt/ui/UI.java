@@ -1,5 +1,7 @@
-package javattt;
+package javattt.ui;
 
+import javattt.Board;
+import javattt.Side;
 import javattt.command.Command;
 
 /**

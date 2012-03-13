@@ -2,6 +2,7 @@ package javattt.fsm;
 
 import javattt.command.Command;
 import javattt.*;
+import javattt.strategy.AIStrategy;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,7 +38,7 @@ public class PlayAsXState extends State {
     }
 
     public void finish() {
-        game.state = new BeginningGameState(game);
+        game.state = new Play3x3State(game);
         game.onReceivingPlayAsX();
     }
 }

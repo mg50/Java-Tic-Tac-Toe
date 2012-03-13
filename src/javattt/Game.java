@@ -39,10 +39,17 @@ public abstract class Game {
 
         if(state instanceof HaltState) onHalt();
     }
+
+    public boolean chooseMarkerInPvP() {
+        return true;
+    }
+
     
     public Player nonMasterPlayer() {
         return masterPlayer == playerX ? playerO : playerX;
     }
+
+
 
     //hooks
 

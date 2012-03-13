@@ -1,5 +1,8 @@
-package javattt;
+package javattt.strategy;
 
+import javattt.Board;
+import javattt.Side;
+import javattt.ui.UI;
 import javattt.command.Command;
 import javattt.command.MoveCommand;
 

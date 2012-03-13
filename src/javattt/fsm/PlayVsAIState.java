@@ -1,6 +1,6 @@
 package javattt.fsm;
 
-import javattt.HumanStrategy;
+import javattt.strategy.HumanStrategy;
 import javattt.command.Command;
 import javattt.Game;
 import javattt.Side;
@@ -30,7 +30,7 @@ public class PlayVsAIState extends State{
     public void no() {
         game.playerX.gameStrategy = new HumanStrategy(Side.X);
         game.playerO.gameStrategy = new HumanStrategy(Side.O);
-        game.state = new BeginningGameState(game);
+        game.state = game.chooseMarkerInPvP() ? new PlayAsXState(game) : new Play3x3State(game);
         game.onReceivingPlayVsAI();
     }
 

@@ -1,5 +1,8 @@
-package javattt;
+package javattt.strategy;
 
+import javattt.Board;
+import javattt.Side;
+import javattt.ui.UI;
 import javattt.command.Command;
 
 /**
@@ -19,7 +22,7 @@ public class HumanStrategy extends GameStrategy {
         super(side);
     }
     
-    public Command determineNextMove(Board board, UI ui) {
+    public Command determineNextMove(Side side, Board board, UI ui) {
         return ui.promptMove(board);
     }
 }
