@@ -28,8 +28,7 @@ public class MoveState extends State {
         int y = coords[1];
         if(game.board.getCell(x, y) == Side._) {
             game.board.setCell(x, y, game.currentPlayer.side);
-            game.playerX.ui.update(game.board);
-            game.playerO.ui.update(game.board);
+            game.updatePlayerUIs();
 
             game.currentPlayer = game.currentPlayer == game.playerX ? game.playerO : game.playerX;
             

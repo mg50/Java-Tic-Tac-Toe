@@ -1,6 +1,8 @@
 package javattt;
 
 import javattt.command.MoveCommand;
+import javattt.strategy.AIStrategy;
+import javattt.ui.Console;
 import junit.framework.TestCase;
 
 import static org.junit.Assert.*;
@@ -58,116 +60,116 @@ public class AIPlayerTest extends TestCase {
     public void testLeafValueOne() {
         Board board = new Board(TestGrid1);
 
-        AIPlayer x = new AIPlayer(Side.X, board.size);
+        AIStrategy x = new AIStrategy(board.size);
         assertEquals(x.absoluteLeafScore(board), 512);
                 
-        AIPlayer o = new AIPlayer(Side.O, board.size);
+        AIStrategy o = new AIStrategy(board.size);
         assertEquals(o.absoluteLeafScore(board), 512);
     }
 
     public void testLeafValueTwo() {
         Board board = new Board(TestGrid2);
 
-        AIPlayer x = new AIPlayer(Side.X, board.size);
+        AIStrategy x = new AIStrategy(board.size);
         assertEquals(x.absoluteLeafScore(board), 0);
 
-        AIPlayer o = new AIPlayer(Side.O, board.size);
+        AIStrategy o = new AIStrategy(board.size);
         assertEquals(o.absoluteLeafScore(board), 0);
     }
 
 
     public void testScoreChildOne() {
         Board board = new Board(TestGrid2);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        assertEquals(x.scoreChild(board), 0);
-        assertEquals(o.scoreChild(board), 0);
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        assertEquals(x.scoreChild(Side.X, board), 0);
+        assertEquals(o.scoreChild(Side.O, board), 0);
     }
 
     public void testScoreChildTwo() {
         Board board = new Board(TestGrid3);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        assertEquals(x.scoreChild(board), 0);
-        assertEquals(o.scoreChild(board), 0);
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        assertEquals(x.scoreChild(Side.X, board), 0);
+        assertEquals(o.scoreChild(Side.O, board), 0);
     }
 
     public void testScoreChildThree() {
         Board board = new Board(TestGrid4);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        assertEquals(x.scoreChild(board), 0);
-        assertEquals(o.scoreChild(board), 256);
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        assertEquals(x.scoreChild(Side.X, board), 0);
+        assertEquals(o.scoreChild(Side.O, board), 256);
     }
 
     public void testScoreChildFour() {
         Board board = new Board(TestGrid5);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        assertEquals(x.scoreChild(board), 0);
-        assertEquals(o.scoreChild(board), 256);
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        assertEquals(x.scoreChild(Side.X, board), 0);
+        assertEquals(o.scoreChild(Side.O, board), 256);
     }
 
     public void testScoreChildFive() {
         Board board = new Board(TestGrid6);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
 
-        assertEquals(x.scoreChild(board), 0);
-        assertEquals(o.scoreChild(board), 8);
+        assertEquals(x.scoreChild(Side.X, board), 0);
+        assertEquals(o.scoreChild(Side.O, board), 16);
     }
 
     public void testScoreChildSix() {
         Board board = new Board(TestGrid7);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
 
-        assertEquals(o.scoreChild(board), 64);
+        assertEquals(o.scoreChild(Side.O, board), 64);
     }
 
     public void testScoreChildSeven() {
         Board board = new Board(TestGrid8);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
 
-        assertEquals(x.scoreChild(board), -256);
-        assertEquals(o.scoreChild(board), 256);
+        assertEquals(x.scoreChild(Side.X, board), -256);
+        assertEquals(o.scoreChild(Side.O, board), 256);
     }
 
     public void testCalculateMoveOne() {
         Board board = new Board(TestGrid4);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(board, new Console());
-        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(board, new Console());
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(Side.X, board, new Console());
+        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(Side.O, board, new Console());
         assertArrayEquals(cmd1.coords, new int[]{0, 2});
         assertArrayEquals(cmd2.coords, new int[]{0, 2});
     }
 
     public void testCalculateMoveTwo() {
         Board board = new Board(TestGrid7);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        MoveCommand cmd = (MoveCommand) x.determineNextMove(board, new Console());
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        MoveCommand cmd = (MoveCommand) x.determineNextMove(Side.X, board, new Console());
 
         assertArrayEquals(cmd.coords, new int[]{0, 2});
     }
 
     public void testCalculateMoveThree() {
         Board board = new Board(TestGrid8);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        MoveCommand cmd = (MoveCommand) o.determineNextMove(board, new Console());
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        MoveCommand cmd = (MoveCommand) o.determineNextMove(Side.O, board, new Console());
 
         assertArrayEquals(cmd.coords, new int[]{1, 2});
     }
 
     public void testCalculateMoveFour() {
         Board board = new Board(TestGrid9);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(board, new Console());
-        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(board, new Console());
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(Side.X, board, new Console());
+        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(Side.O, board, new Console());
 
 
         assertArrayEquals(cmd1.coords, new int[]{0, 1});
@@ -176,14 +178,13 @@ public class AIPlayerTest extends TestCase {
 
     public void testCalculateMoveFive() {
         Board board = new Board(TestGrid10);
-        AIPlayer x = new AIPlayer(Side.X, board.size);
-        AIPlayer o = new AIPlayer(Side.O, board.size);
-        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(board, new Console());
-        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(board, new Console());
+        AIStrategy x = new AIStrategy(board.size);
+        AIStrategy o = new AIStrategy(board.size);
+        MoveCommand cmd1 = (MoveCommand) x.determineNextMove(Side.X, board, new Console());
+        MoveCommand cmd2 = (MoveCommand) o.determineNextMove(Side.O, board, new Console());
 
 
         assertArrayEquals(cmd1.coords, new int[]{3, 2});
         assertArrayEquals(cmd2.coords, new int[]{0, 2});
     }
-
 }

@@ -17,7 +17,7 @@ public class StartNewGameState extends State {
     }
     
     public Command readNextCommand() {
-        return game.masterPlayer.ui.prompt(game.currentPlayer.languageStore.PROMPT_START_NEW_GAME);
+        return game.promptPlayer(game.masterPlayer, game.masterPlayer.languageStore.PROMPT_START_NEW_GAME);
     }
     
     public void yes() {

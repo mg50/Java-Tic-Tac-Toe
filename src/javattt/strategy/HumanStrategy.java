@@ -18,10 +18,7 @@ public class HumanStrategy extends GameStrategy {
 
     }
 
-    public HumanStrategy(Side side) {
-        super(side);
-    }
-    
+
     public Command determineNextMove(Side side, Board board, UI ui) {
         return ui.promptMove(board);
     }

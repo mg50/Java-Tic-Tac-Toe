@@ -19,18 +19,20 @@ public class PlayVsAIState extends State{
     }
     
     public Command readNextCommand() {
-        return game.masterPlayer.ui.prompt(game.masterPlayer.languageStore.PROMPT_PLAY_VS_AI);
+        return game.promptPlayer(game.masterPlayer, game.masterPlayer.languageStore.PROMPT_PLAY_VS_AI);
     }
 
     public void yes() {
         game.state = new PlayAsXState(game);
+        game.versusAI = true;
         game.onReceivingPlayVsAI();
     }
 
     public void no() {
-        game.playerX.gameStrategy = new HumanStrategy(Side.X);
-        game.playerO.gameStrategy = new HumanStrategy(Side.O);
+        game.playerX.gameStrategy = new HumanStrategy();
+        game.playerO.gameStrategy = new HumanStrategy();
         game.state = game.chooseMarkerInPvP() ? new PlayAsXState(game) : new Play3x3State(game);
+        game.versusAI = false;
         game.onReceivingPlayVsAI();
     }
 

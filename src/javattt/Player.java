@@ -1,5 +1,6 @@
 package javattt;
 
+import javattt.command.Command;
 import javattt.strategy.GameStrategy;
 import javattt.ui.UI;
 
@@ -16,6 +17,22 @@ public class Player {
     public UI ui;
     public LanguageStore languageStore = LanguageStore.instance;
 
+    public Command promptUI(String message) {
+        return ui.prompt(message);
+    }
+    
+    public void updateUI(Board board) {
+        ui.update(board);
+    }
+
+    public void displayHelp() {
+        ui.displayHelp();
+    }
+    
+    public void displayVictoryMessage(String message, int xWinsCount, int oWinsCount) {
+        ui.victoryMessage(message, xWinsCount, oWinsCount);
+    }
+    
     public Player() {
 
     }

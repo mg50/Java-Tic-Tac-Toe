@@ -42,7 +42,7 @@ public class AIStrategy extends GameStrategy {
             int[] emptyCoord = emptyCoords.get(i);
             Board child = board.duplicateBoard();
             child.setCell(emptyCoord[0], emptyCoord[1], side);
-            int minimaxValue = scoreChild(child);
+            int minimaxValue = scoreChild(side, child);
 
             //System.out.println("[" + emptyCoord[0] + ", " + emptyCoord[1] + "]: " + minimaxValue);
             
@@ -66,7 +66,7 @@ public class AIStrategy extends GameStrategy {
         else return 0;
     }
 
-    public int scoreChild(Board board) {
+    public int scoreChild(Side side, Board board) {
         return minimax(board, board.emptyCoords().size(), negInfinity, infinity, Board.otherSide(side));
     }
     
@@ -101,11 +101,11 @@ public class AIStrategy extends GameStrategy {
 
         int ret;
         if(side == Side.X) {
-            ret = alpha;
+            ret = alpha / 2;
             gameHashForX.put(new Integer(boardHash), new Integer(ret));
         }
         else {
-            ret = beta;
+            ret = beta / 2;
             gameHashForO.put(new Integer(boardHash), new Integer(ret));
         }
 

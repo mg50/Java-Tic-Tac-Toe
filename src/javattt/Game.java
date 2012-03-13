@@ -25,6 +25,7 @@ public abstract class Game {
     public int oWinsCount;
     public javattt.fsm.State state = new NewGameState(this);
     public boolean playing = false;
+    public boolean versusAI;
 
     public void start() {
         start(null);
@@ -45,6 +46,25 @@ public abstract class Game {
         return true;
     }
 
+    public void updatePlayerUIs() {
+        playerX.updateUI(board);
+        playerO.updateUI(board);
+    }    
+
+    public void displayPlayerHelpMessages() {
+        playerX.displayHelp();
+        playerO.displayHelp();
+    }
+
+    public void displayPlayerVictoryMessages(String message) {
+        playerX.displayVictoryMessage(message, xWinsCount, oWinsCount);
+        playerO.displayVictoryMessage(message, xWinsCount, oWinsCount);
+    }
+
+    public Command promptPlayer(Player player, String message) {
+        return player.promptUI(message);
+    }
+    
     
     public Player nonMasterPlayer() {
         return masterPlayer == playerX ? playerO : playerX;

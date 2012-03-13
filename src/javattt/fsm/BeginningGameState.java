@@ -17,11 +17,10 @@ public class BeginningGameState extends State {
     public void step() {
         game.playing = true;
         game.currentPlayer = game.playerX;
-        game.playerX.ui.update(game.board);
-        game.playerX.ui.displayHelp();
-        game.playerO.ui.update(game.board);
-        game.playerO.ui.displayHelp();
         game.state = new MoveState(game);
+
+        game.updatePlayerUIs();
+        game.displayPlayerHelpMessages();
 
         game.onBeginningGame();
     }

@@ -3,6 +3,7 @@ package javattt.fsm;
 import javattt.command.Command;
 import javattt.*;
 import javattt.strategy.AIStrategy;
+import javattt.strategy.HumanStrategy;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,19 +19,19 @@ public class PlayAsXState extends State {
     }
     
     public Command readNextCommand() {
-        return game.masterPlayer.ui.prompt(game.masterPlayer.languageStore.PROMPT_PLAY_AS_X);
+        return game.promptPlayer(game.masterPlayer, game.masterPlayer.languageStore.PROMPT_PLAY_AS_X);
     }
 
     public void yes() {
         game.playerX = game.masterPlayer;
         game.masterPlayer.side = Side.X;
 
-        game.playerO.gameStrategy = new AIStrategy(game.board.size);
+        game.playerO.gameStrategy = game.versusAI ? new AIStrategy(game.board.size) : new HumanStrategy();
         finish();
     }
     
     public void no() {
-        game.playerX.gameStrategy = new AIStrategy(game.board.size);
+        game.playerX.gameStrategy = game.versusAI ? new AIStrategy(game.board.size) : new HumanStrategy();
         
         game.playerO = game.masterPlayer;
         game.masterPlayer.side = Side.O;

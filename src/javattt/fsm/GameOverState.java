@@ -45,8 +45,8 @@ public class GameOverState extends State {
             poMessage = game.playerO.languageStore.DRAW;
 
         }
-        game.playerX.ui.victoryMessage(pxMessage, game.xWinsCount, game.oWinsCount);
-        game.playerO.ui.victoryMessage(poMessage, game.xWinsCount, game.oWinsCount);
+
+        game.displayPlayerVictoryMessages(pxMessage);
 
         game.state = new StartNewGameState(game);
 

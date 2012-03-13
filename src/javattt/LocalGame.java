@@ -46,13 +46,26 @@ public class LocalGame extends Game {
         return false;
     }
 
+    public void updatePlayerUIs() {
+        masterPlayer.updateUI(board);
+    }
+
+    public void displayPlayerHelpMessages() {
+        masterPlayer.displayHelp();
+    }
+    
+    public void displayPlayerVictoryMessages(String message) {
+        masterPlayer.displayVictoryMessage(message, xWinsCount, oWinsCount);
+        
+    }
+
     public void onNewGame() {
         playerX.ui = new MockUI();
         playerO.ui = new MockUI();
     }
 
     public void onBeginningGame() {
-        masterPlayer.ui = new Console();
+        //masterPlayer.ui = new Console();
         //nonMasterPlayer().ui = masterPlayer.ui;
     }
 }

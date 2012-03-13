@@ -18,7 +18,7 @@ public class Play3x3State extends State {
     }
     
     public Command readNextCommand() {
-        return game.masterPlayer.ui.prompt(game.masterPlayer.languageStore.PROMPT_PLAY_3x3);
+        return game.promptPlayer(game.masterPlayer, game.masterPlayer.languageStore.PROMPT_PLAY_3x3);
     }
         
     public void yes() {

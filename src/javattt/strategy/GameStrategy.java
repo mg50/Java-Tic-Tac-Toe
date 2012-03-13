@@ -15,14 +15,8 @@ import javattt.command.StepCommand;
  */
 public abstract class GameStrategy {
 
-    public Side side;
-
     public GameStrategy() {
 
-    }
-
-    public GameStrategy(Side side) {
-        this.side = side;
     }
 
     public Command determineNextMove(Side side, Board board, UI ui) { // No-op

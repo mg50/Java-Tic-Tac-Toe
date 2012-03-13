@@ -1,10 +1,13 @@
 package javattt;
 
-import javattt.command.AlertCommand;
 import javattt.command.Command;
-import javattt.command.NullCommand;
+import javattt.command.StepCommand;
 import javattt.command.VictorCommand;
 import javattt.fsm.*;
+import javattt.strategy.AIStrategy;
+import javattt.strategy.HumanStrategy;
+import javattt.ui.Console;
+import javattt.ui.MockUI;
 import junit.framework.TestCase;
 
 import java.io.ByteArrayInputStream;
@@ -15,301 +18,206 @@ import static javattt.Side.X;
 import static javattt.Side._;
 
 public class LocalGameTest extends TestCase {
+    private LocalGame game;
+
+    protected void setUp() {
+        game = new LocalGame();
+        game.playerX = new Player();
+        game.playerO = new Player();
+        game.playerX.ui = new MockUI();
+        game.playerO.ui = new MockUI();
+        game.playerX.side = Side.X;
+        game.playerO.side = Side.O;
+        game.playerX.gameStrategy = new HumanStrategy();
+        game.playerO.gameStrategy = new HumanStrategy();
+        game.currentPlayer = game.playerX;
+        game.masterPlayer = game.playerX;
+        game.board = new Board();
+    }
+    
+    protected void setUI(String s) {
+        Console ui = new Console(new ByteArrayInputStream(s.getBytes()), new ByteArrayOutputStream());
+        game.playerX.ui = game.playerO.ui = ui;
+    }
+    
+    protected void transition() {
+        game.state.readNextCommand().issue(game);
+    }
 
     public void testNewGameState() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Console ui = new Console(new ByteArrayInputStream("y\nexit\n".getBytes()), out);
-        Game game = new LocalGame(ui);
         assertTrue(game.state instanceof NewGameState);
-
-        game.board = new Board(3);
-        game.playerO = game.playerX = game.currentPlayer = new HumanPlayer(Side.X);
-
-        game.state.transition(new NullCommand());
-        assertTrue(game.state instanceof PromptingPlay3x3State);
-        assertNull(game.playerX);
-        assertNull(game.playerO);
+        game.playerX = null;
+        game.playerO = null;
+        
+        new StepCommand().issue(game);
+        assertTrue(game.state instanceof PlayVsAIState);
+        assertTrue(game.playerX instanceof Player);
+        assertTrue(game.playerO instanceof Player);
+        assertTrue(game.playerX.ui instanceof MockUI);
+        assertTrue(game.playerO.ui instanceof MockUI);
         assertNull(game.currentPlayer);
     }
 
-    public void test3x3Prompt() throws Exception {
+    public void testPlayVsAIPrompt() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.state.transition(new NullCommand());
-        assertTrue(game.state instanceof PromptingPlay3x3State);
-
-
-        Command cmd = game.state.transition(new NullCommand());
-        assertTrue(game.state instanceof ReceivingPlay3x3State);
+        setUI("y\n");
+        game.state = new PlayVsAIState(game);
+        transition();
+        assertTrue(game.state instanceof PlayAsXState);
     }
+                           
+    public void testPlayVsAIPromptTwo() throws Exception {
+        game.state = new PlayVsAIState(game);
+        setUI("n\n");
+        transition();
 
-    public void test3x3PromptTwo() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("12345\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.state.transition(new NullCommand());
-        assertTrue(game.state instanceof PromptingPlay3x3State);
-
-
-        Command cmd = game.state.transition(new NullCommand());
-        assertTrue(game.state instanceof ReceivingPlay3x3State);
-    }
-
-    public void testReceive3x3Prompt() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.state.transition(null);
-        Command cmd = game.state.transition(new NullCommand());
-        assertTrue(game.state instanceof ReceivingPlay3x3State);
-
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof PromptingPlayVsAIState);
-        assertEquals(game.board.size, 3);
-    }
-
-    public void testReceive3x3PromptTwo() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("n\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.state.transition(null);
-        Command cmd = game.state.transition(new NullCommand());
-        assertTrue(game.state instanceof ReceivingPlay3x3State);
-
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof PromptingPlayVsAIState);
-        assertEquals(game.board.size, 4);
-    }
-
-    public void testReceive3x3PromptThree() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("12345\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.state.transition(null);
-        Command cmd = game.state.transition(new NullCommand());
-        assertTrue(game.state instanceof ReceivingPlay3x3State);
-
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof PromptingPlay3x3State);
-    }
-
-    public void testPromptPlayVsAI() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingPlayVsAIState(game);
-        game.state.transition(null);
-        assertTrue(game.state instanceof ReceivingPlayVsAIState);
-    }
-
-    public void testReceivePlayVsAIPrompt() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingPlayVsAIState(game);
-        Command cmd = game.state.transition(new NullCommand());
-
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof PromptingPlayAsXState);
-    }
-
-    public void testReceivePlayVsAIPromptTwo() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("n\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingPlayVsAIState(game);
-        Command cmd = game.state.transition(new NullCommand());
-
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof BeginningGameState);
-        assertTrue(game.playerX instanceof HumanPlayer);
-        assertTrue(game.playerO instanceof HumanPlayer);
+        assertTrue(game.state instanceof Play3x3State);
+        assertTrue(game.playerX.gameStrategy instanceof HumanStrategy);
+        assertTrue(game.playerO.gameStrategy instanceof HumanStrategy);
     }
 
     public void testReceivePlayVsAIPromptThree() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("asdf\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingPlayVsAIState(game);
-        Command cmd = game.state.transition(new NullCommand());
+        game.state = new PlayVsAIState(game);
+        setUI("asdf\n");
+        transition();
 
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof PromptingPlayVsAIState);
-    }
-
-    public void testPromptPlayAsX() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingPlayAsXState(game);
-        game.state.transition(null);
-
-        assertTrue(game.state instanceof ReceivingPlayAsXState);
-
+        assertTrue(game.state instanceof PlayVsAIState);
     }
 
     public void testReceivePlayAsXPrompt() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingPlayAsXState(game);
-        Command cmd = game.state.transition();
+        game.state = new PlayAsXState(game);
+        game.versusAI = true;
+        setUI("y\n");
+        transition();
 
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof BeginningGameState);
-        assertTrue(game.playerX instanceof HumanPlayer);
-        assertTrue(game.playerO instanceof AIPlayer);
+        assertTrue(game.state instanceof Play3x3State);
+        assertEquals(game.masterPlayer, game.playerX);
+        assertEquals(game.masterPlayer.side, Side.X);
+        assertTrue(game.playerO.gameStrategy instanceof AIStrategy);
     }
 
     public void testReceivePlayAsXPromptTwo() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("n\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingPlayAsXState(game);
-        Command cmd = game.state.transition();
+        game.state = new PlayAsXState(game);
+        game.versusAI = true;
+        setUI("n\n");
+        transition();
 
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof BeginningGameState);
-        assertTrue(game.playerX instanceof AIPlayer);
-        assertTrue(game.playerO instanceof HumanPlayer);
+        assertTrue(game.state instanceof Play3x3State);
+        assertEquals(game.masterPlayer, game.playerO);
+        assertEquals(game.masterPlayer.side, Side.O);
+        assertTrue(game.playerX.gameStrategy instanceof AIStrategy);
     }
 
     public void testReceivePlayAsXPromptThree() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("t\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingPlayAsXState(game);
-        Command cmd = game.state.transition();
+        game.state = new PlayAsXState(game);
+        game.versusAI = true;
+        setUI("blah\n");
+        transition();
 
-        game.state.transition(cmd);
-        assertTrue(game.state instanceof PromptingPlayAsXState);
+        assertTrue(game.state instanceof PlayAsXState);
     }
 
+
+    public void test3x3State() throws Exception {
+        game.state = new Play3x3State(game);
+        setUI("y\n");
+        game.board = null;
+        transition();
+        assertTrue(game.state instanceof BeginningGameState);
+        assertEquals(game.board.size, 3);
+    }
+
+    public void test3x3StateTwo() throws Exception {
+        game.state = new Play3x3State(game);
+        setUI("n\n");
+        game.board = null;
+        transition();
+        assertTrue(game.state instanceof BeginningGameState);
+        assertEquals(game.board.size, 4);
+    }
+
+    public void test3x3StateThree() throws Exception {
+        game.state = new Play3x3State(game);
+        setUI("12345\n");
+        game.board = null;
+        transition();
+        assertTrue(game.state instanceof Play3x3State);
+    }
+    
     public void testBeginningGame() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("t\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
         game.state = new BeginningGameState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
         game.currentPlayer = null;
-        game.state.transition();
+        transition();
 
-        assertTrue(game.state instanceof PromptingMoveState);
-        assertEquals(game.playerX, game.currentPlayer);
-    }
-
-    public void testPromptMove() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("1 1\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingMoveState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
-        game.currentPlayer = game.playerX;
-        game.state.transition();
-
-        assertTrue(game.state instanceof ReceivingMoveState);
-
+        
+        assertTrue(game.state instanceof MoveState);
+        assertEquals(game.currentPlayer, game.playerX);
     }
 
     public void testReceiveMoveOne() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("1 1\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingMoveState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
+        game.state = new MoveState(game);
         game.currentPlayer = game.playerX;
-        Command cmd = game.state.transition();
+        setUI("1 1\n");
 
         assertEquals(game.board.getCell(0, 0), Side._);
         assertEquals(game.board.getCell(1, 0), Side._);
 
-        game.state.transition(cmd);
+        transition();
 
-        assertTrue(game.state instanceof PromptingMoveState);
+        assertTrue(game.state instanceof MoveState);
         assertEquals(game.board.getCell(0, 0), Side.X);
         assertEquals(game.board.getCell(1, 0), Side._);
         assertEquals(game.currentPlayer, game.playerO);
     }
 
     public void testReceiveMoveTwo() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("1 1\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingMoveState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
+        game.state = new MoveState(game);
         game.currentPlayer = game.playerO;
-        Command cmd = game.state.transition();
+        setUI("1 1\n");
 
         assertEquals(game.board.getCell(0, 0), Side._);
         assertEquals(game.board.getCell(1, 0), Side._);
 
-        game.state.transition(cmd);
+        transition();
 
-        assertTrue(game.state instanceof PromptingMoveState);
+        assertTrue(game.state instanceof MoveState);
         assertEquals(game.board.getCell(0, 0), Side.O);
         assertEquals(game.board.getCell(1, 0), Side._);
         assertEquals(game.currentPlayer, game.playerX);
     }
 
     public void testReceiveMoveThree() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("invalid move\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingMoveState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
+        game.state = new MoveState(game);
         game.currentPlayer = game.playerX;
-        Command cmd = game.state.transition();
+        setUI("invalid move\n");
 
         assertEquals(game.board.getCell(0, 0), Side._);
         assertEquals(game.board.getCell(1, 0), Side._);
 
-        game.state.transition(cmd);
+        transition();
 
-        assertTrue(game.state instanceof PromptingMoveState);
+        assertTrue(game.state instanceof MoveState);
         assertEquals(game.board.getCell(0, 0), Side._);
         assertEquals(game.board.getCell(1, 0), Side._);
         assertEquals(game.currentPlayer, game.playerX);
     }
 
     public void testReceiveMoveFour() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("2 1\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingMoveState(game);
-        game.playerX = new AIPlayer(Side.X, game.board.size);
-        game.playerO = new HumanPlayer(Side.O);
+        game.state = new MoveState(game);
         game.currentPlayer = game.playerX;
-        Command cmd = game.state.transition();
+        setUI("1 1\n2 1\n");
 
         assertEquals(game.board.getCell(0, 0), Side._);
         assertEquals(game.board.getCell(1, 0), Side._);
         assertEquals(game.board.getCell(2, 0), Side._);
 
-        cmd = game.state.transition(cmd);
-        cmd = game.state.transition(cmd);
-        cmd = game.state.transition(cmd);
+        transition();
+        transition();
 
-        assertTrue(game.state instanceof PromptingMoveState);
+        assertTrue(game.state instanceof MoveState);
         assertEquals(game.board.getCell(0, 0), Side.X);
         assertEquals(game.board.getCell(1, 0), Side.O);
         assertEquals(game.board.getCell(2, 0), Side._);
@@ -318,169 +226,100 @@ public class LocalGameTest extends TestCase {
 
     public void testReceiveMoveFive() throws Exception {
         Side[][] grid = {{X, X, _}, {_, _, _}, {_, _, _}};
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("3 1\n".getBytes()), out);
-        Game game = new LocalGame(ui);
+        setUI("3 1\n");
         game.board = new Board(grid);
-        game.state = new PromptingMoveState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
-        game.currentPlayer = game.playerX;
-        Command cmd = game.state.transition();
+        game.state = new MoveState(game);
 
-        assertEquals(game.board.getCell(2, 0), Side._);
-
-        cmd = game.state.transition(cmd);
+        transition();
 
         assertTrue(game.state instanceof GameOverState);
         assertEquals(game.board.getCell(2, 0), Side.X);
-
-        assertTrue(cmd instanceof VictorCommand);
-        assertEquals(((VictorCommand) cmd).side, Side.X);
     }
+
+
 
     public void testGameOver() throws Exception {
         Side[][] grid = {{X, X, _}, {_, _, _}, {_, _, _}};
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("3 1\n".getBytes()), out);
-        Game game = new LocalGame(ui);
+        setUI("3 1\n");
         game.board = new Board(grid);
-        game.state = new PromptingMoveState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
-        game.currentPlayer = game.playerX;
-        Command cmd = game.state.transition();
-        cmd = game.state.transition(cmd);
+        game.state = new MoveState(game);
 
+        transition();
+        assertEquals(game.xWinsCount, 0);
+        transition();
+        assertEquals(game.xWinsCount, 1);
+        assertEquals(game.xWinsCount, 1);
+        assertTrue(game.state instanceof StartNewGameState);
+    }
+
+    public void testGameOverTwo() throws Exception {
+        Side[][] grid = {{X, X, _}, {_, _, _}, {_, _, _}};
+        setUI("3 1\n");
+        game.board = new Board(grid);
+        game.state = new MoveState(game);
+
+        transition();
         assertEquals(game.xWinsCount, 0);
         assertEquals(game.oWinsCount, 0);
-
-        cmd = game.state.transition(cmd);
-
-        assertTrue(game.state instanceof PromptingStartNewGameState);
+        transition();
         assertEquals(game.xWinsCount, 1);
         assertEquals(game.oWinsCount, 0);
+        assertTrue(game.state instanceof StartNewGameState);
     }
 
-    public void testPromptNewGame() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingStartNewGameState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
-        game.currentPlayer = game.playerX;
-        game.state.transition();
+    public void testGameOverThree() throws Exception {
+        Side[][] grid = {{O, O, _}, {_, _, _}, {_, _, _}};
+        setUI("3 1\n");
+        game.board = new Board(grid);
+        game.state = new MoveState(game);
+        game.currentPlayer = game.playerO;
 
-        assertTrue(game.state instanceof ReceivingStartNewGameState);
+        transition();
+        assertEquals(game.xWinsCount, 0);
+        assertEquals(game.oWinsCount, 0);
+        transition();
+        assertEquals(game.xWinsCount, 0);
+        assertEquals(game.oWinsCount, 1);
+        assertTrue(game.state instanceof StartNewGameState);
     }
 
-    public void testReceiveNewGame() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("y\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingStartNewGameState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
-        game.currentPlayer = game.playerX;
-        Command cmd = game.state.transition();
-        game.state.transition(cmd);
+    public void testGameOverFour() throws Exception {
+        Side[][] grid = {{O, O, _}, {X, X, O}, {O, X, X}};
+        setUI("3 1\n");
+        game.board = new Board(grid);
+        game.state = new MoveState(game);
 
+        transition();
+        assertEquals(game.xWinsCount, 0);
+        assertEquals(game.oWinsCount, 0);
+        transition();
+        assertEquals(game.xWinsCount, 0);
+        assertEquals(game.oWinsCount, 0);
+        assertTrue(game.state instanceof StartNewGameState);
+    }
+
+
+    public void testStartNewGame() {
+        game.state = new StartNewGameState(game);
+        setUI("y\n");
+        transition();
+        
         assertTrue(game.state instanceof NewGameState);
     }
 
-    public void testReceiveNewGameTwo() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("n\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingStartNewGameState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
-        game.currentPlayer = game.playerX;
-        Command cmd = game.state.transition();
-        game.state.transition(cmd);
+    public void testStartNewGameTwo() {
+        game.state = new StartNewGameState(game);
+        setUI("n\n");
+        transition();
 
         assertTrue(game.state instanceof HaltState);
     }
 
+    public void testStartNewGameThree() {
+        game.state = new StartNewGameState(game);
+        setUI("12345\n");
+        transition();
 
-    public void testReceiveNewGameThree() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("444\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingStartNewGameState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
-        game.currentPlayer = game.playerX;
-        Command cmd = game.state.transition();
-        game.state.transition(cmd);
-
-        assertTrue(game.state instanceof PromptingStartNewGameState);
-    }
-
-    public void testHaltState() throws Exception {
-        Game game = new LocalGame(new Console());
-        game.state = new HaltState(game);
-        game.state.transition();
-
-        assertTrue(game.state instanceof HaltState);
-    }
-
-    public void testAlert() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("".getBytes()), out);
-        Game game = new LocalGame(ui);
-        game.board = new Board();
-        game.state = new PromptingStartNewGameState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new HumanPlayer(Side.O);
-        game.currentPlayer = game.playerX;
-        
-        Command cmd = new AlertCommand("test");
-        cmd = cmd.sendToGame(game);
-        assertTrue(game.state instanceof PromptingAlertState);
-                             
-        cmd = cmd.sendToGame(game);
-        assertTrue(game.state instanceof ReceivingAlertState);
-        
-        cmd.sendToGame(game);
-        assertTrue(game.state instanceof PromptingStartNewGameState);
-        
-        assertEquals(out.toString(), "test");
-    }
-    
-    public void testPlayGame() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Console ui = new Console(new ByteArrayInputStream("4 2\n2 3\n3 3\nexit\n".getBytes()), out);
-        Game game = new LocalGame(ui);
-        Side[][] grid = {{O, _, _, X},
-                         {O, _, _, _},
-                         {_, _, _, _},
-                         {X, _, _, _}};
-
-        game.board = new Board(grid);
-        game.state = new PromptingMoveState(game);
-        game.playerX = new HumanPlayer(Side.X);
-        game.playerO = new AIPlayer(Side.O, game.board.size);
-        game.currentPlayer = game.playerX;
-        game.start();
-
-        System.out.println(out.toString());
-        
-        /*
-        assertEquals(game.board.getCell(0, 0), Side._);
-        assertEquals(game.board.getCell(1, 0), Side._);
-
-        game.state.transition(cmd);
-
-        assertTrue(game.state instanceof PromptingMoveState);
-        assertEquals(game.board.getCell(0, 0), Side.O);
-        assertEquals(game.board.getCell(1, 0), Side._);
-        assertEquals(game.currentPlayer, game.playerX);      */
-        
+        assertTrue(game.state instanceof StartNewGameState);
     }
 }
