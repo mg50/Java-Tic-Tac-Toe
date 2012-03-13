@@ -29,7 +29,7 @@ public class MockUI implements UI {
     }
 
     @Override
-    public void victoryMessage(Side winner, int xWinCount, int oWinCount) {
+    public void victoryMessage(String message, int xWinCount, int oWinCount) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 

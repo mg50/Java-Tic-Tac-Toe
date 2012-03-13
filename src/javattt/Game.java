@@ -35,6 +35,7 @@ public abstract class Game {
             if(cmd == null) cmd = new StepCommand();
             cmd.issue(this);
             cmd = state.readNextCommand();
+            onStateTransition();
         }
 
         if(state instanceof HaltState) onHalt();

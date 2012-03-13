@@ -29,9 +29,24 @@ public class GameOverState extends State {
 
     public void victor(Side side) {
         game.playing = false;
-        if(side == Side.X) game.xWinsCount++;
-        else if(side == Side.O) game.oWinsCount++;
-        //game.ui.victoryMessage(side, game.xWinsCount, game.oWinsCount);
+        String pxMessage, poMessage;
+        if(side == Side.X) {
+            game.xWinsCount++;
+            pxMessage = game.playerX.languageStore.PLAYER_X_WON;
+            poMessage = game.playerO.languageStore.PLAYER_X_WON;
+        }
+        else if(side == Side.O) {
+            game.oWinsCount++;
+            pxMessage = game.playerX.languageStore.PLAYER_O_WON;
+            poMessage = game.playerO.languageStore.PLAYER_O_WON;
+        }
+        else {
+            pxMessage = game.playerX.languageStore.DRAW;
+            poMessage = game.playerO.languageStore.DRAW;
+
+        }
+        game.playerX.ui.victoryMessage(pxMessage, game.xWinsCount, game.oWinsCount);
+        game.playerO.ui.victoryMessage(poMessage, game.xWinsCount, game.oWinsCount);
 
         game.state = new StartNewGameState(game);
 

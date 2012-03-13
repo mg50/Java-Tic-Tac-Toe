@@ -16,7 +16,7 @@ public interface UI {
     void update(Board board);
     Command promptMove(Board board);
     Command prompt(String message);
-    void victoryMessage(Side winner, int xWinCount, int oWinCount);
+    void victoryMessage(String message, int xWinCount, int oWinCount);
     Command displayMessage(String message);
     void displayHelp();
 }

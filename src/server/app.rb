@@ -33,6 +33,9 @@ class App < Sinatra::Base
 
 #		game = Connection[session[:id]].game
 
+		player = HTTPPlayer[session]
+		game = HTTPGame[params[:room]]
+
 		game = HTTPGame[session]
 		current_room = Room[params[:room]]
 		prior_room_of_game = Room.room_of_game game

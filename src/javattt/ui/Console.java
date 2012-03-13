@@ -117,12 +117,11 @@ public class Console implements UI {
         return prompt("Start another game?");
     }
     
-    public void victoryMessage(Side winner, int xWinsCount, int oWinsCount) {
+    public void victoryMessage(String message, int xWinsCount, int oWinsCount) {
 
         try {
-            if(winner != null) outputStream.write("GameStrategy " + getSideSymbol(winner) + " has won!\n");
-            else outputStream.write("The game has ended in a draw.\n");
-            outputStream.write("GameStrategy X has won " + inflectWinCount(xWinsCount) + " and player O has won " +
+            outputStream.write(message + "\n");
+            outputStream.write("Player X has won " + inflectWinCount(xWinsCount) + " and player O has won " +
                                inflectWinCount(oWinsCount) + ".\n");
             outputStream.flush();
             
