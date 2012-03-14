@@ -4,4 +4,3 @@ test.iml
 src/javattt/*.txt
 src/javattt/*.jar
 src/javattt/classes
-lib/*
