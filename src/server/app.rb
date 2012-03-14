@@ -3,15 +3,17 @@ require 'sinatra'
 require 'json'
 require 'pry'
 require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
+require File.join(File.dirname(__FILE__), 'httpgame')
+require File.join(File.dirname(__FILE__), 'httpplayer')
 require File.join(File.dirname(__FILE__), 'httpui')
 require File.join(File.dirname(__FILE__), 'serializer')
-require File.join(File.dirname(__FILE__), 'room')
 include_class Java::Javattt::command.RestartCommand
 include_class Java::Javattt::fsm.HaltState
 TEST = false unless defined? TEST
 
 class App < Sinatra::Base
 	enable :sessions
+	set :server, ["mongrel"]
 
 	all_previous_games = Serializer.new.deserialize_all || []
 	ip_hash = {}
@@ -20,10 +22,17 @@ class App < Sinatra::Base
 	end
 
 	get '/' do
-		redirect '/r/'
+		redirect '/' + HTTPGame.random_empty_room_name
 	end
 
-	get '/r/:room' do
+	get '/favicon.ico' do
+	end
+
+	get '/test' do
+		File.read(File.join('public/html', 'test.html'))
+	end	
+
+	get '/:room' do
 #		unless session[:id]
 #			session[:id] = Connection.register(request.ip) 			
 #			if saved_game = ip_hash[@env['REMOTE_ADDR']] and saved_game.room == params[:room]
@@ -36,17 +45,9 @@ class App < Sinatra::Base
 		player = HTTPPlayer[session]
 		game = HTTPGame[params[:room]]
 
-		game = HTTPGame[session]
-		current_room = Room[params[:room]]
-		prior_room_of_game = Room.room_of_game game
-
-		if prior_room_of_game != current_room
-			prior_room_of_game.remove_game game if prior_room_of_game
-			current_room.add_game game
-		end
-
+		game.add_player player unless HTTPGame[player] == game
 		if game.state.is_a? HaltState
-			game.receive_signal "signal" => "RESTART"
+			game.receive_signal player, "signal" => "RESTART"
 		end		
 
 		File.read(File.join('public/html', 'index.html'))
@@ -57,17 +58,17 @@ class App < Sinatra::Base
 	end
 
 	post '/status' do
-		JSON.generate HTTPGame[session].status
+		player = HTTPPlayer[session]
+		JSON.generate HTTPGame[player].status player if HTTPGame[player]
 	end
 
 	post '/query' do
-		HTTPGame[session].receive_signal JSON.parse(params['json'])
+		player = HTTPPlayer[session]
+		game = HTTPGame[player]
+
+		game.receive_signal(player, params[:signal], JSON.parse(params[:options])) if game
 		#Serializer.new.serialize_and_save
 		JSON.generate "response" => true
-	end
-
-	get '/test' do
-		File.read(File.join('public/html', 'test.html'))
 	end
 end
 

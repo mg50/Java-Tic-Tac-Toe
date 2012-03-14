@@ -2,224 +2,246 @@ require 'rubygems'
 require 'json'
 require 'java'
 require '../../src/server/httpgame'
-require '../../src/server/room'
+require '../../src/server/httpplayer'
 
 include_class Java::Javattt.Side
 include_class Java::Javattt.Board
-include_class Java::Javattt.HumanPlayer
-include_class Java::Javattt.AIPlayer
-include_class Java::Javattt::fsm.ReceivingMoveState
-include_class Java::Javattt::fsm.ReceivingAlertState
-include_class Java::Javattt::command.AlertCommand
+include_class Java::Javattt.Player
+include_class Java::Javattt::fsm.MoveState
+include_class Java::Javattt::fsm.PlayVsAIState
+include_class Java::Javattt::fsm.PlayAsXState
+include_class Java::Javattt::fsm.BeginningGameState
+include_class Java::Javattt::fsm.StartNewGameState
+include_class Java::Javattt::strategy.HumanStrategy
+include_class Java::Javattt::strategy.AIStrategy
 
 describe HTTPGame do
-	def start_two_player_game(room1=nil, room2=nil)
-		game1 = HTTPGame.new
-		game2 = HTTPGame.new
-
-		Room[room1].add_game game1 if room1
-		Room[room2].add_game game2 if room2
-
-		[game1, game2].each do |game|
-			game.start nil
-			game.receive_signal "signal" => "YES" # for 3x3
-			game.receive_signal "signal" => "NO"  # for 2-player game
-		end
-
-		[game1, game2]
-	end
-
 	before :each do
-		HTTPGame.clear_waiting_games
+		HTTPGame.clear_all_games
+		HTTPPlayer.clear_all_players
 	end
 
-	it "refers to a game by session" do
-		session = {:session_id => 1}
-		HTTPGame[session].class.should == HTTPGame
+	it "refers to a game by room" do
+		game = HTTPGame["room"]
+		game.class.should == HTTPGame
 	end
 
-	it "creates multiple games" do
-		sess1 = {:session_id => 1}
-		sess2 = {:session_id => 2}
+	it "does not create duplicates by room" do
+		game1 = HTTPGame["room"]
+		game2 = HTTPGame["room"]
 
-		HTTPGame[sess1].class.should == HTTPGame
-		HTTPGame[sess2].class.should == HTTPGame
-
-		HTTPGame[sess1].should_not == HTTPGame[sess2]
+		game1.should == game2
 	end
 
-	it "returns valid JSON about its state" do
-		time = Time.now.to_i
-		game = HTTPGame.new
-		game_info = game.status
-		game_info['timestamp'].to_i.should == time.to_i
-		game_info['state'].should == "NewGameState"
-		game_info['board'].should == [["", "", ""], ["", "", ""], ["", "", ""]]
+	it "refers to a game by player" do
+		player1 = HTTPPlayer[{:session_id => 1}]
+		HTTPGame["room1"].add_player player1
+
+		player2 = HTTPPlayer[{:session_id => 2}]
+		HTTPGame["room2"].add_player player2
+
+		HTTPGame[player1].should == HTTPGame["room1"]
+		HTTPGame[player2].should == HTTPGame["room2"]
 	end
 
-	it "should initialize with a UI" do
-		game = HTTPGame.new
-		game.ui.class.should == HTTPUI
+	it "returns nil if it can't find a player's game" do
+		player = HTTPPlayer[{:session_id => 1}]
+		HTTPGame[player].should be_nil
 	end
 
-	it "can duplicate the state of another game" do
-		g1 = HTTPGame.new
-		g2 = HTTPGame.new
+	it "removes a player from one game before adding to another" do
+		g1 = HTTPGame["room1"]
+		g2 = HTTPGame["room2"]
+		p = HTTPPlayer[{:session_id => 1}]
 
-		g1.start
-		g1.playerX = g1.currentPlayer = HumanPlayer.new(Side.X)
-		g1.playerO = HumanPlayer.new Side.O
+		g1.add_player p
+		g1.receive_signal p, "YES"
+		g1.masterPlayer.should == p
+		HTTPGame[p].should == g1
+		g1.state.class.should == PlayAsXState
+		g2.state.class.should == NewGameState
 
-		g2.duplicate_game_state g1
-
-		g2.playerX.class.should == g1.playerX.class
-		g2.playerO.class.should == g1.playerO.class
-		g2.currentPlayer.should == g2.playerX
-		g2.get_ruby_grid.should == g1.get_ruby_grid
-		g2.state.class.should == g1.state.class
-		g2.state.should_not == g1.state
+		g2.add_player p
+		g2.masterPlayer.should == p
+		g1.masterPlayer.should == nil
+		HTTPGame[p].should == g2
+		g2.state.class.should == PlayVsAIState
 	end
 
-	it "plays a full game against the AI" do
-		game = HTTPGame.new
-		game.state.class.should == Java::Javattt::fsm.NewGameState
+	it "begins a game after a player is added" do
+		player = HTTPPlayer[{:session_id => 1}]
+		game = HTTPGame["room"]
+		game.add_player player
 
-		game.start nil
-		game.state.class.should == Java::Javattt::fsm.ReceivingPlay3x3State
-
-		game.receive_signal "signal" => "YES"
-		game.state.class.should == Java::Javattt::fsm.ReceivingPlayVsAIState
-
-		game.receive_signal "signal" => "YES"
-		game.state.class.should == Java::Javattt::fsm.ReceivingPlayAsXState
-
-		game.receive_signal "signal" => "NO"
-		game.state.class.should == Java::Javattt::fsm.ReceivingMoveState
-
-		game.receive_signal "signal" => "MOVE", "coords" => [2, 0]
-		game.receive_signal "signal" => "MOVE", "coords" => [2, 1]
-
-		game.state.class.should == Java::Javattt::fsm.ReceivingStartNewGameState
+		game.masterPlayer.should == player
+		game.client_player.should be_nil
+		game.state.class.should == PlayVsAIState
 	end
 
-	it "sets up a game against two players" do
-		game1 = HTTPGame.new
-		game2 = HTTPGame.new
+	it "adds a client player" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
 
-		game1.start nil
-		game1.receive_signal "signal" => "YES"
-		game1.receive_signal "signal" => "NO"
-
-		game1.opponent_game.should be_nil
-		game1.waiting_for_opponent.should be_true
-
-		game2.start nil
-		game2.receive_signal "signal" => "YES"
-		game2.receive_signal "signal" => "NO"
-
-		game1.opponent_game.should == game2
-		game2.opponent_game.should == game1
-
-		game1.waiting_for_opponent.should be_false
-		game2.waiting_for_opponent.should be_true
+		HTTPGame[p1].should == game
+		HTTPGame[p2].should == game
+		game.masterPlayer.should == p1
+		game.client_player.should == p2
 	end
 
-	it "plays a two-player game" do
-		game1, game2 = start_two_player_game
+	it "shouldn't add a third player" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		p3 = HTTPPlayer[{:session_id => 3}]
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
+		game.add_player p3
 
-		game1.receive_signal "signal" => "MOVE", "coords" => [0, 0]
-
-		game2.receive_signal "signal" => "MOVE", "coords" => [2, 0]
-		game1.receive_signal "signal" => "MOVE", "coords" => [0, 1]
-		game2.receive_signal "signal" => "MOVE", "coords" => [2, 1]
-
-		game1.state.class.should == Java::Javattt.fsm.ReceivingMoveState
-		game2.state.class.should == Java::Javattt.fsm.ReceivingMoveState
-
-		game1.receive_signal "signal" => "MOVE", "coords" => [0, 2]
-
-		game1.state.class.should == Java::Javattt::fsm.ReceivingStartNewGameState
-		game1.state.class.should == Java::Javattt::fsm.ReceivingStartNewGameState
+		HTTPGame[p3].should be_nil
 	end
 
-	it "should not let a player move on the wrong turn" do
-		game1, game2 = start_two_player_game
+	it "should begin a game" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		game = HTTPGame["room"]
+		game.add_player p1
 
-		game1.receive_signal "signal" => "MOVE", "coords" => [0, 0]
-		grid = game1.get_ruby_grid
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
 
-		game1.receive_signal "signal" => "MOVE", "coords" => [0, 1]
-		game1.get_ruby_grid.should == grid
-
-		game2.receive_signal "signal" => "MOVE", "coords" => [0, 1]
-		game2.get_ruby_grid.should_not == grid
+		game.currentPlayer.should == p1
+		game.state.class.should == MoveState
 	end
 
-	it "should start a new game for a player if his opponent quits" do
-		game1, game2 = start_two_player_game
+	it "lets a player make a move against another" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p1.side = Side.X
+		p2 = HTTPPlayer[{:session_id => 2}]
+		p2.side = Side.O
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
 
-		game2.receive_signal "signal" => "EXIT"
-		game1.state.class.should == Java::Javattt::fsm.ReceivingStartNewGameState
+		game.state = MoveState.new game
+		game.playerX = game.masterPlayer
+		game.playerO = p2
+		game.currentPlayer = game.playerX
+
+		game.receive_signal p1, "MOVE", "coords" => [2, 2]
+
+		game.get_ruby_grid[2][2].should == "X"
+		game.currentPlayer.should == game.playerO
 	end
 
-	it "should start a new game for a player if his opponent quits (2)" do
-		game1, game2 = start_two_player_game
+	it "waits for the second player to join" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		game = HTTPGame["room"]
+		game.add_player p1
 
-		game2.receive_signal "signal" => "EXIT"
-		game1.state.class.should == Java::Javattt::fsm.ReceivingStartNewGameState
+		game.receive_signal p1, "NO"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
+
+		game.state.class.should == BeginningGameState
+		game.start
+		game.state.class.should == BeginningGameState
+
+		game.add_player p2
+		game.state.class.should == MoveState
 	end
 
-	it "should allow you to play vs the AI after playing two-player" do
-		game1, game2 = start_two_player_game
-		game2.receive_signal "signal" => "EXIT"
+	it "plays against the AI and then against a player" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
 
-		game1.receive_signal "signal" => "YES" # start a new game
-		game1.receive_signal "signal" => "YES" # play 3x3 game
-		game1.receive_signal "signal" => "YES" # play vs. AI
-		game1.receive_signal "signal" => "YES" # play as X
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "NO"
+		game.receive_signal p1, "YES"
 
-		game1.two_player?.should be_false
-		game1.state.class.should == Java::Javattt::fsm.ReceivingMoveState
-		game1.waiting_for_opponent.should be_false
+		game.playerO.should == p1
+		game.playerX.gameStrategy.class.should == AIStrategy
+		game.receive_signal p1, "MOVE", "coords" => [2, 0]
+		game.receive_signal p1, "MOVE", "coords" => [2, 1]
+		game.state.class.should == StartNewGameState
 
-		game1.receive_signal "signal" => "MOVE", "coords" => [0, 0]
-		game1.get_ruby_grid[0][0].should == "X"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "NO"
+		game.receive_signal p1, "NO"
+		game.receive_signal p1, "YES"
+
+		game.state.class.should == MoveState
+		game.currentPlayer.should == p2
 	end
 
-	it "restarts a game for one player" do
-		game = HTTPGame.new
-		game.state = Java::Javattt::fsm.HaltState.new game
+	it "plays against another player and then against an AI" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
 
-		game.receive_signal "signal" => "RESTART"
+		game.receive_signal p1, "NO"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
 
-		game.state.class.should == Java::Javattt::fsm.ReceivingPlay3x3State
+		game.playerX.should == p1
+		game.playerO.should == p2
+		game.receive_signal p1, "MOVE", "coords" => [0, 0]
+		game.receive_signal p2, "MOVE", "coords" => [2, 0]
+		game.receive_signal p1, "MOVE", "coords" => [0, 1]
+		game.receive_signal p2, "MOVE", "coords" => [2, 1]
+		game.receive_signal p1, "MOVE", "coords" => [0, 2]
+		game.state.class.should == StartNewGameState
+
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
+
+		game.state.class.should == MoveState
+		game.playerO.gameStrategy.class.should == AIStrategy
+
 	end
 
-	it "restarts a game for two players" do
-		game1, game2 = start_two_player_game("room", "room")
+	it "doesn't let a player move outside of his turn" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
 
-		game1.receive_signal "signal" => "RESTART"
+		game.receive_signal p1, "NO"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
 
-		game1.state.class.should == Java::Javattt::fsm.ReceivingPlay3x3State
-#		game2.state.class.should == Java::Javattt::fsm.ReceivingAlertState
+		game.receive_signal p1, "MOVE", "coords" => [0, 0]
+		game.receive_signal p1, "MOVE", "coords" => [1, 1]
 
-		game1.opponent_game.should be_nil
-		game2.opponent_game.should be_nil
+		game.currentPlayer.should == game.playerO
+		game.board.getCell(0, 0).should == Side.X
+		game.board.getCell(1, 1).should == Side._
 	end
 
-	it "sends an alert message" do
-		game = HTTPGame.new
-		game.board = Board.new(3)
-		game.playerX = game.currentPlayer = HumanPlayer.new(Side.X)
-		game.playerO = AIPlayer.new(Side.O, game.board.size)
-		game.state = ReceivingMoveState.new game
+	# it "returns valid JSON about its state" do
+	# 	time = Time.now.to_i
+	# 	game = HTTPGame.new
+	# 	game_info = game.status
+	# 	game_info['timestamp'].to_i.should == time.to_i
+	# 	game_info['state'].should == "NewGameState"
+	# 	game_info['board'].should == [["", "", ""], ["", "", ""], ["", "", ""]]
+	# end
+
+	# it "should initialize with a UI" do
+	# 	game = HTTPGame.new
+	# 	game.ui.class.should == HTTPUI
+	# end
 
 
-		game.alert "Test alert message"
-		game.state.class.should == ReceivingAlertState
-		game.status["message"].should == "Test alert message"
-
-		game.receive_signal "signal" => "INVALID"
-		game.state.class.should == ReceivingMoveState
-	end
 end

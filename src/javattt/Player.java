@@ -2,6 +2,7 @@ package javattt;
 
 import javattt.command.Command;
 import javattt.strategy.GameStrategy;
+import javattt.ui.MockUI;
 import javattt.ui.UI;
 
 /**
@@ -14,7 +15,7 @@ import javattt.ui.UI;
 public class Player {
     public GameStrategy gameStrategy;
     public Side side;
-    public UI ui;
+    public UI ui = new MockUI();
     public LanguageStore languageStore = LanguageStore.instance;
 
     public Command promptUI(String message) {

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_ttt" default="compile.module.ttt">
+  <dirname property="module.ttt.basedir" file="${ant.file.module_ttt}"/>
+  
+  <property name="module.jdk.home.ttt" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.ttt" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.ttt" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.ttt" value="${compiler.args}"/>
+  
+  <property name="ttt.output.dir" value="${module.ttt.basedir}/out/production/Ttt"/>
+  <property name="ttt.testoutput.dir" value="${module.ttt.basedir}/out/test/Ttt"/>
+  
+  <path id="ttt.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="ttt.module.production.classpath">
+    <path refid="${module.jdk.classpath.ttt}"/>
+    <pathelement location="${basedir}/../../../lib/junit-4.10.jar"/>
+  </path>
+  
+  <path id="ttt.runtime.production.module.classpath">
+    <pathelement location="${ttt.output.dir}"/>
+    <pathelement location="${basedir}/../../../lib/junit-4.10.jar"/>
+  </path>
+  
+  <path id="ttt.module.classpath">
+    <path refid="${module.jdk.classpath.ttt}"/>
+    <pathelement location="${ttt.output.dir}"/>
+    <pathelement location="${basedir}/../../../lib/junit-4.10.jar"/>
+  </path>
+  
+  <path id="ttt.runtime.module.classpath">
+    <pathelement location="${ttt.testoutput.dir}"/>
+    <pathelement location="${ttt.output.dir}"/>
+    <pathelement location="${basedir}/../../../lib/junit-4.10.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.ttt">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.ttt">
+    <patternset refid="excluded.from.module.ttt"/>
+  </patternset>
+  
+  <path id="ttt.module.sourcepath">
+    <dirset dir="${module.ttt.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  <path id="ttt.module.test.sourcepath">
+    <dirset dir="${module.ttt.basedir}">
+      <include name="test"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.ttt" depends="compile.module.ttt.production,compile.module.ttt.tests" description="Compile module Ttt"/>
+  
+  <target name="compile.module.ttt.production" depends="register.custom.compilers" description="Compile module Ttt; production classes">
+    <mkdir dir="${ttt.output.dir}"/>
+    <javac2 destdir="${ttt.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.ttt}/javac">
+      <compilerarg line="${compiler.args.ttt}"/>
+      <bootclasspath refid="ttt.module.bootclasspath"/>
+      <classpath refid="ttt.module.production.classpath"/>
+      <src refid="ttt.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.ttt"/>
+    </javac2>
+    
+    <copy todir="${ttt.output.dir}">
+      <fileset dir="${module.ttt.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.ttt.tests" depends="register.custom.compilers,compile.module.ttt.production" description="compile module Ttt; test classes" unless="skip.tests">
+    <mkdir dir="${ttt.testoutput.dir}"/>
+    <javac2 destdir="${ttt.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.ttt}/javac">
+      <compilerarg line="${compiler.args.ttt}"/>
+      <bootclasspath refid="ttt.module.bootclasspath"/>
+      <classpath refid="ttt.module.classpath"/>
+      <src refid="ttt.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.ttt"/>
+    </javac2>
+    
+    <copy todir="${ttt.testoutput.dir}">
+      <fileset dir="${module.ttt.basedir}/test">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.ttt" description="cleanup module">
+    <delete dir="${ttt.output.dir}"/>
+    <delete dir="${ttt.testoutput.dir}"/>
+  </target>
+</project>

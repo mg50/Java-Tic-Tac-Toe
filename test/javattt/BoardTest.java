@@ -115,7 +115,6 @@ public class BoardTest extends TestCase {
 
     public void testIsDraw() throws Exception {
         Board board1 = new Board(TestGrid3);
-        System.out.println(board1.isDraw());
         assertTrue(board1.isDraw());
 
         Board board2 = new Board(TestGrid2);

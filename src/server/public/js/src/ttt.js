@@ -17,7 +17,7 @@ var PAUSE;
 		ALERT_SELECTOR = "#alert"
 		ALERT_MESSAGE_SELECTOR = "#alert_message"
 
-	var HOST = 'http://localhost:4567/'
+	var HOST = '/'
 
 
 	Board = function(stage, gameState) {
@@ -61,7 +61,7 @@ var PAUSE;
 			else signal = "NO";
 
 			$(this).click(function() {
-				self.query({signal: signal});
+				self.query(signal);
 				$(CONFIRM_SELECTOR).dialog('close');
 			})
 		})
@@ -71,12 +71,12 @@ var PAUSE;
 			autoOpen: false
 		})
 		.find('a').unbind().click(function() {
-			self.query({signal: "INVALID"})
+			self.query("ALERT_OK")
 			$(ALERT_SELECTOR).dialog('close')
 		})
 
 		$("#restart a").click(function() {
-			self.query({signal: "RESTART"})
+			self.query("RESTART")
 
 			return false;
 		})
@@ -97,10 +97,7 @@ var PAUSE;
 			var row = $(this).closest(ROW_SELECTOR).get(0);
 			var x = $(row).find(CELL_SELECTOR).index(this);
 			var y = $(self.dom).find(ROW_SELECTOR).index(row);
-			self.query({
-				signal: "MOVE",
-				coords: [x, y]
-			})
+			self.query("MOVE", {coords: [x, y]});
 		})
 	}
 
@@ -133,20 +130,27 @@ var PAUSE;
 					}
 					self.updateDom(r.board);
 					self.respondToServerStatus(r);
+				},
+				error: function(r) {
+					console.log("Error querying status:", r.responseText)
 				}
 			});
 		}, 500);
 	}
 
-	Board.prototype.query = function(params, cb) {
+	Board.prototype.query = function(signal, options) {
+		options = options || {}
+
 		$.ajax({
 			url: HOST + 'query',
 			type: 'post',
-			data: 'json=' + JSON.stringify(params),
+			data: 'signal=' + signal + '&options=' + JSON.stringify(options),
 			dataType: 'json',
 			success: function(r) {
 				console.log("Response from query: ", r);
-				if(typeof cb === 'function') cb();
+			},
+			error: function(r) {
+				console.log("Error from query:", r.responseText);
 			}
 		})
 	}
@@ -169,38 +173,42 @@ var PAUSE;
 
 	Board.prototype.respondToServerStatus = function(msg) {
 		var self = this;
-		if(msg.state === 'ReceivingMoveState') {
+
+		if(msg.ui.alert_message) {
+			self.alert(msg.ui.alert_message);
+		}
+		else if(msg.ui.wait_message) {
+			this.displayMessage(msg.ui.wait_message)
+		}
+		else if(msg.state === 'MoveState') {
 			this.readyForMove = true;
-			this.displayMessage("It's player " + msg.currentPlayer + "'s turn.")
+			if(msg.currentPlayer == "you") this.displayMessage("It's your turn.")
+			else this.displayMessage("It's player " + msg.currentPlayer + "'s turn.")
 		}
 
-		else if(msg.state === "ReceivingPlay3x3State") {
+		else if(msg.state === "Play3x3State") {
 			self.confirm("What size board would you like to play on?", "3x3", "4x4")
 		}
 
-		else if(msg.state === "ReceivingPlayVsAIState") {
+		else if(msg.state === "PlayVsAIState") {
 			self.confirm("Play vs. an AI?", "Yes", "No")
 		}
 
 
-		else if(msg.state === "ReceivingPlayAsXState") {
+		else if(msg.state === "PlayAsXState") {
 			self.confirm("Play as X or O?", "X", "O")
 		}
 
-		else if(msg.state === "ReceivingStartNewGameState") {
+		else if(msg.state === "StartNewGameState") {
 			self.confirm("Start a new game?", "Yes", "No")
+		}
+
+		else if(msg.state === "BeginningGameState") {
+			self.displayMessage(msg.ui.wait_message);
 		}
 
 		else if(msg.state === 'HaltState') {
 			this.displayMessage("");
-		}
-
-		else if(msg.state === "ReceivingAlertState") {
-			self.alert(msg.message);
-		}
-
-		else if(msg.state == "WaitingState") {
-			self.displayMessage(msg.message);
 		}
 
 		else console.log("Can't understand response: ", msg);

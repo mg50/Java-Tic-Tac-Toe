@@ -81,6 +81,8 @@ public abstract class Game {
     public void onReceivingPlayAsX() {}
     public void onGameOver(Side victor) {}
     public void onRestart() {}
-    public void onBeginningGame() {}
+    public boolean readyForGameStart() {
+        return true;
+    }
     public void onStateTransition() {}
 }

@@ -1,11 +1,11 @@
 
-include_class Java::Javattt.UI
+include_class Java::Javattt::ui.UI
 include_class Java::Javattt.command::PauseCommand
 
 class HTTPUI
 	include UI
 
-	attr_accessor :message
+	attr_accessor :message, :alert_message, :wait_message
 
 	def initialize
 	end
@@ -18,23 +18,13 @@ class HTTPUI
 		PauseCommand.new
 	end
 
-	def promptPlay3x3
+	def prompt(message)
 		PauseCommand.new
 	end
 
-	def promptPlayAsX
-		PauseCommand.new
-	end
 
-	def promptPlayVsAI
-		PauseCommand.new
-	end
-
-	def promptStartNewGame
-		PauseCommand.new
-	end
-
-	def victoryMessage(victor, xWinsCount, oWinsCount)
+	def victoryMessage(message, xWinsCount, oWinsCount)
+		self.alert_message = message
 	end
 
 	def displayHelp

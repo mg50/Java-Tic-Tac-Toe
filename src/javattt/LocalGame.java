@@ -63,9 +63,4 @@ public class LocalGame extends Game {
         playerX.ui = new MockUI();
         playerO.ui = new MockUI();
     }
-
-    public void onBeginningGame() {
-        //masterPlayer.ui = new Console();
-        //nonMasterPlayer().ui = masterPlayer.ui;
-    }
 }
