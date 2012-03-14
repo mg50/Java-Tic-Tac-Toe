@@ -20,8 +20,8 @@
 
     <target name="compile" depends="clean" description="compile the Java source code to class files">
         <mkdir dir="${classes-dir}"/>
-        <javac srcdir="${java-src-dir}" destdir="${classes-dir}"/>
-        <javac srcdir="${java-test-dir}" destdir="${classes-dir}">
+        <javac includeantruntime="false" srcdir="${java-src-dir}" destdir="${classes-dir}"/>
+        <javac includeantruntime="false" srcdir="${java-test-dir}" destdir="${classes-dir}">
             <classpath refid="classpath.test" />
         </javac>
     </target>
