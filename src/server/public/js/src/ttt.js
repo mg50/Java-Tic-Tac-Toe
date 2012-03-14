@@ -80,6 +80,10 @@ var PAUSE;
 
 			return false;
 		})
+
+		$(window).unload(function() {
+			self.query("EXIT")
+		})
 	}
 
 	Board.prototype.getCell = function(x, y) {

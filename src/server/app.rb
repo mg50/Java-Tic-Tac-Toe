@@ -65,7 +65,7 @@ class App < Sinatra::Base
 	post '/query' do
 		player = HTTPPlayer[session]
 		game = HTTPGame[player]
-
+		
 		game.receive_signal(player, params[:signal], JSON.parse(params[:options])) if game
 		#Serializer.new.serialize_and_save
 		JSON.generate "response" => true

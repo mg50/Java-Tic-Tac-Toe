@@ -71,9 +71,21 @@ class HTTPGame < Java::Javattt.Game
 
 	def remove_player(player)
 		if player == self.masterPlayer
+
 			self.masterPlayer = self.client_player
 			self.client_player = nil
+
+			if self.masterPlayer
+				self.masterPlayer.alert_message "The game owner has left the game."
+				self.receive_signal self.masterPlayer, "RESTART"
+			end
+
 		elsif player == self.client_player
+			if two_player? and self.state.is_a? MoveState
+				self.masterPlayer.alert_message "Your opponent has left the game."
+				self.receive_signal self.masterPlayer, "RESTART"
+			end
+
 			self.client_player = nil
 		end
 
@@ -153,9 +165,9 @@ class HTTPGame < Java::Javattt.Game
 	end
 
 	def onNewGame
-		self.masterPlayer.alert_message nil if self.masterPlayer
-		self.masterPlayer.wait_message  nil if self.masterPlayer
-		waiting_for_second_player = false
+		#self.masterPlayer.alert_message nil if self.masterPlayer
+		#self.masterPlayer.wait_message  nil if self.masterPlayer
+		#waiting_for_second_player = false
 	end
 
 	def readyForGameStart

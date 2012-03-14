@@ -154,6 +154,42 @@ describe HTTPGame do
 		game.state.class.should == MoveState
 	end
 
+	it "restarts when the client leaves in a middle of a 2-player game" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
+
+		game.receive_signal p1, "NO"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
+
+		game.receive_signal p2, "EXIT"
+		game.client_player.should be_nil
+		game.state.class.should == PlayVsAIState
+		p1.ui.alert_message.should_not be_nil
+	end
+
+	it "restarts when the main player leaves and makes the client the master player" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
+
+		game.receive_signal p1, "NO"
+		game.receive_signal p1, "YES"
+		game.receive_signal p1, "YES"
+
+		game.receive_signal p1, "EXIT"
+
+		game.masterPlayer.should == p2
+		game.client_player.should be_nil
+		game.state.class.should == PlayVsAIState
+		p2.ui.alert_message.should_not be_nil
+	end		
+
 	it "plays against the AI and then against a player" do
 		p1 = HTTPPlayer[{:session_id => 1}]
 		p2 = HTTPPlayer[{:session_id => 2}]

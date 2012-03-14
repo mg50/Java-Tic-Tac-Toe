@@ -101,11 +101,11 @@ public class AIStrategy extends GameStrategy {
 
         int ret;
         if(side == Side.X) {
-            ret = alpha / 2;
+            ret = alpha;
             gameHashForX.put(new Integer(boardHash), new Integer(ret));
         }
         else {
-            ret = beta / 2;
+            ret = beta;
             gameHashForO.put(new Integer(boardHash), new Integer(ret));
         }
 
