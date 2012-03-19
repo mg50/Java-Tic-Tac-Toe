@@ -17,19 +17,60 @@ tic_tac_toe {
 	background_color :white
 }
 
-board {
+board_3x3 {
+	width 500
+	height 500
+
+}
+
+board_4x4 {
 	width 500
 	height 500
 
 }
 
 sidebar {
-	width "20%"
+	width 200
+	horizontal_alignment :center
+	transparency "100%"
 }
 
-tic_tac_toe_button {
+message_box {
+	width "100%"
+	height 50
+	top_padding 20
+	font_size 24
+	left_padding 5
+	right_padding 5
+	horizontal_alignment :center	
+}
+
+button {
+	horizontal_alignment :center		
+	border_color "#000000"
+	border_width 1
+	width 70
+	padding 5
+	margin 10
+	font_size 20
+}
+
+cell_3x3 {
 	width "33%"
 	height "33%"
+	bottom_border_color "#000000"
+	bottom_border_width 1
+	top_border_width 1
+	left_border_width 1
+	right_border_width 1
+	vertical_alignment :center
+	horizontal_alignment :center
+	font_size 130;
+}
+
+cell_4x4 {
+	width "25%"
+	height "25%"
 	bottom_border_color "#000000"
 	bottom_border_width 1
 	top_border_width 1

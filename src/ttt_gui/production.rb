@@ -1,8 +1,15 @@
+require '../javattt/ttt.jar'
+require './lib/limelightui'
+require './lib/limelightgame'
+require 'rubygems'
 # This file (production.rb) is the first file loaded opening a production.  It must define a module named 'Production'.
 # The containing production will acquire all the behavior defined in this module.
 # You may define serveral hooks and initialization steps here.
 
+GAME = LimelightGame.new
+
 module Production
+	GAME = LimelightGame.new
 
 #  # Define this method if you want the production name to be different from the default, directory name.
 #  def name
@@ -19,8 +26,8 @@ module Production
 #
 #  # Hook #1.  Called when the production is newly created, before any loading has been done.
 #  # This is a good place to require needed files and instantiate objects in the business layer.
-#  def production_opening
-#  end
+# def production_opening
+# end
 #
 #  # Hook #2.  Called after internal gems have been loaded and stages have been instantiated, yet before
 #  # any scenes have been opened.
@@ -28,8 +35,9 @@ module Production
 #  end
 #
 #  # Hook #3.  Called when the production, and all the scenes, have fully opened.
-#  def production_opened
-#  end
+  def production_opened
+  	Game.begin
+  end
 #
 #  # The system will call this methods when it wishes to close the production, perhaps when the user quits the
 #  # application.  By default the production will always return true. You may override this behavior by re-implenting

@@ -11,7 +11,7 @@
 
 stage "default" do
   default_scene "default_scene"
-  title "Limelight"
+  title "Tic-Tac-Toe"
   location [200, 25]
-  size [600, 600]
+  size [700, 500]
 end
