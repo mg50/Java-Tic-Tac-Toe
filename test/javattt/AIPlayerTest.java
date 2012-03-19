@@ -99,7 +99,7 @@ public class AIPlayerTest extends TestCase {
         AIStrategy x = new AIStrategy(board.size);
         AIStrategy o = new AIStrategy(board.size);
         assertEquals(x.scoreChild(Side.X, board), 0);
-        assertEquals(o.scoreChild(Side.O, board), 256);
+        assertEquals(o.scoreChild(Side.O, board), 512);
     }
 
     public void testScoreChildFour() {
@@ -107,7 +107,7 @@ public class AIPlayerTest extends TestCase {
         AIStrategy x = new AIStrategy(board.size);
         AIStrategy o = new AIStrategy(board.size);
         assertEquals(x.scoreChild(Side.X, board), 0);
-        assertEquals(o.scoreChild(Side.O, board), 256);
+        assertEquals(o.scoreChild(Side.O, board), 512);
     }
 
     public void testScoreChildFive() {
@@ -124,7 +124,7 @@ public class AIPlayerTest extends TestCase {
         AIStrategy x = new AIStrategy(board.size);
         AIStrategy o = new AIStrategy(board.size);
 
-        assertEquals(o.scoreChild(Side.O, board), 64);
+        assertEquals(o.scoreChild(Side.O, board), 512);
     }
 
     public void testScoreChildSeven() {
@@ -132,8 +132,8 @@ public class AIPlayerTest extends TestCase {
         AIStrategy x = new AIStrategy(board.size);
         AIStrategy o = new AIStrategy(board.size);
 
-        assertEquals(x.scoreChild(Side.X, board), -256);
-        assertEquals(o.scoreChild(Side.O, board), 256);
+        assertEquals(x.scoreChild(Side.X, board), -512);
+        assertEquals(o.scoreChild(Side.O, board), 512);
     }
 
     public void testCalculateMoveOne() {
