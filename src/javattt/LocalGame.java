@@ -43,6 +43,7 @@ public class LocalGame extends Game {
 
         playerO.gameStrategy = new HumanStrategy();
         playerO.ui = masterPlayer.ui;
+        onReceivingPlayAsX();
         return false;
     }
 

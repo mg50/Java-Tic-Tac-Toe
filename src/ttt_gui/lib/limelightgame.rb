@@ -12,11 +12,16 @@ class LimelightGame < Java::Javattt.LocalGame
 		self.masterPlayer.ui = LimelightUI.new
 	end
 
+	def onReceivingPlayAsX
+		self.masterPlayer.ui.set_prompt_options("3x3", "4x4")
+	end
+
 	def onPlay3x3
 		self.masterPlayer.ui.current_board = self.board.size == 3 ? self.masterPlayer.ui.board_3x3 :
 																	self.masterPlayer.ui.board_4x4
 
 		self.masterPlayer.ui.load_current_board
+		self.masterPlayer.ui.set_prompt_options("Yes", "No")		
 	end
 
 	def load_boards

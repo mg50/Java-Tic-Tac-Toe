@@ -17,6 +17,10 @@ tic_tac_toe {
 	background_color :white
 }
 
+board_container {
+	padding 5
+}
+
 board_3x3 {
 	width 500
 	height 500

@@ -1,3 +1,4 @@
+require 'pry'
 include_class Java::Javattt.command.PauseCommand
 include_class Java::Javattt.Side
 
@@ -56,13 +57,18 @@ class LimelightUI
 	end
 
 	def prompt(message)
+		scene.find("message_prompt").text = message
+		
 		scene.find_by_name("sidebar")[0].children.each do |c|
 			c.style.transparency = "0%"
 		end
 
-		scene.find("message_prompt").text = message
-
 		PauseCommand.new
+	end
+
+	def set_prompt_options(yes, no)
+		scene.find("button_yes").text = yes
+		scene.find("button_no").text = no
 	end
 
 	def victoryMessage(victor, xWinsCount, oWinsCount)
