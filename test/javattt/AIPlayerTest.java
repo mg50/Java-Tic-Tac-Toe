@@ -116,7 +116,7 @@ public class AIPlayerTest extends TestCase {
         AIStrategy o = new AIStrategy(board.size);
 
         assertEquals(x.scoreChild(Side.X, board), 0);
-        assertEquals(o.scoreChild(Side.O, board), 16);
+        assertEquals(o.scoreChild(Side.O, board), 512);
     }
 
     public void testScoreChildSix() {
@@ -161,7 +161,7 @@ public class AIPlayerTest extends TestCase {
         AIStrategy o = new AIStrategy(board.size);
         MoveCommand cmd = (MoveCommand) o.determineNextMove(Side.O, board, new Console());
 
-        assertArrayEquals(cmd.coords, new int[]{1, 2});
+        assertArrayEquals(cmd.coords, new int[]{0, 1});
     }
 
     public void testCalculateMoveFour() {
