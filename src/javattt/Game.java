@@ -79,6 +79,7 @@ public abstract class Game {
     public void onReceivingPlayVsAI() {}
     public void onHalt() {}
     public void onReceivingPlayAsX() {}
+    public void onPlay3x3() {}
     public void onGameOver(Side victor) {}
     public void onRestart() {}
     public boolean readyForGameStart() {

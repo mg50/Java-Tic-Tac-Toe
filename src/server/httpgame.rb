@@ -76,14 +76,14 @@ class HTTPGame < Java::Javattt.Game
 			self.client_player = nil
 
 			if self.masterPlayer
-				self.masterPlayer.alert_message "The game owner has left the game."
 				self.receive_signal self.masterPlayer, "RESTART"
+				self.masterPlayer.alert_message "The game owner has left the game."				
 			end
 
 		elsif player == self.client_player
 			if two_player? and self.state.is_a? MoveState
-				self.masterPlayer.alert_message "Your opponent has left the game."
 				self.receive_signal self.masterPlayer, "RESTART"
+				self.masterPlayer.alert_message "Your opponent has left the game."				
 			end
 
 			self.client_player = nil
@@ -165,16 +165,23 @@ class HTTPGame < Java::Javattt.Game
 	end
 
 	def onNewGame
-		#self.masterPlayer.alert_message nil if self.masterPlayer
-		#self.masterPlayer.wait_message  nil if self.masterPlayer
-		#waiting_for_second_player = false
+		self.masterPlayer.alert_message nil if self.masterPlayer
+		self.masterPlayer.wait_message  nil if self.masterPlayer
+		waiting_for_second_player = false
+	end
+
+	def onRestart
+		if client_player
+			client_player.alert_message "Your opponent has restarted the game."
+		end
 	end
 
 	def readyForGameStart
 		return true unless two_player?
 
 		if not client_player
-			self.masterPlayer.wait_message "Waiting for second player to join."
+			self.masterPlayer.wait_message "Waiting for second player to join. " + 
+				"(Send the URL to another person to invite him to the game)."
 			return false
 		else
 			self.masterPlayer.wait_message nil

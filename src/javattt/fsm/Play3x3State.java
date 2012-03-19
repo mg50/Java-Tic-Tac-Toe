@@ -23,11 +23,13 @@ public class Play3x3State extends State {
         
     public void yes() {
         game.board = new Board(3);
+        game.onPlay3x3();
         game.state = new BeginningGameState(game);
     }
     
     public void no() {
         game.board = new Board(4);
+        game.onPlay3x3();
         game.state = new BeginningGameState(game);
     }
 }

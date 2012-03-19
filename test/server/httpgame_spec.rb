@@ -265,6 +265,17 @@ describe HTTPGame do
 		game.board.getCell(1, 1).should == Side._
 	end
 
+	it "alerts a player if the game owner restarts" do
+		p1 = HTTPPlayer[{:session_id => 1}]
+		p2 = HTTPPlayer[{:session_id => 2}]
+		game = HTTPGame["room"]
+		game.add_player p1
+		game.add_player p2
+
+		game.receive_signal p1, "RESTART"
+		p2.ui.alert_message.should_not be_nil		
+	end
+
 	# it "returns valid JSON about its state" do
 	# 	time = Time.now.to_i
 	# 	game = HTTPGame.new
