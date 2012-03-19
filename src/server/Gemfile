@@ -1,0 +1,7 @@
+
+gem 'sinatra'
+gem 'json'
+gem 'pry'
+gem 'rspec'
+gem 'limelight'
+gem 'mongrel2'

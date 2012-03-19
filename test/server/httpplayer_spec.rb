@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'json'
 require 'java'
-require '../../src/server/httpgame'
-require '../../src/server/httpplayer'
+require File.join(File.dirname(__FILE__), '../../src/server/httpgame')
+require File.join(File.dirname(__FILE__), '../../src/server/httpplayer')
 
 
 describe HTTPPlayer do

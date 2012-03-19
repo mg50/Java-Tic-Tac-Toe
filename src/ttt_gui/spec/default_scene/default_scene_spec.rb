@@ -1,6 +1,4 @@
-require 'pry'
-require '../javattt/ttt.jar'
-require 'java'
+require File.join(File.dirname(__FILE__), '../../../javattt/ttt.jar')
 include_class Java::Javattt.LanguageStore
 include_class Java::Javattt::fsm.NewGameState
 include_class Java::Javattt::fsm.MoveState

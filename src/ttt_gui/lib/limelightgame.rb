@@ -24,7 +24,7 @@ class LimelightGame < Java::Javattt.LocalGame
 	end
 
 	def begin(scene=nil)
-  		Game.scene = scene || theater.stages[0].current_scene
+  		Game.scene = scene
   		Game.load_boards
   		Game.start		
   	end

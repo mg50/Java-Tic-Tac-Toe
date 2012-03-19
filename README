@@ -1,0 +1,24 @@
+
+Project contains three implementations of Tic-Tac-Toe: a Java console version, a JRuby web version and a Limelight version.
+
+Make sure you have Java installed, as well as JRuby 1.6.4. Type 'bundle install' in the root directory to install gem dependencies from the gemfile. Also make sure the latest version of Ant is installed.
+
+============
+JAVA VERSION
+============
+
+Type "ant test" to run tests and "ant jar" to build the ttt.jar and put it in the src/javattt directory. To run the game from the root directory, type "java -jar src/javattt/ttt.jar".
+
+
+===========
+WEB VERSION
+===========
+
+From the root directory directory, run "ruby src/server/app.rb" to start the server. Server uses port 4567 and can be begun by going to http://localhost:4567 in the browser. Run the two tests with rspec as "spec test/server/httpgame_spec.rb" and "spec test/server/httpplayer_spec.ui".
+
+
+=================
+LIMELIGHT VERSION
+=================
+
+Run the game with "limelight open src/ttt_gui" and run the test via "spec src/ttt_gui/spec/default_scene/".

@@ -1,4 +1,3 @@
-require '../javattt/ttt.jar'
 include_class Java::Javattt.command.YesCommand
 include_class Java::Javattt.command.NoCommand
 

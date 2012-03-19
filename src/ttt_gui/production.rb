@@ -1,6 +1,10 @@
-require '../javattt/ttt.jar'
-require './lib/limelightui'
-require './lib/limelightgame'
+require 'rubygems'
+require 'java'
+#binding.pry
+require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
+require File.join(File.dirname(__FILE__), 'lib/limelightui')
+require File.join(File.dirname(__FILE__), 'lib/limelightgame')
+
 require 'rubygems'
 # This file (production.rb) is the first file loaded opening a production.  It must define a module named 'Production'.
 # The containing production will acquire all the behavior defined in this module.
@@ -36,7 +40,7 @@ module Production
 #
 #  # Hook #3.  Called when the production, and all the scenes, have fully opened.
   def production_opened
-  	Game.begin
+  	Game.begin theater.stages[0].current_scene
   end
 #
 #  # The system will call this methods when it wishes to close the production, perhaps when the user quits the

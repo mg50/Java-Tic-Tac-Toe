@@ -4,7 +4,7 @@ include_class Java::Javattt.fsm.MoveState
 
 module Cell
 	def mouse_clicked(e)
-		return unless Game.state.is_a? MoveState and Game.currentPlayer == Game.masterPlayer
+		return unless Game.state.is_a? MoveState and (!Game.versusAI || Game.currentPlayer == Game.masterPlayer)
 
 		size = id.split("_")[1].split("x")[0].to_i
 		num = id.split("_")[0].to_i
