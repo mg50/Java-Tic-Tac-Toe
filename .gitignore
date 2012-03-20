@@ -1,6 +1,9 @@
 .idea
 out
 test.iml
-src/javattt/*.txt
-src/javattt/*.jar
-src/javattt/classes
+javattt/classes
+javattt/*.jar
+server/lib/*.jar
+limelight/lib/*.jar
+
+
