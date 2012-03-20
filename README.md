@@ -2,7 +2,8 @@
 Project contains three implementations of Tic-Tac-Toe: a Java console version, a JRuby web version and a Limelight version.
 
 Make sure you have Java installed, as well as JRuby 1.6.4. Type 'bundle install' in the root directory to install gem
-dependencies from the gemfile. Also make sure the latest version of Ant is installed.
+dependencies from the gemfile. Also make sure the latest version of Ant is installed. Run "ant jar" before any of the
+following.
 
 ============
 JAVA VERSION
