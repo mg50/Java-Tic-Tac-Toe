@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <project name="Tic-Tac-Toe" default="jar">
-    <property name="java-src-dir" location="src/javattt" />
-    <property name="java-test-dir" location="test/javattt" />
-    <property name="classes-dir" location="src/javattt/classes" />
+    <property name="java-src-dir" location="javattt/src" />
+    <property name="java-test-dir" location="javattt/test" />
+    <property name="classes-dir" location="javattt/test/classes" />
 
 
     <path id="classpath.base"></path>
