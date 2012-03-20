@@ -1,6 +1,5 @@
 
 __ :name => "tic_tac_toe"
-binding.pry
 board {
 
 }

@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'sinatra'
 require 'json'
-require 'pry'
 require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
 require File.join(File.dirname(__FILE__), 'httpgame')
 require File.join(File.dirname(__FILE__), 'httpplayer')

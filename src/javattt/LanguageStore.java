@@ -9,7 +9,7 @@ package javattt;
  */
 public class LanguageStore {
 
-    public final String PROMPT_PLAY_3x3 = "Play a 3x3 or 4x4 game?";
+    public final String PROMPT_PLAY_3x3 = "Play a 3x3 game? (Alternative is a 4x4 game.)";
     public final String PROMPT_PLAY_VS_AI = "Play vs. AI?";
     public final String PROMPT_PLAY_AS_X = "Play as X?";
     public final String PROMPT_START_NEW_GAME = "Start new game?";
