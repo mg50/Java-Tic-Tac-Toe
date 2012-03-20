@@ -29,7 +29,7 @@ class App < Sinatra::Base
 	end
 
 	get '/test' do
-		File.read(File.join('public/html', 'test.html'))
+		File.read(File.join(File.dirname(__FILE__), './public/html/test.html'));
 	end	
 
 	get '/:room' do

@@ -1,4 +1,3 @@
-require 'pry'
 include_class Java::Javattt.command.PauseCommand
 include_class Java::Javattt.Side
 

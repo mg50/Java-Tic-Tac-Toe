@@ -1,5 +1,4 @@
 require 'json'
-require 'pry'
 require File.join(File.dirname(__FILE__), '../javattt/ttt.jar')
 require File.join(File.dirname(__FILE__), 'HTTPUI')
 include_class Java::Javattt.Board
