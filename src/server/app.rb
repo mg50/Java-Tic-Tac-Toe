@@ -50,7 +50,7 @@ class App < Sinatra::Base
 			game.receive_signal player, "signal" => "RESTART"
 		end		
 
-		File.read(File.join('public/html', 'index.html'))
+		File.read(File.join(File.dirname(__FILE__), './public/html/index.html'));
 	end
 
 	post '/' do

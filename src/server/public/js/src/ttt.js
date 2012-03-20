@@ -53,7 +53,17 @@ var PAUSE;
 		$(CONFIRM_SELECTOR).find("*").unbind().end()
 		.dialog({
 			modal: true,
-			autoOpen: false
+			autoOpen: false,
+			height: 'auto',
+			show: 'fade',
+			hide: 'fade',
+			minHeight: 0,
+			open: function() {
+				PAUSE = true;
+			},			
+			close: function() {
+				PAUSE = false;
+			}
 		})
 		.find('a').each(function(idx) {			
 			var signal;
@@ -68,7 +78,18 @@ var PAUSE;
 
 		$(ALERT_SELECTOR).dialog({
 			modal: true,
-			autoOpen: false
+			autoOpen: false,
+			height: 'auto',
+			show: 'fade',
+			hide: 'fade',
+			minHeight: 0,
+			open: function() {
+				PAUSE = true;
+			},			
+			close: function() {
+				PAUSE = false;
+			}
+			
 		})
 		.find('a').unbind().click(function() {
 			self.query("ALERT_OK")

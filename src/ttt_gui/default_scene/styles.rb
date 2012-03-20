@@ -14,7 +14,8 @@
 tic_tac_toe {
 	width "100%"
 	height "100%"
-	background_color :white
+	background_color :black
+	text_color :white
 }
 
 board_container {
@@ -47,22 +48,24 @@ message_box {
 	left_padding 5
 	right_padding 5
 	horizontal_alignment :center	
+	text_color :white	
 }
 
 button {
 	horizontal_alignment :center		
-	border_color "#000000"
+	border_color "#FFFFFF"
 	border_width 1
 	width 70
 	padding 5
 	margin 10
 	font_size 20
+	text_color :white	
 }
 
 cell_3x3 {
 	width "33%"
 	height "33%"
-	bottom_border_color "#000000"
+	border_color "#FFFFFF"
 	bottom_border_width 1
 	top_border_width 1
 	left_border_width 1
@@ -70,12 +73,14 @@ cell_3x3 {
 	vertical_alignment :center
 	horizontal_alignment :center
 	font_size 130;
+	text_color :white
+
 }
 
 cell_4x4 {
 	width "25%"
 	height "25%"
-	bottom_border_color "#000000"
+	border_color "#FFFFFF"
 	bottom_border_width 1
 	top_border_width 1
 	left_border_width 1
@@ -83,4 +88,6 @@ cell_4x4 {
 	vertical_alignment :center
 	horizontal_alignment :center
 	font_size 130;
+	text_color :white
+
 }
