@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="Tic-Tac-Toe" default="jar">
     <property name="java-src-dir" location="javattt/src" />
+    <property name="server-lib-dir" location="server/lib" />
+    <property name="limelight-lib-dir" location="limelight/lib" />
     <property name="java-test-dir" location="javattt/test" />
     <property name="classes-dir" location="javattt/test/classes" />
 
@@ -33,6 +35,8 @@
                 <attribute name="Main-Class" value="javattt.Main"/>
             </manifest>
         </jar>
+        <copy file="${java-src-dir}/ttt.jar" tofile="${server-lib-dir}/ttt.jar" />
+        <copy file="${java-src-dir}/ttt.jar" tofile="${limelight-lib-dir}/ttt.jar" />
     </target>
 
     <target name="test" depends="compile">
