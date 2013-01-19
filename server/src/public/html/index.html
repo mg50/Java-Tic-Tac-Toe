@@ -2,100 +2,20 @@
 <html>
 	<head>
 		<title>Tic-Tac-Toe</title>
-		<link rel="stylesheet" href="css/jquery-ui.css" type="text/css" />				
+                <link rel="stylesheet" href="css/jquery-ui.css" type="text/css" />
+                <link rel="stylesheet" href="css/custom.css" type="text/css" />
 		<script type="text/javascript" src="js/lib/jquery.js"></script>
 		<script type="text/javascript" src="js/lib/jquery-ui.js"></script>
 		<script type="text/javascript" src="js/lib/json.js"></script>
 		<script type="text/javascript" src="js/src/ttt.js"></script>
 		<script type="text/javascript">
+                  var board;
 			$(document).ready(function() {
-				var board = new Board('#board_wrapper');
+				board = new Board('#board_wrapper');
 				board.begin();
 			})
 		</script>
-		<style type="text/css">
-			html, body {
-				background-color: black;
-				padding: 0;
-				margin: 0;
-				color: white;
-			}
-
-			#board_wrapper {
-				height: 100%;
-				width: 100%;
-				position: relative;
-			}
-
-			#board {
-				height: 600px;
-				width: 600px;
-				position: absolute;
-				left: 0;
-				right: 0;
-				top: 0;
-				bottom: 0;
-				margin: auto;
-				border-collapse: collapse;
-			}
-
-			td {
-				border: 1px solid white;
-				width: 150px;
-				height: 150px;
-				vertical-align: middle;
-				text-align: center;
-				font-size: 100px;				
-			}
-
-			a {
-				text-decoration: none;
-			}
-
-			#message {
-				position: absolute;
-				bottom: 10;
-				width: 100%;
-				text-align: center;
-			}
-			#restart {
-				position: absolute;
-				top: 10px;
-				right: 10px;
-				z-index: 2;
-			}
-			#restart a {
-				color: white;
-			}
-
-			.ui-dialog {
-				padding: 1em;
-			}
-
-			.ui-dialog-titlebar {
-				display: none;
-			}
-
-			#confirm, #alert {
-				text-align: center;
-				font-family: "Helvetica Neue" !important;
-				font-weight: lighter;
-				overflow: hidden;				
-			}
-
-			#question, #alert_message {
-				padding-bottom: 2em;
-			}
-
-			#confirm a, #alert a {
-				margin: 10px;
-				background-color: #333;
-				padding: 10px;
-				border-radius: 3px;
-				outline: none;
-			}
-		</style>
-	</head>	
+	</head>
 	<body>
 		<div id="wrapper">
 			<div id="restart">
@@ -103,21 +23,21 @@
 			</div>
 
 			<div id="board_wrapper">
-			
+
 			</div>
 
-			<div id="message">
-			
-			</div>
-			<div id="confirm">
-				<div id="question"></div>
-				<a href="#" onclick="return false;"></a>
-				<a href="#" onclick="return false;"></a>
-			</div>
-			<div id="alert">
-				<div id="alert_message"></div>
-				<a href="#" onclick="return false;">OK</a>
-			</div>
 		</div>
-	</body>
+                <div id="button" class="button enabled">
+                  <div class="bevel"></div>
+                  <a href='#'>
+                    <div class="label"></div>
+                  </a>
+                </div>
+           <div id="alert"></div>
+           <div id="octagon-template-container">
+             <div class="octagon">
+               <div class="octagon-body"></div>
+             </div>
+           </div>
+        </body>
 </html>

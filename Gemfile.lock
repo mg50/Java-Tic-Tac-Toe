@@ -6,6 +6,10 @@ GEM
     json (1.6.5-java)
     limelight (0.5.5-java)
     method_source (0.7.0)
+    pry (0.9.8.2)
+      coderay (~> 1.0.5)
+      method_source (~> 0.7)
+      slop (>= 2.4.4, < 3)
     pry (0.9.8.2-java)
       coderay (~> 1.0.5)
       method_source (~> 0.7)
@@ -25,6 +29,7 @@ GEM
 
 PLATFORMS
   java
+  ruby
 
 DEPENDENCIES
   json

@@ -1,0 +1,171 @@
+@font-face {
+  font-family: 'Namco';
+  src: url('namco.ttf');
+}
+
+@font-face {
+  font-family: 'JST';
+  src: url('jst.ttf');
+}
+
+html, body {
+  background-color: deepskyblue;
+  padding: 0;
+  margin: 0;
+  color: white;
+}
+
+#wrapper {
+  position: relative;
+  left: 100px;
+}
+
+#board_wrapper {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+#board {
+  -webkit-transform-style: preserve-3d;
+  //-webkit-transform: rotate3d( 10, 3, -15, 31deg );
+  -webkit-transform: rotate3d( -18, 11, 0, 67deg );
+  position:absolute;
+  height: 900px;
+  width: 900px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  border-collapse: collapse;
+}
+
+td {
+  border: 1px solid white;
+  width: 200px;
+  height: 200px;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 100px;
+}
+
+a {
+  text-decoration: none;
+}
+
+#message {
+  position: absolute;
+  bottom: 10;
+  width: 100%;
+  text-align: center;
+}
+#restart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+#restart a {
+  color: white;
+}
+
+.ui-dialog {
+  padding: 1em;
+}
+
+.ui-dialog-titlebar {
+  display: none;
+}
+
+
+#question, #alert_message {
+  padding-bottom: 2em;
+}
+
+#confirm a, #alert a {
+  margin: 10px;
+  background-color: #333;
+  padding: 10px;
+  border-radius: 3px;
+  outline: none;
+}
+
+table .button {
+  position: absolute;
+  width: 800px;
+  height: 95px;
+  background-color: white;
+  left: -830px;
+  text-align: right;
+  color: black;
+  font-size: 1.5em;
+  -webkit-transition: background-color 0.2s ease-in;
+}
+
+table .button.enabled:hover {
+  background-color: lightcyan;
+  -webkit-transition: background-color 0.2s ease-in;
+}
+
+table .button a {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+table .button.disabled a {
+  cursor: default;
+}
+
+
+table .button .label {
+  position: absolute;
+  right: 20px;
+  top: 30px;
+  opacity: 0;
+  font-size: 1em;
+  font-family: 'Namco';
+  height: 100%;
+  width: 100%;
+}
+
+.button a:link, .button a:visited {
+  color: black;
+}
+
+#button1 {
+  bottom: 202px;
+}
+
+#button2 {
+  bottom: 100px;
+}
+
+#button3 {
+  bottom: 0px;
+}
+
+.bevel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 0;
+  width: 0;
+  border-top: 37px solid deepskyblue;
+  border-left: 25px solid transparent;
+}
+
+#alert {
+  margin-top: 300px;
+  font-size: 200px;
+  position: absolute;
+  top: 0;
+  color: black;
+  display: table;
+  white-space: nowrap;
+  font-family: 'JST'
+}
