@@ -3,7 +3,4 @@ out
 test.iml
 javattt/classes
 javattt/*.jar
-server/lib/*.jar
 limelight/lib/*.jar
-
-
